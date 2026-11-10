@@ -1,0 +1,33 @@
+{
+  "app": {
+    "name": "StrollWay",
+    "tagline": "Spacery bez schodów dla rodzin z wózkiem"
+  },
+  "nav": {
+    "planner": "Planer",
+    "walks": "Moje spacery",
+    "profiles": "Profile"
+  },
+  "language": {
+    "label": "Język",
+    "pl": "Polski",
+    "en": "English"
+  },
+  "health": {
+    "title": "Status backendu",
+    "loading": "Sprawdzam serwer…",
+    "ok": "Serwer działa",
+    "error": "Serwer nie odpowiada: {{message}}"
+  },
+  "pages": {
+    "planner": { "title": "Zaplanuj spacer", "placeholder": "Tu będzie planer trasy." },
+    "walks": { "title": "Moje spacery", "placeholder": "Tu będą zapisane spacery." },
+    "walkDetail": { "title": "Spacer {{id}}", "placeholder": "Tu będą szczegóły spaceru." },
+    "profiles": { "title": "Profile dzieci", "placeholder": "Tu będą profile dzieci." },
+    "notFound": { "title": "Nie ma takiej strony", "back": "Wróć do planera" }
+  },
+  "errors": {
+    "network": "Brak połączenia z serwerem.",
+    "http": "Serwer zwrócił błąd {{status}}."
+  }
+}
