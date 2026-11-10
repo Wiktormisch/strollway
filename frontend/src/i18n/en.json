@@ -1,0 +1,33 @@
+{
+  "app": {
+    "name": "StrollWay",
+    "tagline": "Stair-free walks for families with a stroller"
+  },
+  "nav": {
+    "planner": "Planner",
+    "walks": "My walks",
+    "profiles": "Profiles"
+  },
+  "language": {
+    "label": "Language",
+    "pl": "Polski",
+    "en": "English"
+  },
+  "health": {
+    "title": "Backend status",
+    "loading": "Checking the server…",
+    "ok": "The server works",
+    "error": "The server does not answer: {{message}}"
+  },
+  "pages": {
+    "planner": { "title": "Plan a walk", "placeholder": "The route planner will be here." },
+    "walks": { "title": "My walks", "placeholder": "Your saved walks will be here." },
+    "walkDetail": { "title": "Walk {{id}}", "placeholder": "Walk details will be here." },
+    "profiles": { "title": "Child profiles", "placeholder": "Child profiles will be here." },
+    "notFound": { "title": "Page not found", "back": "Go to the planner" }
+  },
+  "errors": {
+    "network": "No connection to the server.",
+    "http": "The server returned error {{status}}."
+  }
+}
