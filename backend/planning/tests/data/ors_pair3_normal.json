@@ -1,0 +1,63 @@
+{
+ "routes": [
+  {
+   "summary": {
+    "distance": 826.6,
+    "duration": 595.1
+   },
+   "geometry": "_|akIeaipBCYGUQ]OQSWOc@K}@@w@Be@C?DO`@_@PE?CCMBCAMKg@GYGDmAqGWiB@OxBgAAMCO[}BAKCKCIEQODAUCYA?UDCg@Eu@CYCMEE]EECKMQY]a@EEg@e@IISCG@i@yHAMAGf@M",
+   "extras": {
+    "waytype": {
+     "summary": [
+      {
+       "value": 7.0,
+       "distance": 808.4,
+       "amount": 97.8
+      },
+      {
+       "value": 8.0,
+       "distance": 12.6,
+       "amount": 1.52
+      },
+      {
+       "value": 4.0,
+       "distance": 5.6,
+       "amount": 0.68
+      }
+     ],
+     "values": [
+      [
+       0,
+       19,
+       7
+      ],
+      [
+       19,
+       20,
+       4
+      ],
+      [
+       20,
+       35,
+       7
+      ],
+      [
+       35,
+       36,
+       8
+      ],
+      [
+       36,
+       55,
+       7
+      ]
+     ]
+    }
+   },
+   "way_points": [
+    0,
+    55
+   ]
+  }
+ ]
+}
