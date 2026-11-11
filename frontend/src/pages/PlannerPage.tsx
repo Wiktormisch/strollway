@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { fetchRoutePlan, useRoutePlan } from '@/api/planning'
+import { useProfiles } from '@/api/profiles'
 import type { LatLng, RoutePlanRequest } from '@/api/types'
 import { HealthStatus } from '@/components/HealthStatus'
 import { DemoModeBanner, ErrorBanner } from '@/components/planner/Banners'
@@ -12,6 +13,10 @@ import { PlacesSection } from '@/components/planner/PlacesSection'
 import { RouteForm } from '@/components/planner/RouteForm'
 import { RouteLegend } from '@/components/planner/RouteLegend'
 import { TransitStops } from '@/components/planner/TransitStops'
+import { Label } from '@/components/ui/label'
+import { ProfileSelect } from '@/components/walks/ProfileSelect'
+import { SaveWalkDialog } from '@/components/walks/SaveWalkDialog'
+import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DEFAULT_MAP_CENTER, type DemoRoute } from '@/constants/demoRoutes'
 import { usePoiLabel } from '@/lib/poiLabel'
@@ -27,6 +32,9 @@ export function PlannerPage() {
   const [avoidStairs, setAvoidStairs] = useState(true)
   const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set())
   const [sheetOpen, setSheetOpen] = useState(true)
+  const [profileId, setProfileId] = useState<number | null>(null)
+  const [saveOpen, setSaveOpen] = useState(false)
+  const profiles = useProfiles()
   // A ref, not state: the map centre changes often and nothing needs to re-render for it.
   const mapCenter = useRef<LatLng>(DEFAULT_MAP_CENTER)
 
@@ -34,7 +42,7 @@ export function PlannerPage() {
   // So a changed input hides an old result, and going back shows it again with no request.
   const request: RoutePlanRequest | null =
     points.start && points.end
-      ? { start: points.start, end: points.end, avoid_stairs: avoidStairs }
+      ? withProfile({ start: points.start, end: points.end, avoid_stairs: avoidStairs }, profileId)
       : null
   const query = useRoutePlan(request)
   const result = query.data
@@ -60,7 +68,21 @@ export function PlannerPage() {
 
   function pickDemo(route: DemoRoute) {
     setPoints({ start: route.start, end: route.end })
-    fetchRoutePlan(queryClient, { start: route.start, end: route.end, avoid_stairs: avoidStairs })
+    fetchRoutePlan(
+      queryClient,
+      withProfile({ start: route.start, end: route.end, avoid_stairs: avoidStairs }, profileId),
+    )
+  }
+
+  /** The profile changes the pace, so a route on the map is planned again right away. */
+  function changeProfile(next: number | null) {
+    setProfileId(next)
+    if (points.start && points.end) {
+      fetchRoutePlan(
+        queryClient,
+        withProfile({ start: points.start, end: points.end, avoid_stairs: avoidStairs }, next),
+      )
+    }
   }
 
   return (
@@ -68,7 +90,7 @@ export function PlannerPage() {
       <section
         aria-labelledby="planner-title"
         className={cn(
-          'absolute inset-x-0 bottom-0 z-1000 flex max-h-[65%] flex-col rounded-t-2xl border-t bg-background shadow-2xl',
+          'absolute inset-x-0 bottom-0 z-10 flex max-h-[65%] flex-col rounded-t-2xl border-t bg-background shadow-2xl',
           'md:static md:z-auto md:h-full md:max-h-none md:w-100 md:shrink-0 md:rounded-none md:border-t-0 md:border-r md:shadow-none',
         )}
       >
@@ -105,6 +127,16 @@ export function PlannerPage() {
             </TabsList>
 
             <TabsContent value="route" className="space-y-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="planner-profile">{t('planner.profile.label')}</Label>
+                <ProfileSelect
+                  id="planner-profile"
+                  profiles={profiles.data ?? []}
+                  value={profileId}
+                  disabled={!profiles.data}
+                  onChange={changeProfile}
+                />
+              </div>
               <RouteForm
                 start={points.start}
                 end={points.end}
@@ -135,6 +167,9 @@ export function PlannerPage() {
               </div>
               {result && (
                 <>
+                  <Button className="w-full" onClick={() => setSaveOpen(true)}>
+                    {t('planner.save')}
+                  </Button>
                   <RouteLegend />
                   <PlacesSection
                     plan={result}
@@ -155,6 +190,34 @@ export function PlannerPage() {
         </div>
       </section>
 
+      {result && request && points.start && points.end && (
+        <SaveWalkDialog
+          open={saveOpen}
+          onOpenChange={setSaveOpen}
+          plan={result}
+          start={points.start}
+          end={points.end}
+          avoidStairs={request.avoid_stairs}
+          profiles={profiles.data ?? []}
+          profileId={profileId}
+        />
+      )}
+
+      {/* Phone only: with the panel folded, the next step is a button on the map. */}
+      {!sheetOpen && request && (
+        <Button
+          className="absolute bottom-16 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          disabled={fetching}
+          onClick={result ? () => setSaveOpen(true) : plan}
+        >
+          {result
+            ? t('planner.save')
+            : fetching
+              ? t('planner.form.planning')
+              : t('planner.form.plan')}
+        </Button>
+      )}
+
       {/* `isolate` keeps the Leaflet z-indexes inside the map, under the bottom sheet. */}
       <div className="isolate h-full md:flex-1">
         <MapView
@@ -172,4 +235,9 @@ export function PlannerPage() {
       </div>
     </div>
   )
+}
+
+/** profile_id is sent only when a profile is chosen. */
+function withProfile(request: RoutePlanRequest, profileId: number | null): RoutePlanRequest {
+  return profileId === null ? request : { ...request, profile_id: profileId }
 }
