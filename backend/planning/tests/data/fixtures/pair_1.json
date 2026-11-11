@@ -1,0 +1,197 @@
+{
+ "pair": 1,
+ "name": "Big detour (Kartuska)",
+ "start": [
+  54.347791,
+  18.618119
+ ],
+ "end": [
+  54.34874,
+  18.618458
+ ],
+ "ors": {
+  "normal": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 132.4,
+       "duration": 95.3
+      },
+      "geometry": "uxujIejspBC?A?Y@mBHCa@O?O@Ai@C?C?C@?I@?",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 7.0,
+          "distance": 96.6,
+          "amount": 72.95
+         },
+         {
+          "value": 3.0,
+          "distance": 18.8,
+          "amount": 14.23
+         },
+         {
+          "value": 8.0,
+          "distance": 16.0,
+          "amount": 12.12
+         },
+         {
+          "value": 0.0,
+          "distance": 0.9,
+          "amount": 0.7
+         }
+        ],
+        "values": [
+         [
+          0,
+          2,
+          7
+         ],
+         [
+          2,
+          3,
+          8
+         ],
+         [
+          3,
+          5,
+          7
+         ],
+         [
+          5,
+          7,
+          3
+         ],
+         [
+          7,
+          9,
+          7
+         ],
+         [
+          9,
+          10,
+          8
+         ],
+         [
+          10,
+          12,
+          7
+         ],
+         [
+          12,
+          13,
+          0
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       13
+      ]
+     }
+    ]
+   }
+  },
+  "avoid": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 420.1,
+       "duration": 302.4
+      },
+      "geometry": "uxujIejspB@ACeACs@Cm@OcBIi@OcBGkBG@SFCF@TAFO@?PGDCLBdAg@@EL@J?N?L]@?d@B|@DjC@h@CMKS@E?I@?",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 3.0,
+          "distance": 245.8,
+          "amount": 58.5
+         },
+         {
+          "value": 7.0,
+          "distance": 140.1,
+          "amount": 33.35
+         },
+         {
+          "value": 4.0,
+          "distance": 19.3,
+          "amount": 4.59
+         },
+         {
+          "value": 6.0,
+          "distance": 14.0,
+          "amount": 3.34
+         },
+         {
+          "value": 0.0,
+          "distance": 0.9,
+          "amount": 0.22
+         }
+        ],
+        "values": [
+         [
+          0,
+          1,
+          7
+         ],
+         [
+          1,
+          8,
+          3
+         ],
+         [
+          8,
+          11,
+          4
+         ],
+         [
+          11,
+          15,
+          7
+         ],
+         [
+          15,
+          23,
+          3
+         ],
+         [
+          23,
+          28,
+          7
+         ],
+         [
+          28,
+          30,
+          6
+         ],
+         [
+          30,
+          32,
+          7
+         ],
+         [
+          32,
+          33,
+          0
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       33
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "overpass": null
+}

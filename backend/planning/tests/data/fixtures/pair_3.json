@@ -1,0 +1,152 @@
+{
+ "pair": 3,
+ "name": "Tiny detour (Oliwa SKM -> Pacholek)",
+ "start": [
+  54.4097,
+  18.5655
+ ],
+ "end": [
+  54.4115,
+  18.5745
+ ],
+ "ors": {
+  "normal": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 826.6,
+       "duration": 595.1
+      },
+      "geometry": "_|akIeaipBCYGUQ]OQSWOc@K}@@w@Be@C?DO`@_@PE?CCMBCAMKg@GYGDmAqGWiB@OxBgAAMCO[}BAKCKCIEQODAUCYA?UDCg@Eu@CYCMEE]EECKMQY]a@EEg@e@IISCG@i@yHAMAGf@M",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 7.0,
+          "distance": 808.4,
+          "amount": 97.8
+         },
+         {
+          "value": 8.0,
+          "distance": 12.6,
+          "amount": 1.52
+         },
+         {
+          "value": 4.0,
+          "distance": 5.6,
+          "amount": 0.68
+         }
+        ],
+        "values": [
+         [
+          0,
+          19,
+          7
+         ],
+         [
+          19,
+          20,
+          4
+         ],
+         [
+          20,
+          35,
+          7
+         ],
+         [
+          35,
+          36,
+          8
+         ],
+         [
+          36,
+          55,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       55
+      ]
+     }
+    ]
+   }
+  },
+  "avoid": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 832.8,
+       "duration": 599.6
+      },
+      "geometry": "_|akIeaipBCYGUQ]OQSWOc@K}@@w@Be@C?DO`@_@PE?CCMBCAMKg@GYGDmAqGWiB@OxBgAAMCO[}BAKCKCIU?O@QSABAWAKDABACg@Eu@CYCMEE]EECKMQY]a@EEg@e@IISCG@i@yHAMAGf@M",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 7.0,
+          "distance": 795.0,
+          "amount": 95.46
+         },
+         {
+          "value": 3.0,
+          "distance": 20.5,
+          "amount": 2.46
+         },
+         {
+          "value": 4.0,
+          "distance": 17.3,
+          "amount": 2.08
+         }
+        ],
+        "values": [
+         [
+          0,
+          19,
+          7
+         ],
+         [
+          19,
+          20,
+          4
+         ],
+         [
+          20,
+          30,
+          7
+         ],
+         [
+          30,
+          32,
+          3
+         ],
+         [
+          32,
+          33,
+          4
+         ],
+         [
+          33,
+          57,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       57
+      ]
+     }
+    ]
+   }
+  }
+ },
+ "overpass": null
+}
