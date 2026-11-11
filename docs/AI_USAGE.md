@@ -19,7 +19,7 @@ This page describes how the developer worked with AI tools on StrollWay: what th
 5. **A human reads the diff.** The agent never commits, pushes, merges or opens a PR on its own (`AGENTS.md`).
 6. **Self-review with named gaps.** At the end of a task the agent scores its own work from 1 to 10 and must name what is missing. A score without named gaps is not accepted.
 
-Each finished stage has a short log in `docs/stages/` (for example `docs/stages/stage-1.md`): what was built, which checks ran, and what went wrong.
+Each finished stage has a short log in `docs/stages/` (for example `docs/stages/stage-1.md` and `stage-2.md`): what was built, which checks ran, and what went wrong.
 
 ## Verify before building
 
@@ -33,6 +33,7 @@ Before any code, the riskiest assumptions of the plan were checked by hand again
 
 - A summary of Overpass limits written by a second AI was compared with the official documentation. Most numbers were right. Two were **not** in the sources ("2 parallel slots per IP" and "10 minutes of total query time per day"), so they were recorded as unconfirmed instead of being used.
 - Coordinates for demo routes proposed by the agent were written from memory and flagged as approximate. One pair turned out to have no stairs at all and was rejected; another gave the most useful case (no step-free route).
+- In stage 2 the developer asked the agent to review its own plan before coding. The review found three real gaps (a bad client id could give 404 instead of 400, a `PATCH` with only a rating ignored the saved status, a stop could move to another walk). All were fixed and tested before the first commit.
 - The flags of `claude -p` were read from `claude --help`, not guessed, and are marked "not tested" until stage 6.
 
 ## What the AI is allowed to do inside the app
