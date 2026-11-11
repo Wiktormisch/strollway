@@ -1,13 +1,15 @@
 import { screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
-import { vi } from 'vitest'
 import App from './App'
+import { mockApi } from './test/mockApi'
 import { renderWithProviders } from './test/render'
 
-function mockHealth(result: Response | Error) {
-  vi.spyOn(globalThis, 'fetch').mockImplementation(() =>
-    result instanceof Error ? Promise.reject(result) : Promise.resolve(result.clone()),
-  )
+function mockHealth(health: Response | Error) {
+  mockApi({
+    'GET /api/health/': health,
+    'GET /api/profiles/': [],
+    'GET /api/walks/': [],
+  })
 }
 
 describe('App', () => {
@@ -37,9 +39,11 @@ describe('App', () => {
     expect(screen.getByRole('heading', { name: 'Child profiles' })).toBeInTheDocument()
   })
 
-  it('renders the walk detail route', () => {
+  it('renders the walk detail route', async () => {
+    mockHealth(Response.json({ status: 'ok' }))
     renderWithProviders(<App />, { route: '/walks/7' })
-    expect(screen.getByRole('heading', { name: 'Walk 7' })).toBeInTheDocument()
+    // The fetch mock has no walk 7, so the page shows its not-found state.
+    expect(await screen.findByText('Walk not found.')).toBeInTheDocument()
   })
 
   it('renders a not-found page for unknown paths', () => {

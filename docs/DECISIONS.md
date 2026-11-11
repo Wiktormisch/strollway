@@ -195,3 +195,13 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - **"Load places again"** sends the same route request again. There is no places-only endpoint; ORS answers come from the 24 h cache, and failed Overpass answers are not cached.
 - **The map is thin:** Leaflet code lives only in `MapView.tsx`. Tests replace it with a fake (`src/test/setup.ts`), because jsdom cannot draw maps.
 - **Route plans are cached in the browser** (TanStack `useQuery`, key = the whole request, 10 min). This changes D.7 ("planning results as mutations"): a mutation keeps only the last answer, so going back to the same points or switch value sent the same request again. The query is `enabled: false`, so clicking the map sends nothing; only "Plan route" or a demo button fetches. "Try again" and "Load places again" skip the cache.
+
+## 9. Stage 5: walks, stops and profiles UI
+
+- **Saving a plan as a walk:** `buildWalkPayload` (`frontend/src/lib/walkPayload.ts`) saves unknown values as 0: `stairs_m: null` (mock line) and `detour_m: null` (no stair-free route). `stairs_avoided_m = max(0, baseline.stairs_m - route.stairs_m)`. A POI category the `Stop` model does not know becomes `other`; a place without a name is saved with `name: ""`.
+- **A stop's note is the `reason` field.** The API has no separate note field.
+- **Profile and pace:** the backend computes the walking time from the profile in `/api/route-plans/`. Choosing a profile in the planner plans the route again at once. In the save dialog, a different profile only links the walk to it; a hint says that the saved time stays as planned. Recomputing there was left for later (it needs `keepPreviousData`, so the dialog does not close while loading).
+- **Field errors:** `parseFieldErrors` puts DRF 400 messages under the fields the form shows; other messages go to a toast. Backend messages are English only.
+- **Retries:** app-wide `retry: 1`, because the default 3 retries with growing delays kept a stopped backend "loading" for about 7 s. Route plans set `retry: false` themselves: `fetchQuery` turns retries off only when no default is set, and a 422 or 429 will not change.
+- **Planner panel z-index** went from `z-1000` to `z-10`, so dialogs and selects (`z-50`) open above it. The map is in an `isolate` box, so Leaflet stays under the panel.
+- **No `next-themes`:** the shadcn Sonner wrapper is replaced by a small `Toaster` with `theme="system"`.
