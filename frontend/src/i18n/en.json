@@ -20,14 +20,149 @@
     "error": "The server does not answer: {{message}}"
   },
   "pages": {
-    "planner": { "title": "Plan a walk", "placeholder": "The route planner will be here." },
-    "walks": { "title": "My walks", "placeholder": "Your saved walks will be here." },
-    "walkDetail": { "title": "Walk {{id}}", "placeholder": "Walk details will be here." },
-    "profiles": { "title": "Child profiles", "placeholder": "Child profiles will be here." },
-    "notFound": { "title": "Page not found", "back": "Go to the planner" }
+    "planner": {
+      "title": "Plan a walk"
+    },
+    "walks": {
+      "title": "My walks",
+      "placeholder": "Your saved walks will be here."
+    },
+    "walkDetail": {
+      "title": "Walk {{id}}",
+      "placeholder": "Walk details will be here."
+    },
+    "profiles": {
+      "title": "Child profiles",
+      "placeholder": "Child profiles will be here."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "back": "Go to the planner"
+    }
   },
   "errors": {
     "network": "No connection to the server.",
     "http": "The server returned error {{status}}."
+  },
+  "planner": {
+    "empty": "Set a start and an end on the map, or try a demo route.",
+    "loading": "Planning the route…",
+    "retry": "Try again",
+    "tabs": {
+      "route": "Route A → B",
+      "trip": "Trip idea (soon)"
+    },
+    "sheet": {
+      "collapse": "Hide the panel",
+      "expand": "Show the panel"
+    },
+    "form": {
+      "hint": "Click the map: the first click sets the start, the second the end.",
+      "start": "Start",
+      "end": "End",
+      "notSet": "not set",
+      "clear": "Clear {{point}}",
+      "useCenter": "Set {{point}} at the map centre",
+      "demoTitle": "Try a demo route",
+      "avoidStairs": "Avoid stairs",
+      "plan": "Plan route",
+      "planning": "Planning…"
+    },
+    "demo": {
+      "bigDetour": "Big detour",
+      "tinyDetour": "Tiny detour",
+      "noStepFree": "No stair-free route"
+    },
+    "detour": {
+      "summary": "Route to follow: {{distance}}, {{duration}}.",
+      "bigDetour": {
+        "title": "Stair-free route: +{{detour}}, +{{minutes}} min",
+        "detail": "The shortest route has <stairs>{{stairs}} of stairs</stairs>. Stair-free route: +{{detour}}, +{{minutes}} min."
+      },
+      "tinyDetour": {
+        "title": "You can avoid the stairs with almost no extra distance.",
+        "detail": "The shortest route has <stairs>{{stairs}} of stairs</stairs>. The stair-free route is only +{{detour}}."
+      },
+      "noStepFree": {
+        "title": "There is no stair-free route between these points.",
+        "detail": "The route has <stairs>{{stairs}} of stairs</stairs>, marked in red on the map."
+      },
+      "noStairs": {
+        "title": "No stairs on this route.",
+        "detail": "You can go with a stroller the shortest way."
+      },
+      "notSearched": {
+        "title": "Stairs are not avoided.",
+        "detail": "The route has <stairs>{{stairs}} of stairs</stairs>, marked in red on the map."
+      },
+      "checkFailed": {
+        "title": "We could not check for a stair-free route.",
+        "detail": "Showing the shortest route. It has <stairs>{{stairs}} of stairs</stairs>, marked in red."
+      },
+      "unknownStairs": {
+        "title": "This is a straight line, not a real route.",
+        "detail": "We do not know if it has stairs."
+      }
+    },
+    "legend": {
+      "title": "Map legend",
+      "route": "Route to follow",
+      "baseline": "Shortest route",
+      "stairs": "Stairs"
+    },
+    "demoMode": {
+      "fixture": "Demo mode: a recorded route (no routing key, or the service did not answer).",
+      "mock": "Demo mode: a straight line, not a real route."
+    },
+    "errors": {
+      "noRoute": "We could not find any walking route between these points.",
+      "noRoutablePoint": "A point is too far from a path or a street. Move it closer to a road.",
+      "invalid": "These points cannot be used. Put the end closer to the start.",
+      "tooManyRequests": "Too many requests. Wait a moment and try again.",
+      "network": "No connection to the server.",
+      "unknown": "Something went wrong while planning the route."
+    }
+  },
+  "poi": {
+    "title": "Places on the way",
+    "filterLabel": "Show place categories",
+    "fromStart": "about {{minutes}} min from start",
+    "openingHours": "Opening hours: {{hours}}",
+    "openNow": "Open now",
+    "closedNow": "Closed now",
+    "accessibilityLabel": "Accessibility",
+    "accessibility": {
+      "wheelchair": "Wheelchair access",
+      "changing_table": "Changing table"
+    },
+    "unavailable": "The places service did not answer.",
+    "reload": "Load places again",
+    "none": "There are no tagged places near this route in OpenStreetMap.",
+    "allHidden": "All categories are hidden.",
+    "categories": {
+      "playground": "Playground",
+      "toilets": "Toilets",
+      "cafe": "Cafe",
+      "restaurant": "Restaurant",
+      "water": "Drinking water",
+      "bench": "Bench",
+      "park": "Park",
+      "zoo": "Zoo",
+      "museum": "Museum",
+      "beach": "Beach",
+      "other": "Place"
+    }
+  },
+  "transit": {
+    "title": "Transit stops",
+    "none": "No tram or bus stops close to the start or the end.",
+    "near": {
+      "start": "Near the start",
+      "end": "Near the end"
+    },
+    "kind": {
+      "bus": "Bus stop",
+      "tram": "Tram stop"
+    }
   }
 }

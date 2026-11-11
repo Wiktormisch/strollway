@@ -20,14 +20,149 @@
     "error": "Serwer nie odpowiada: {{message}}"
   },
   "pages": {
-    "planner": { "title": "Zaplanuj spacer", "placeholder": "Tu będzie planer trasy." },
-    "walks": { "title": "Moje spacery", "placeholder": "Tu będą zapisane spacery." },
-    "walkDetail": { "title": "Spacer {{id}}", "placeholder": "Tu będą szczegóły spaceru." },
-    "profiles": { "title": "Profile dzieci", "placeholder": "Tu będą profile dzieci." },
-    "notFound": { "title": "Nie ma takiej strony", "back": "Wróć do planera" }
+    "planner": {
+      "title": "Zaplanuj spacer"
+    },
+    "walks": {
+      "title": "Moje spacery",
+      "placeholder": "Tu będą zapisane spacery."
+    },
+    "walkDetail": {
+      "title": "Spacer {{id}}",
+      "placeholder": "Tu będą szczegóły spaceru."
+    },
+    "profiles": {
+      "title": "Profile dzieci",
+      "placeholder": "Tu będą profile dzieci."
+    },
+    "notFound": {
+      "title": "Nie ma takiej strony",
+      "back": "Wróć do planera"
+    }
   },
   "errors": {
     "network": "Brak połączenia z serwerem.",
     "http": "Serwer zwrócił błąd {{status}}."
+  },
+  "planner": {
+    "empty": "Wybierz start i cel na mapie albo wypróbuj trasę demo.",
+    "loading": "Planujemy trasę…",
+    "retry": "Spróbuj ponownie",
+    "tabs": {
+      "route": "Trasa A → B",
+      "trip": "Pomysł na wycieczkę (wkrótce)"
+    },
+    "sheet": {
+      "collapse": "Ukryj panel",
+      "expand": "Pokaż panel"
+    },
+    "form": {
+      "hint": "Kliknij mapę: pierwsze kliknięcie to start, drugie to cel.",
+      "start": "Start",
+      "end": "Cel",
+      "notSet": "nie wybrano",
+      "clear": "Usuń: {{point}}",
+      "useCenter": "Ustaw {{point}} na środku mapy",
+      "demoTitle": "Wypróbuj trasę demo",
+      "avoidStairs": "Omijaj schody",
+      "plan": "Zaplanuj trasę",
+      "planning": "Planujemy…"
+    },
+    "demo": {
+      "bigDetour": "Duży objazd",
+      "tinyDetour": "Mały objazd",
+      "noStepFree": "Brak trasy bez schodów"
+    },
+    "detour": {
+      "summary": "Trasa do przejścia: {{distance}}, {{duration}}.",
+      "bigDetour": {
+        "title": "Trasa bez schodów: +{{detour}}, +{{minutes}} min",
+        "detail": "Najkrótsza trasa ma <stairs>{{stairs}} schodów</stairs>. Trasa bez schodów: +{{detour}}, +{{minutes}} min."
+      },
+      "tinyDetour": {
+        "title": "Schody możesz ominąć prawie bez nadkładania drogi.",
+        "detail": "Najkrótsza trasa ma <stairs>{{stairs}} schodów</stairs>. Trasa bez schodów to tylko +{{detour}}."
+      },
+      "noStepFree": {
+        "title": "Między tymi punktami nie ma trasy bez schodów.",
+        "detail": "Trasa ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na mapie na czerwono."
+      },
+      "noStairs": {
+        "title": "Na tej trasie nie ma schodów.",
+        "detail": "Z wózkiem możesz iść najkrótszą drogą."
+      },
+      "notSearched": {
+        "title": "Schody nie są omijane.",
+        "detail": "Trasa ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na mapie na czerwono."
+      },
+      "checkFailed": {
+        "title": "Nie udało się sprawdzić trasy bez schodów.",
+        "detail": "Pokazujemy najkrótszą trasę. Ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na czerwono."
+      },
+      "unknownStairs": {
+        "title": "To linia prosta, a nie prawdziwa trasa.",
+        "detail": "Nie wiemy, czy są na niej schody."
+      }
+    },
+    "legend": {
+      "title": "Legenda mapy",
+      "route": "Trasa do przejścia",
+      "baseline": "Najkrótsza trasa",
+      "stairs": "Schody"
+    },
+    "demoMode": {
+      "fixture": "Tryb demo: nagrana trasa (brak klucza do routingu albo usługa nie odpowiedziała).",
+      "mock": "Tryb demo: linia prosta, a nie prawdziwa trasa."
+    },
+    "errors": {
+      "noRoute": "Nie znaleźliśmy żadnej trasy pieszej między tymi punktami.",
+      "noRoutablePoint": "Punkt jest za daleko od ścieżki lub ulicy. Przesuń go bliżej drogi.",
+      "invalid": "Nie można użyć tych punktów. Ustaw cel bliżej startu.",
+      "tooManyRequests": "Za dużo zapytań. Poczekaj chwilę i spróbuj ponownie.",
+      "network": "Brak połączenia z serwerem.",
+      "unknown": "Coś poszło nie tak podczas planowania trasy."
+    }
+  },
+  "poi": {
+    "title": "Miejsca po drodze",
+    "filterLabel": "Pokaż kategorie miejsc",
+    "fromStart": "ok. {{minutes}} min od startu",
+    "openingHours": "Godziny otwarcia: {{hours}}",
+    "openNow": "Teraz otwarte",
+    "closedNow": "Teraz zamknięte",
+    "accessibilityLabel": "Dostępność",
+    "accessibility": {
+      "wheelchair": "Dostęp dla wózków",
+      "changing_table": "Przewijak"
+    },
+    "unavailable": "Usługa z miejscami nie odpowiedziała.",
+    "reload": "Wczytaj miejsca ponownie",
+    "none": "W OpenStreetMap nie ma oznaczonych miejsc przy tej trasie.",
+    "allHidden": "Wszystkie kategorie są ukryte.",
+    "categories": {
+      "playground": "Plac zabaw",
+      "toilets": "Toaleta",
+      "cafe": "Kawiarnia",
+      "restaurant": "Restauracja",
+      "water": "Woda pitna",
+      "bench": "Ławka",
+      "park": "Park",
+      "zoo": "Zoo",
+      "museum": "Muzeum",
+      "beach": "Plaża",
+      "other": "Miejsce"
+    }
+  },
+  "transit": {
+    "title": "Przystanki",
+    "none": "Brak przystanków tramwajowych i autobusowych blisko startu i celu.",
+    "near": {
+      "start": "Przy starcie",
+      "end": "Przy celu"
+    },
+    "kind": {
+      "bus": "Przystanek autobusowy",
+      "tram": "Przystanek tramwajowy"
+    }
   }
 }
