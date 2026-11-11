@@ -4,6 +4,7 @@ import { vi } from 'vitest'
 import type { RoutePlan } from '@/api/types'
 import { renderWithProviders } from '@/test/render'
 import { makePlan } from '@/test/routePlan'
+import { makeProfile } from '@/test/walks'
 import { PlannerPage } from './PlannerPage'
 
 type RouteAnswer = RoutePlan | Promise<RoutePlan> | { status: number; body: unknown }
@@ -14,6 +15,7 @@ function mockApi(...answers: RouteAnswer[]) {
   vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
     const url = String(input)
     if (url.includes('/api/health/')) return Promise.resolve(Response.json({ status: 'ok' }))
+    if (url.includes('/api/profiles/')) return Promise.resolve(Response.json([makeProfile()]))
     routeCalls.push(JSON.parse(String(init?.body)))
     const answer = answers.shift()
     if (!answer) return Promise.reject(new TypeError('no more answers'))
@@ -142,5 +144,46 @@ describe('PlannerPage', () => {
     ).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Plan route' }))
     expect(calls).toHaveLength(1)
+  })
+
+  it('plans from a button on the map when the panel is folded', async () => {
+    const calls = mockApi(makePlan())
+    const user = userEvent.setup()
+    renderWithProviders(<PlannerPage />)
+
+    await user.click(screen.getByRole('button', { name: 'Hide the panel' }))
+    await user.click(screen.getByRole('button', { name: 'fake map click A' }))
+    await user.click(screen.getByRole('button', { name: 'fake map click B' }))
+
+    // jsdom has no CSS, so the folded panel's own button is in the DOM too; the map one is last.
+    const buttons = screen.getAllByRole('button', { name: 'Plan route' })
+    expect(buttons).toHaveLength(2)
+    await user.click(buttons[1])
+
+    expect(await screen.findByText('map route: drawn')).toBeInTheDocument()
+    expect(calls).toHaveLength(1)
+    // With a result the map button changes to the next step: saving the walk.
+    expect(screen.getAllByRole('button', { name: 'Plan route' })).toHaveLength(1)
+    const saveButtons = screen.getAllByRole('button', { name: 'Save walk' })
+    expect(saveButtons).toHaveLength(2)
+    await user.click(saveButtons[1])
+    expect(screen.getByRole('dialog', { name: 'Save walk' })).toBeInTheDocument()
+  })
+
+  it('sends profile_id after choosing a profile and plans again', async () => {
+    const calls = mockApi(makePlan(), makePlan({ route: { ...makePlan().route, duration_min: 9 } }))
+    const user = userEvent.setup()
+    renderWithProviders(<PlannerPage />)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    expect(calls[0]).not.toHaveProperty('profile_id')
+
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+
+    expect(await screen.findByText(/9 min/)).toBeInTheDocument()
+    expect(calls).toHaveLength(2)
+    expect(calls[1]).toMatchObject({ avoid_stairs: true, profile_id: 3 })
   })
 })

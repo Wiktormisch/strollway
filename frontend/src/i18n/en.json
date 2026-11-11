@@ -24,16 +24,10 @@
       "title": "Plan a walk"
     },
     "walks": {
-      "title": "My walks",
-      "placeholder": "Your saved walks will be here."
-    },
-    "walkDetail": {
-      "title": "Walk {{id}}",
-      "placeholder": "Walk details will be here."
+      "title": "My walks"
     },
     "profiles": {
-      "title": "Child profiles",
-      "placeholder": "Child profiles will be here."
+      "title": "Child profiles"
     },
     "notFound": {
       "title": "Page not found",
@@ -42,7 +36,8 @@
   },
   "errors": {
     "network": "No connection to the server.",
-    "http": "The server returned error {{status}}."
+    "http": "The server returned error {{status}}.",
+    "unknown": "Something went wrong."
   },
   "planner": {
     "empty": "Set a start and an end on the map, or try a demo route.",
@@ -121,6 +116,10 @@
       "tooManyRequests": "Too many requests. Wait a moment and try again.",
       "network": "No connection to the server.",
       "unknown": "Something went wrong while planning the route."
+    },
+    "save": "Save walk",
+    "profile": {
+      "label": "Family profile (sets the pace)"
     }
   },
   "poi": {
@@ -163,6 +162,178 @@
     "kind": {
       "bus": "Bus stop",
       "tram": "Tram stop"
+    }
+  },
+  "common": {
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "loadFailed": "Could not load the data. {{reason}}"
+  },
+  "walks": {
+    "filter": {
+      "label": "Show walks",
+      "all": "All",
+      "planned": "Planned",
+      "done": "Done"
+    },
+    "status": {
+      "planned": "Planned",
+      "done": "Done"
+    },
+    "card": {
+      "distance": "Distance",
+      "duration": "Walking time",
+      "stairsAvoided": "Stairs avoided",
+      "stops": "Stops"
+    },
+    "rating": {
+      "value": "{{value}} of 5"
+    },
+    "empty": {
+      "title": "No saved walks yet.",
+      "text": "Plan a route and save it, or add a few sample walks.",
+      "filtered": "No walks with this status."
+    },
+    "demo": {
+      "button": "Add sample walks",
+      "loading": "Adding…",
+      "added": "Sample walks added.",
+      "existed": "Sample walks are already here.",
+      "failed": "Could not add sample walks. {{reason}}"
+    }
+  },
+  "walkForm": {
+    "title": "Save walk",
+    "description": "Give the walk a name and choose places to keep as stops.",
+    "name": "Name",
+    "namePlaceholder": "e.g. Sunday to the park",
+    "profile": "Family profile",
+    "noProfile": "No profile",
+    "stops": "Stops",
+    "stopsHint": "Choose up to {{max}} places from the route.",
+    "noPlaces": "There are no places on this route to add.",
+    "submit": "Save walk",
+    "saved": "Walk saved.",
+    "failed": "Could not save the walk. {{reason}}",
+    "errors": {
+      "nameRequired": "Give the walk a name."
+    },
+    "paceMismatch": "The walking time was planned with another profile. It is saved as it is; plan the route again with this profile to update it."
+  },
+  "walkDetail": {
+    "back": "Back to my walks",
+    "editName": "Edit the name",
+    "stairsOnRoute": "Stairs on the route",
+    "notFound": {
+      "title": "Walk not found.",
+      "text": "It may have been deleted, or it was saved in another browser."
+    },
+    "notes": {
+      "label": "Notes",
+      "placeholder": "What should you remember next time?",
+      "count": "{{count}} / {{max}}",
+      "save": "Save notes"
+    },
+    "status": {
+      "title": "Status and rating",
+      "rating": "Rating",
+      "markDone": "Mark as done",
+      "markPlanned": "Mark as planned again",
+      "saveRating": "Save rating",
+      "rateFirst": "Choose a rating from 1 to 5 first."
+    },
+    "delete": {
+      "button": "Delete walk",
+      "title": "Delete this walk?",
+      "text": "\"{{name}}\" and all its stops will be deleted. This cannot be undone."
+    },
+    "toast": {
+      "saved": "Changes saved.",
+      "saveFailed": "Could not save. {{reason}}",
+      "deleted": "Walk deleted.",
+      "deleteFailed": "Could not delete the walk. {{reason}}"
+    }
+  },
+  "stops": {
+    "title": "Stops",
+    "empty": "No stops yet.",
+    "add": "Add a stop",
+    "addHint": "Click the map to place the new stop.",
+    "pointSet": "Point set. Click the map again to move it.",
+    "addSubmit": "Add stop",
+    "name": "Name (optional)",
+    "namePlaceholder": "e.g. Ice cream",
+    "category": "Category",
+    "minutes": "Minutes",
+    "note": "Note",
+    "deleteNamed": "Delete stop {{name}}",
+    "delete": {
+      "title": "Delete this stop?",
+      "text": "\"{{name}}\" will be removed from the walk."
+    },
+    "errors": {
+      "minutes": "Give a whole number from {{min}} to {{max}}.",
+      "noPoint": "Click the map to place the stop."
+    },
+    "toast": {
+      "added": "Stop added.",
+      "addFailed": "Could not add the stop. {{reason}}",
+      "saved": "Stop saved.",
+      "saveFailed": "Could not save the stop. {{reason}}",
+      "deleted": "Stop deleted.",
+      "deleteFailed": "Could not delete the stop. {{reason}}"
+    }
+  },
+  "profiles": {
+    "intro": "A profile sets the walking pace. It stores only ages, never names.",
+    "new": "New profile",
+    "edit": "Edit profile",
+    "editNamed": "Edit {{name}}",
+    "deleteNamed": "Delete {{name}}",
+    "ageChip": "{{age}} y.",
+    "empty": {
+      "title": "No profiles yet.",
+      "text": "Add a profile to plan walks at your family's pace."
+    },
+    "wheels": {
+      "none": "On foot",
+      "stroller": "Stroller",
+      "kid_bike": "Kid bike"
+    },
+    "pace": {
+      "relaxed": "Relaxed pace",
+      "normal": "Normal pace"
+    },
+    "form": {
+      "name": "Profile name",
+      "namePlaceholder": "e.g. Weekend with a stroller",
+      "ages": "Children's ages",
+      "agesHint": "From 1 to {{max}} children, ages 0-{{maxAge}}.",
+      "age": "Child's age",
+      "addAge": "Add age",
+      "removeAge": "Remove age {{age}}",
+      "wheels": "Wheels",
+      "pace": "Pace",
+      "errors": {
+        "nameRequired": "Give the profile a name.",
+        "noChildren": "Add at least one child's age.",
+        "ageInvalid": "An age is a whole number from 0 to {{maxAge}}.",
+        "tooMany": "At most {{max}} children."
+      }
+    },
+    "delete": {
+      "title": "Delete this profile?",
+      "text": "\"{{name}}\" will be deleted. Saved walks stay, without a profile."
+    },
+    "toast": {
+      "saved": "Profile saved.",
+      "saveFailed": "Could not save the profile. {{reason}}",
+      "deleted": "Profile deleted.",
+      "deleteFailed": "Could not delete the profile. {{reason}}"
     }
   }
 }

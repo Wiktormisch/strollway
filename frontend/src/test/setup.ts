@@ -7,6 +7,14 @@ import i18n from '@/i18n'
 vi.mock('@/components/planner/MapView', async () => ({
   MapView: (await import('./FakeMapView')).FakeMapView,
 }))
+vi.mock('@/components/walks/WalkMap', () => ({
+  WalkMap: (props: { stops: unknown[] }) => `walk map: ${props.stops.length} stops`,
+}))
+
+// Radix Select uses pointer capture and scrollIntoView, which jsdom does not have.
+Element.prototype.hasPointerCapture ??= () => false
+Element.prototype.releasePointerCapture ??= () => {}
+Element.prototype.scrollIntoView ??= () => {}
 
 beforeEach(async () => {
   localStorage.clear()
