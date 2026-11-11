@@ -170,3 +170,18 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
   - Demo data is matched by fixed names. A renamed demo walk is created again by `POST /api/demo-data/`.
   - `distance_m`, `stairs_m` and `detour_m` come from the client and are not recalculated. They only affect the client's own data; stage 3 computes them in `route-plans`.
 - **Stop categories for short walks and full-day trips:** `park`, `zoo`, `museum` and `beach` were added (well tagged in OSM: `leisure=park`, `tourism=zoo`, `tourism=museum`, `natural=beach`). `indoor_play` (`leisure=indoor_play`) waits until stage 3 checks in Overpass how many exist in Gdansk. "Paid" is not a category; OSM has a rarely filled `fee` tag.
+
+## 7. Stage 3: route plans
+
+- **Pace.** The profile model has `relaxed` (3.5 km/h) and `normal` (4.5 km/h). A stroller is a limit of 4 km/h, so `normal` + stroller gives 4 km/h. No profile means 4 km/h. ORS `duration` is ignored.
+- **The avoid-steps request is skipped** when the shortest route has 0 m of stairs: the answer is `step_free_available: true`, `detour_m: 0`. This saves one ORS call.
+- **Avoid-steps request fails** (timeout, 429, 5xx) after a good normal route: we return the normal route with `step_free_available: null` instead of a fixture or a straight line. A real route is better than a fake one.
+- **Cache:** one entry per ORS request (rounded coordinates + avoid flag), 24 h. Routes and the stable errors 2009 and 2010 are cached; temporary failures are not. Overpass: one entry per query, only successful answers. Django file cache in `backend/.cache/` (git-ignored).
+- **Fixtures hold raw answers** (trimmed ORS bodies and Overpass elements) and go through the same parsers as live data. They were recorded on 2026-11-11; Overpass answered 502 that day, so no fixture has places yet (`"overpass": null`). Run `record_fixtures` again to add them. Tests use fixed copies in `planning/tests/data/fixtures/`, so a new recording never breaks them.
+- **Stage 0 file:** its third route ("C") is the rejected Brzezno pair, not Kartuska. It is kept as the test sample for "no stairs on the route".
+- **Mock line and places:** for a straight-line route, live Overpass places near the line are still returned (they are real). Without Overpass, the list is empty. Recorded places are used only for a fixture route.
+- **Duplicates:** places with the same category and name within 30 m are one place (a playground as a point and an outline; groups of benches). Then at most 10 benches, the closest to the route.
+- **Transit stops:** one entry per name, kind and end (a stop has one platform per direction), at most 3 per end.
+- **Overpass (checked 2026-11-11):** the public server answers **406 without a `User-Agent`**, so the client sends `StrollWay/0.1`. It also answered **502** "at capacity" with a text body. Any status other than 200, and a 200 with `remark: runtime error`, mean `pois_status: "unavailable"`.
+- **`indoor_play` not checked yet:** Overpass was at capacity during stage 3. Not a category for now; check again in stage 6.
+- **Input limit:** start and end must be at most 20 km apart (straight line). It is a stroller walk, and it protects the ORS daily limit.
