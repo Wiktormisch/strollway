@@ -157,3 +157,16 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 | 16 | Demo routes too short (130-830 m) to give the AI anything to plan | The AI plans a loop from a start point within a time limit |
 | 17 | Activating a venv in PowerShell can be blocked on a reviewer's machine | A note and a command in D.9 and the README |
 | 18 | Messy risk numbering; self-assessment out of date after stage 0 | Cleaned up |
+
+## 6. Stage 2: walks CRUD API
+
+- **Stops are written with a walk only on create.** `PUT`/`PATCH /api/walks/{id}/` ignores `stops`; stops change through `/api/stops/`. Simpler, and a `PATCH` cannot delete stops by accident.
+- **A stop cannot move to another walk.** `walk` is checked on update and must stay the same.
+- **Bad filter values give 400** (`?status=don`, `?walk=abc`), so typos do not hide behind a full list. A foreign walk id in `?walk=` gives an empty list, as if it did not exist.
+- **`X-Client-Id` is checked before any action** (in `initial()`), so a bad header gives 400 before a possible 404. UUIDs are stored in lower case.
+- **Size limits** in the serializers: `geometry` 2-5000 points, `ai_summary` 2000 characters, up to 20 nested stops.
+- **Known limits (accepted):**
+  - The shared `demo` client (no header) can be changed by anyone with curl or Swagger. `seed_demo` restores it.
+  - Demo data is matched by fixed names. A renamed demo walk is created again by `POST /api/demo-data/`.
+  - `distance_m`, `stairs_m` and `detour_m` come from the client and are not recalculated. They only affect the client's own data; stage 3 computes them in `route-plans`.
+- **Stop categories for short walks and full-day trips:** `park`, `zoo`, `museum` and `beach` were added (well tagged in OSM: `leisure=park`, `tourism=zoo`, `tourism=museum`, `natural=beach`). `indoor_play` (`leisure=indoor_play`) waits until stage 3 checks in Overpass how many exist in Gdansk. "Paid" is not a category; OSM has a rarely filled `fee` tag.
