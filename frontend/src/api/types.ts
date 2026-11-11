@@ -67,3 +67,102 @@ export interface RoutePlan {
 }
 
 export type RoutePlanErrorCode = 'no_route' | 'no_routable_point'
+
+// ----- Saved data (backend/walks/serializers.py) -----
+
+export type Wheels = 'none' | 'stroller' | 'kid_bike'
+export type Pace = 'relaxed' | 'normal'
+
+export interface FamilyProfile {
+  id: number
+  name: string
+  /** Whole numbers 0-17, 1-6 items. No names on purpose. */
+  children_ages: number[]
+  wheels: Wheels
+  pace: Pace
+  created_at: string
+  updated_at: string
+}
+
+export type ProfileInput = Pick<FamilyProfile, 'name' | 'children_ages' | 'wheels' | 'pace'>
+
+export type WalkStatus = 'planned' | 'done'
+
+export type StopCategory =
+  | 'playground'
+  | 'toilets'
+  | 'cafe'
+  | 'restaurant'
+  | 'bench'
+  | 'water'
+  | 'park'
+  | 'zoo'
+  | 'museum'
+  | 'beach'
+  | 'other'
+
+export interface Stop {
+  id: number
+  walk?: number
+  order: number
+  /** Empty for places without a name in OSM. */
+  name: string
+  category: StopCategory
+  lat: number
+  lng: number
+  osm_id: string
+  /** 1-120. */
+  planned_minutes: number
+  /** A short note (max 200 characters). */
+  reason: string
+  source: 'ai' | 'rules' | 'user'
+}
+
+/** A stop sent inside a new walk. */
+export type NestedStopInput = Omit<Stop, 'id' | 'walk'>
+
+/** A stop added to an existing walk through /api/stops/. */
+export type StopCreate = NestedStopInput & { walk: number }
+
+export type StopUpdate = Partial<Pick<Stop, 'planned_minutes' | 'reason' | 'order'>>
+
+interface WalkCommon {
+  id: number
+  profile: number | null
+  name: string
+  start_label: string
+  end_label: string
+  avoid_stairs: boolean
+  distance_m: number
+  duration_min: number
+  stairs_m: number
+  stairs_avoided_m: number
+  detour_m: number
+  status: WalkStatus
+  /** 1-5, only when done. */
+  rating: number | null
+  created_at: string
+  updated_at: string
+}
+
+export interface WalkListItem extends WalkCommon {
+  stops_count: number
+}
+
+export interface WalkDetail extends WalkCommon {
+  start_lat: number
+  start_lng: number
+  end_lat: number
+  end_lng: number
+  geometry: LatLngTuple[]
+  notes: string
+  ai_summary: string
+  stops: Stop[]
+}
+
+export type WalkCreate = Omit<
+  WalkDetail,
+  'id' | 'status' | 'rating' | 'notes' | 'ai_summary' | 'stops' | 'created_at' | 'updated_at'
+> & { stops: NestedStopInput[] }
+
+export type WalkUpdate = Partial<Pick<WalkDetail, 'name' | 'notes' | 'status' | 'rating'>>

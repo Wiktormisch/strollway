@@ -24,16 +24,10 @@
       "title": "Zaplanuj spacer"
     },
     "walks": {
-      "title": "Moje spacery",
-      "placeholder": "Tu będą zapisane spacery."
-    },
-    "walkDetail": {
-      "title": "Spacer {{id}}",
-      "placeholder": "Tu będą szczegóły spaceru."
+      "title": "Moje spacery"
     },
     "profiles": {
-      "title": "Profile dzieci",
-      "placeholder": "Tu będą profile dzieci."
+      "title": "Profile dzieci"
     },
     "notFound": {
       "title": "Nie ma takiej strony",
@@ -42,7 +36,8 @@
   },
   "errors": {
     "network": "Brak połączenia z serwerem.",
-    "http": "Serwer zwrócił błąd {{status}}."
+    "http": "Serwer zwrócił błąd {{status}}.",
+    "unknown": "Coś poszło nie tak."
   },
   "planner": {
     "empty": "Wybierz start i cel na mapie albo wypróbuj trasę demo.",
@@ -121,6 +116,10 @@
       "tooManyRequests": "Za dużo zapytań. Poczekaj chwilę i spróbuj ponownie.",
       "network": "Brak połączenia z serwerem.",
       "unknown": "Coś poszło nie tak podczas planowania trasy."
+    },
+    "save": "Zapisz spacer",
+    "profile": {
+      "label": "Profil rodziny (ustala tempo)"
     }
   },
   "poi": {
@@ -163,6 +162,178 @@
     "kind": {
       "bus": "Przystanek autobusowy",
       "tram": "Przystanek tramwajowy"
+    }
+  },
+  "common": {
+    "save": "Zapisz",
+    "saving": "Zapisywanie…",
+    "cancel": "Anuluj",
+    "delete": "Usuń",
+    "retry": "Spróbuj ponownie",
+    "loading": "Ładowanie…",
+    "loadFailed": "Nie udało się wczytać danych. {{reason}}"
+  },
+  "walks": {
+    "filter": {
+      "label": "Pokaż spacery",
+      "all": "Wszystkie",
+      "planned": "Planowane",
+      "done": "Zrobione"
+    },
+    "status": {
+      "planned": "Planowany",
+      "done": "Zrobiony"
+    },
+    "card": {
+      "distance": "Dystans",
+      "duration": "Czas marszu",
+      "stairsAvoided": "Ominięte schody",
+      "stops": "Przystanki"
+    },
+    "rating": {
+      "value": "{{value}} z 5"
+    },
+    "empty": {
+      "title": "Nie masz jeszcze zapisanych spacerów.",
+      "text": "Zaplanuj trasę i zapisz ją albo dodaj kilka przykładowych spacerów.",
+      "filtered": "Brak spacerów z tym statusem."
+    },
+    "demo": {
+      "button": "Dodaj przykładowe spacery",
+      "loading": "Dodawanie…",
+      "added": "Dodano przykładowe spacery.",
+      "existed": "Przykładowe spacery już tu są.",
+      "failed": "Nie udało się dodać przykładowych spacerów. {{reason}}"
+    }
+  },
+  "walkForm": {
+    "title": "Zapisz spacer",
+    "description": "Nazwij spacer i wybierz miejsca, które mają zostać przystankami.",
+    "name": "Nazwa",
+    "namePlaceholder": "np. Niedziela w parku",
+    "profile": "Profil rodziny",
+    "noProfile": "Bez profilu",
+    "stops": "Przystanki",
+    "stopsHint": "Wybierz do {{max}} miejsc z trasy.",
+    "noPlaces": "Na tej trasie nie ma miejsc do dodania.",
+    "submit": "Zapisz spacer",
+    "saved": "Spacer zapisany.",
+    "failed": "Nie udało się zapisać spaceru. {{reason}}",
+    "errors": {
+      "nameRequired": "Podaj nazwę spaceru."
+    },
+    "paceMismatch": "Czas marszu policzono dla innego profilu. Zapisze się bez zmian; zaplanuj trasę ponownie z tym profilem, aby go zaktualizować."
+  },
+  "walkDetail": {
+    "back": "Wróć do moich spacerów",
+    "editName": "Zmień nazwę",
+    "stairsOnRoute": "Schody na trasie",
+    "notFound": {
+      "title": "Nie znaleziono spaceru.",
+      "text": "Mógł zostać usunięty albo zapisano go w innej przeglądarce."
+    },
+    "notes": {
+      "label": "Notatki",
+      "placeholder": "O czym pamiętać następnym razem?",
+      "count": "{{count}} / {{max}}",
+      "save": "Zapisz notatki"
+    },
+    "status": {
+      "title": "Status i ocena",
+      "rating": "Ocena",
+      "markDone": "Oznacz jako zrobiony",
+      "markPlanned": "Przywróć do planowanych",
+      "saveRating": "Zapisz ocenę",
+      "rateFirst": "Najpierw wybierz ocenę od 1 do 5."
+    },
+    "delete": {
+      "button": "Usuń spacer",
+      "title": "Usunąć ten spacer?",
+      "text": "„{{name}}” i wszystkie jego przystanki zostaną usunięte. Tego nie da się cofnąć."
+    },
+    "toast": {
+      "saved": "Zmiany zapisane.",
+      "saveFailed": "Nie udało się zapisać. {{reason}}",
+      "deleted": "Spacer usunięty.",
+      "deleteFailed": "Nie udało się usunąć spaceru. {{reason}}"
+    }
+  },
+  "stops": {
+    "title": "Przystanki",
+    "empty": "Brak przystanków.",
+    "add": "Dodaj przystanek",
+    "addHint": "Kliknij mapę, aby wskazać nowy przystanek.",
+    "pointSet": "Punkt ustawiony. Kliknij mapę ponownie, aby go przesunąć.",
+    "addSubmit": "Dodaj przystanek",
+    "name": "Nazwa (opcjonalnie)",
+    "namePlaceholder": "np. Lody",
+    "category": "Kategoria",
+    "minutes": "Minuty",
+    "note": "Notatka",
+    "deleteNamed": "Usuń przystanek {{name}}",
+    "delete": {
+      "title": "Usunąć ten przystanek?",
+      "text": "„{{name}}” zostanie usunięty ze spaceru."
+    },
+    "errors": {
+      "minutes": "Podaj liczbę całkowitą od {{min}} do {{max}}.",
+      "noPoint": "Kliknij mapę, aby wskazać przystanek."
+    },
+    "toast": {
+      "added": "Dodano przystanek.",
+      "addFailed": "Nie udało się dodać przystanku. {{reason}}",
+      "saved": "Przystanek zapisany.",
+      "saveFailed": "Nie udało się zapisać przystanku. {{reason}}",
+      "deleted": "Przystanek usunięty.",
+      "deleteFailed": "Nie udało się usunąć przystanku. {{reason}}"
+    }
+  },
+  "profiles": {
+    "intro": "Profil ustala tempo marszu. Zapisuje tylko wiek dzieci, nigdy imiona.",
+    "new": "Nowy profil",
+    "edit": "Edytuj profil",
+    "editNamed": "Edytuj {{name}}",
+    "deleteNamed": "Usuń {{name}}",
+    "ageChip": "{{age}} l.",
+    "empty": {
+      "title": "Nie masz jeszcze profili.",
+      "text": "Dodaj profil, aby planować spacery w tempie Twojej rodziny."
+    },
+    "wheels": {
+      "none": "Pieszo",
+      "stroller": "Wózek",
+      "kid_bike": "Rowerek"
+    },
+    "pace": {
+      "relaxed": "Spokojne tempo",
+      "normal": "Normalne tempo"
+    },
+    "form": {
+      "name": "Nazwa profilu",
+      "namePlaceholder": "np. Weekend z wózkiem",
+      "ages": "Wiek dzieci",
+      "agesHint": "Od 1 do {{max}} dzieci, wiek 0-{{maxAge}}.",
+      "age": "Wiek dziecka",
+      "addAge": "Dodaj wiek",
+      "removeAge": "Usuń wiek {{age}}",
+      "wheels": "Na kółkach",
+      "pace": "Tempo",
+      "errors": {
+        "nameRequired": "Podaj nazwę profilu.",
+        "noChildren": "Dodaj wiek co najmniej jednego dziecka.",
+        "ageInvalid": "Wiek to liczba całkowita od 0 do {{maxAge}}.",
+        "tooMany": "Najwyżej {{max}} dzieci."
+      }
+    },
+    "delete": {
+      "title": "Usunąć ten profil?",
+      "text": "„{{name}}” zostanie usunięty. Zapisane spacery zostaną, bez profilu."
+    },
+    "toast": {
+      "saved": "Profil zapisany.",
+      "saveFailed": "Nie udało się zapisać profilu. {{reason}}",
+      "deleted": "Profil usunięty.",
+      "deleteFailed": "Nie udało się usunąć profilu. {{reason}}"
     }
   }
 }

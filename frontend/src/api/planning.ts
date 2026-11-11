@@ -22,6 +22,9 @@ function routePlanOptions(request: RoutePlanRequest | null) {
     },
     staleTime: ROUTE_PLAN_CACHE_MS,
     gcTime: ROUTE_PLAN_CACHE_MS,
+    // Never retried: a 422 or 429 will not change, and the endpoint is rate limited.
+    // Set here because the app-wide default (main.tsx) retries other queries once.
+    retry: false,
   }
 }
 
