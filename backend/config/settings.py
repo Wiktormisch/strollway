@@ -109,11 +109,34 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "UNAUTHENTICATED_USER": None,
+    # Per-IP limits for the endpoints that call shared external APIs.
+    "DEFAULT_THROTTLE_RATES": {"route_plans": os.getenv("ROUTE_PLANS_RATE", "60/hour")},
 }
+
+# File cache for external API results (ORS and Overpass), 24 h. Survives restarts.
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
+        "LOCATION": BASE_DIR / ".cache",
+        "TIMEOUT": 24 * 60 * 60,
+    }
+}
+
+# External services. See docs/DECISIONS.md for verified facts.
+ROUTING_PROVIDER = os.getenv("ROUTING_PROVIDER", "auto")  # auto | ors | mock
+ORS_BASE_URL = os.getenv("ORS_BASE_URL", "https://api.heigit.org/openrouteservice").rstrip("/")
+ORS_API_KEY = os.getenv("ORS_API_KEY", "")
+POI_PROVIDER = os.getenv("POI_PROVIDER", "auto")  # auto | overpass | mock
+OVERPASS_URL = os.getenv("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "StrollWay API",
     "DESCRIPTION": "Stair-free walks for families with a stroller.",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # Two different "source" choice sets (Stop.source and route-plans source) need own names.
+    "ENUM_NAME_OVERRIDES": {
+        "RoutePlanSourceEnum": ["ors", "fixture", "mock"],
+        "StopSourceEnum": "walks.models.Stop.Source",
+    },
 }

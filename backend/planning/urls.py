@@ -4,4 +4,5 @@ from planning import views
 
 urlpatterns = [
     path("health/", views.health, name="health"),
+    path("route-plans/", views.RoutePlanView.as_view(), name="route-plans"),
 ]
