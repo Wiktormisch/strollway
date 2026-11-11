@@ -19,6 +19,12 @@ A short log of verified facts and decisions. Facts marked "verified" were checke
 - **Opening hours: a small own parser** for common patterns only (`24/7`, `Mo-Fr 08:00-18:00`, rules separated by `;`, `off`). Anything else is "unknown". It is the first thing to cut if time is short.
 - **Stairs are reported in metres** everywhere (API, database, UI), never as a number of steps. ORS gives the length of "steps" segments, not the number of steps.
 - **ORS response format:** we use `/json`. Its geometry is an encoded polyline, so the backend needs a small decoder. We do not request `elevation` (it changes the encoding).
+- **The first commit went to `main` without a PR** (stage 1). An empty branch cannot take a PR, and the commit holds only the plan and agent rules. Every later change goes through a PR to `dev`.
+- **Versions (stage 1):** Python 3.14, Node 24.12, Django 6.1. **TypeScript is pinned to 6.0**, not 7: `typescript-eslint` 8.x supports only TypeScript `<6.1`. Try 7 again when `typescript-eslint` supports it.
+- **ESLint, not oxlint.** The current Vite template ships oxlint; the plan asks for ESLint + `typescript-eslint` (more rules for React hooks, better known), so the template was changed.
+- **shadcn/ui preset "Nova"** (Radix, Lucide icons, Geist font). It uses the `cn` package from the shadcn team instead of `clsx` + `tailwind-merge`.
+- **No LangGraph (or LangChain) for trip ideas.** The flow is linear with one LLM call: code collects candidates, the LLM picks and orders them, code validates the answer and builds the route, and a rule-based engine is the fallback. There is no loop, no tool calls and no state between steps, so a graph framework adds a heavy dependency and its own concepts for no gain. The small `LLMClient` protocol is enough and stays easy to test with a mock. Look again if the LLM ever needs to call tools in a loop (for example "search wider if too few places") or keep a multi-step chat; even then, try a plain tool-use loop in the Anthropic SDK first.
+- **No i18next language detector package.** Detection is about 15 lines in `src/i18n/index.ts`: saved choice, then the browser language, then Polish.
 
 ## 2. OpenRouteService (verified)
 
