@@ -196,7 +196,7 @@ class Stop(models.Model):
     walk            = ForeignKey(Walk, on_delete=CASCADE, related_name="stops")
     order           = PositiveSmallIntegerField
     name            = CharField(max_length=120, blank=True) # empty = a place without a name in OSM (e.g. a bench)
-    category        = CharField(choices: playground | toilets | cafe | restaurant | bench | water | other)
+    category        = CharField(choices: playground | toilets | cafe | restaurant | bench | water | park | zoo | museum | beach | other)
     lat, lng        = FloatField
     osm_id          = CharField(max_length=40, blank=True)  # e.g. "node/123" or "way/456"
     planned_minutes = PositiveSmallIntegerField(default=10) # 1-120
@@ -745,6 +745,8 @@ the checks, show results, summarize the diff, propose Conventional Commit messag
 
 ### Stage 3: Routes, stairs and places
 
+- **Note from stage 2:** Overpass must also find `park` (`leisure=park`), `zoo` (`tourism=zoo`), `museum` (`tourism=museum`) and `beach` (`natural=beach`), and full-day trips need a larger search radius. Check how many `leisure=indoor_play` places exist in Gdansk and decide if `indoor_play` becomes a category.
+
 - **Goal:** `POST /api/route-plans/` returns a step-free route, a comparison with the shortest one, places and stops. It handles the four cases from D.4. It also works without a key.
 - **Depends on:** stage 2, `docs/DECISIONS.md`, an ORS key in the developer's local `.env`, a file with raw ORS responses (the developer gives the agent the path; the file stays outside the repo).
 - **Files:** `backend/planning/{geo,routing,pois,serializers,views,urls}.py`, `backend/planning/fixtures/`, `backend/planning/tests/data/`, `backend/planning/management/commands/record_fixtures.py`, `backend/walks/demo_data.py`, `backend/.env.example`.
@@ -967,6 +969,8 @@ test checklist. Then stop.
 ```
 
 ### Stage 6: Trip ideas, backend (AI)
+
+- **Note from stage 2:** the app must work for short walks and for full-day trips. Check the time limit and the number of stops in D.6 for a full-day trip (zoo, museum, beach as main stops, with meals and breaks).
 
 - **Goal:** `POST /api/trip-ideas/`: candidates from OSM, a choice by the LLM, validation, a route from ORS, enforcing the time limit, a rule-based engine as a spare, weather, a simple opening hours parser.
 - **Depends on:** stage 3; the "demo trip start" and "ORS waypoints" entries in `docs/DECISIONS.md`; the result of `claude --help`.

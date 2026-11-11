@@ -1,0 +1,230 @@
+"""Serializers for the walks API. All validation lives here, not in the views."""
+
+from django.db import transaction
+from rest_framework import serializers
+
+from walks.models import FamilyProfile, Stop, Walk
+
+MAX_CHILDREN = 6
+MAX_CHILD_AGE = 17
+MAX_NOTES_LENGTH = 1000
+MAX_AI_SUMMARY_LENGTH = 2000
+MAX_GEOMETRY_POINTS = 5000
+MAX_NESTED_STOPS = 20
+
+
+def latitude_field(**kwargs):
+    return serializers.FloatField(min_value=-90, max_value=90, **kwargs)
+
+
+def longitude_field(**kwargs):
+    return serializers.FloatField(min_value=-180, max_value=180, **kwargs)
+
+
+def is_int(value):
+    # bool is a subclass of int in Python, so True would pass a plain isinstance check.
+    return isinstance(value, int) and not isinstance(value, bool)
+
+
+def is_number(value):
+    return isinstance(value, int | float) and not isinstance(value, bool)
+
+
+class FamilyProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FamilyProfile
+        fields = ["id", "name", "children_ages", "wheels", "pace", "created_at", "updated_at"]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def validate_children_ages(self, value):
+        if not isinstance(value, list):
+            raise serializers.ValidationError("Must be a list of ages.")
+        if not 1 <= len(value) <= MAX_CHILDREN:
+            raise serializers.ValidationError(f"Give between 1 and {MAX_CHILDREN} ages.")
+        for age in value:
+            if not is_int(age) or not 0 <= age <= MAX_CHILD_AGE:
+                raise serializers.ValidationError(
+                    f"Each age must be a whole number from 0 to {MAX_CHILD_AGE}."
+                )
+        return value
+
+
+class StopFieldsMixin(serializers.Serializer):
+    """Fields shared by the nested stop and the standalone stop."""
+
+    lat = latitude_field()
+    lng = longitude_field()
+    planned_minutes = serializers.IntegerField(min_value=1, max_value=120, required=False)
+
+
+STOP_FIELDS = [
+    "id",
+    "order",
+    "name",
+    "category",
+    "lat",
+    "lng",
+    "osm_id",
+    "planned_minutes",
+    "reason",
+    "source",
+]
+
+
+class NestedStopSerializer(StopFieldsMixin, serializers.ModelSerializer):
+    """A stop inside a walk payload. The walk is set by the parent serializer."""
+
+    class Meta:
+        model = Stop
+        fields = STOP_FIELDS
+        read_only_fields = ["id"]
+
+
+class StopSerializer(StopFieldsMixin, serializers.ModelSerializer):
+    class Meta:
+        model = Stop
+        fields = ["walk", *STOP_FIELDS]
+        read_only_fields = ["id"]
+
+    def validate_walk(self, walk):
+        # A foreign walk looks like a missing one: the same message, no hint that it exists.
+        if walk.client_id != self.context["client_id"]:
+            raise serializers.ValidationError("Walk not found.")
+        # A stop cannot move to another walk; it is set only on create.
+        if self.instance is not None and walk.pk != self.instance.walk_id:
+            raise serializers.ValidationError("A stop cannot be moved to another walk.")
+        return walk
+
+
+class WalkListSerializer(serializers.ModelSerializer):
+    """A light version for the list: no geometry, no stops, only their count."""
+
+    stops_count = serializers.IntegerField(read_only=True)
+
+    class Meta:
+        model = Walk
+        fields = [
+            "id",
+            "profile",
+            "name",
+            "start_label",
+            "end_label",
+            "avoid_stairs",
+            "distance_m",
+            "duration_min",
+            "stairs_m",
+            "stairs_avoided_m",
+            "detour_m",
+            "status",
+            "rating",
+            "stops_count",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class WalkSerializer(serializers.ModelSerializer):
+    """Detail and write serializer. Accepts an optional "stops" list on create only."""
+
+    start_lat = latitude_field()
+    start_lng = longitude_field()
+    end_lat = latitude_field()
+    end_lng = longitude_field()
+    rating = serializers.IntegerField(min_value=1, max_value=5, required=False, allow_null=True)
+    notes = serializers.CharField(
+        max_length=MAX_NOTES_LENGTH, required=False, allow_blank=True, trim_whitespace=False
+    )
+    ai_summary = serializers.CharField(
+        max_length=MAX_AI_SUMMARY_LENGTH, required=False, allow_blank=True
+    )
+    stops = NestedStopSerializer(many=True, required=False)
+
+    class Meta:
+        model = Walk
+        fields = [
+            "id",
+            "profile",
+            "name",
+            "start_lat",
+            "start_lng",
+            "end_lat",
+            "end_lng",
+            "start_label",
+            "end_label",
+            "avoid_stairs",
+            "distance_m",
+            "duration_min",
+            "stairs_m",
+            "stairs_avoided_m",
+            "detour_m",
+            "geometry",
+            "status",
+            "rating",
+            "notes",
+            "ai_summary",
+            "stops",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "created_at", "updated_at"]
+
+    def get_fields(self):
+        fields = super().get_fields()
+        if self.instance is not None:
+            # On update stops are read-only: ignored, and not validated either.
+            fields["stops"].read_only = True
+        return fields
+
+    def validate_profile(self, profile):
+        if profile is not None and profile.client_id != self.context["client_id"]:
+            raise serializers.ValidationError("Profile not found.")
+        return profile
+
+    def validate_geometry(self, value):
+        if not isinstance(value, list) or not 2 <= len(value) <= MAX_GEOMETRY_POINTS:
+            raise serializers.ValidationError(
+                f"Must be a list of 2 to {MAX_GEOMETRY_POINTS} [lat, lng] points."
+            )
+        for point in value:
+            if (
+                not isinstance(point, list)
+                or len(point) != 2
+                or not all(is_number(c) for c in point)
+                or not -90 <= point[0] <= 90
+                or not -180 <= point[1] <= 180
+            ):
+                raise serializers.ValidationError("Each point must be [lat, lng] in valid ranges.")
+        return value
+
+    def validate_stops(self, value):
+        if len(value) > MAX_NESTED_STOPS:
+            raise serializers.ValidationError(f"At most {MAX_NESTED_STOPS} stops.")
+        orders = [stop["order"] for stop in value]
+        if len(orders) != len(set(orders)):
+            raise serializers.ValidationError("Each stop needs a different order.")
+        return value
+
+    def validate(self, attrs):
+        # On PATCH the request may not include status, so use the saved value.
+        status = attrs.get("status", getattr(self.instance, "status", Walk.Status.PLANNED))
+        if status == Walk.Status.PLANNED:
+            if attrs.get("rating") is not None:
+                raise serializers.ValidationError(
+                    {"rating": "A rating is allowed only when the status is done."}
+                )
+            # Going back to "planned" clears an old rating.
+            attrs["rating"] = None
+        return attrs
+
+    @transaction.atomic
+    def create(self, validated_data):
+        stops_data = validated_data.pop("stops", [])
+        walk = Walk.objects.create(**validated_data)
+        Stop.objects.bulk_create(Stop(walk=walk, **stop) for stop in stops_data)
+        return walk
+
+    def update(self, instance, validated_data):
+        # Stops are changed through /api/stops/, never through the walk.
+        validated_data.pop("stops", None)
+        return super().update(instance, validated_data)
