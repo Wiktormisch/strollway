@@ -11,7 +11,7 @@ export function LanguageSwitch() {
   }
 
   return (
-    <div role="group" aria-label={t('language.label')} className="flex gap-1">
+    <div role="group" aria-label={t('language.label')} className="flex shrink-0 gap-1">
       {LANGUAGES.map((language) => (
         <Button
           key={language}
@@ -21,7 +21,11 @@ export function LanguageSwitch() {
           lang={language}
           onClick={() => choose(language)}
         >
-          {t(`language.${language}`)}
+          {/* Phones see "PL" / "EN"; the accessible name stays the full language name. */}
+          <span aria-hidden className="sm:hidden">
+            {language.toUpperCase()}
+          </span>
+          <span className="sr-only sm:not-sr-only">{t(`language.${language}`)}</span>
         </Button>
       ))}
     </div>
