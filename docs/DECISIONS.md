@@ -185,3 +185,13 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - **Overpass (checked 2026-11-11):** the public server answers **406 without a `User-Agent`**, so the client sends `StrollWay/0.1`. It also answered **502** "at capacity" with a text body. Any status other than 200, and a 200 with `remark: runtime error`, mean `pois_status: "unavailable"`.
 - **`indoor_play` not checked yet:** Overpass was at capacity during stage 3. Not a category for now; check again in stage 6.
 - **Input limit:** start and end must be at most 20 km apart (straight line). It is a stroller walk, and it protects the ORS daily limit.
+
+## 8. Stage 4: planner UI
+
+- **"Almost free" detour:** `detour_m <= 25 m` or `<= 3%` of the shortest route. D.4 gives no number; demo pair 3 is +6.2 m (under 1%). One place: `TINY_DETOUR_MAX_*` in `frontend/src/lib/planner.ts`.
+- **`step_free_available: null` has two meanings.** The UI tells them apart by the `avoid_stairs` flag of its own request: `false` means "stairs not avoided", `true` means "the stair-free check failed" (see stage 3 above).
+- **`stairs_m: null` (straight mock line)** is shown as "stairs unknown", never as "no stairs".
+- **Accessibility tags:** `Poi.accessibility?: string[]` exists only in the frontend type. The backend does not send it yet; the popup shows it only when present. Follow-up: add `wheelchair` / `changing_table` to `pois.py`.
+- **"Load places again"** sends the same route request again. There is no places-only endpoint; ORS answers come from the 24 h cache, and failed Overpass answers are not cached.
+- **The map is thin:** Leaflet code lives only in `MapView.tsx`. Tests replace it with a fake (`src/test/setup.ts`), because jsdom cannot draw maps.
+- **Route plans are cached in the browser** (TanStack `useQuery`, key = the whole request, 10 min). This changes D.7 ("planning results as mutations"): a mutation keeps only the last answer, so going back to the same points or switch value sent the same request again. The query is `enabled: false`, so clicking the map sends nothing; only "Plan route" or a demo button fetches. "Try again" and "Load places again" skip the cache.
