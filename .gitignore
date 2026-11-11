@@ -39,3 +39,6 @@ npm-debug.log*
 .idea/
 Thumbs.db
 .DS_Store
+
+# Django file cache (external API results)
+.cache/
