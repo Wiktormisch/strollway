@@ -15,11 +15,8 @@ class PointSerializer(serializers.Serializer):
     lng = longitude_field()
 
 
-class RoutePlanRequestSerializer(serializers.Serializer):
-    start = PointSerializer()
-    end = PointSerializer()
-    avoid_stairs = serializers.BooleanField(default=True)
-    profile_id = serializers.IntegerField(required=False, allow_null=True)
+class ProfileMixin:
+    """`profile_id` must belong to this client; `profile` holds the object (or None)."""
 
     def validate_profile_id(self, value):
         """The profile must belong to this client. Its object is kept in `profile`."""
@@ -31,6 +28,18 @@ class RoutePlanRequestSerializer(serializers.Serializer):
             raise serializers.ValidationError("Profile not found.")
         return value
 
+    @staticmethod
+    def profile_for(attrs):
+        profile_id = attrs.get("profile_id")
+        return FamilyProfile.objects.get(pk=profile_id) if profile_id else None
+
+
+class RoutePlanRequestSerializer(ProfileMixin, serializers.Serializer):
+    start = PointSerializer()
+    end = PointSerializer()
+    avoid_stairs = serializers.BooleanField(default=True)
+    profile_id = serializers.IntegerField(required=False, allow_null=True)
+
     def validate(self, attrs):
         start = (attrs["start"]["lat"], attrs["start"]["lng"])
         end = (attrs["end"]["lat"], attrs["end"]["lng"])
@@ -39,8 +48,7 @@ class RoutePlanRequestSerializer(serializers.Serializer):
                 {"end": f"Must be within {MAX_STRAIGHT_DISTANCE_M // 1000} km of the start."}
             )
         attrs["start_point"], attrs["end_point"] = start, end
-        profile_id = attrs.get("profile_id")
-        attrs["profile"] = FamilyProfile.objects.get(pk=profile_id) if profile_id else None
+        attrs["profile"] = self.profile_for(attrs)
         return attrs
 
 
@@ -97,4 +105,79 @@ class RoutePlanResponseSerializer(serializers.Serializer):
 
 class RoutePlanErrorSerializer(serializers.Serializer):
     code = serializers.ChoiceField(choices=["no_route", "no_routable_point"])
+    detail = serializers.CharField()
+
+
+# --- Trip ideas -----------------------------------------------------------------------
+
+MAX_WISHES_LENGTH = 200
+
+
+class TripIdeaRequestSerializer(ProfileMixin, serializers.Serializer):
+    """Only these fields are read. A client cannot send its own candidate list."""
+
+    start = PointSerializer()
+    profile_id = serializers.IntegerField(required=False, allow_null=True)
+    max_minutes = serializers.IntegerField(min_value=15, max_value=180)
+    round_trip = serializers.BooleanField(default=True)
+    language = serializers.ChoiceField(choices=["pl", "en"], default="pl")
+    wishes = serializers.CharField(max_length=MAX_WISHES_LENGTH, allow_blank=True, default="")
+
+    def validate(self, attrs):
+        attrs["start_point"] = (attrs["start"]["lat"], attrs["start"]["lng"])
+        attrs["profile"] = self.profile_for(attrs)
+        return attrs
+
+
+class WeatherSerializer(serializers.Serializer):
+    temp_c = serializers.FloatField(allow_null=True)
+    precip_probability = serializers.IntegerField(allow_null=True)
+    wind_kmh = serializers.FloatField(allow_null=True)
+
+
+class TripStopSerializer(serializers.Serializer):
+    poi_id = serializers.CharField()
+    name = serializers.CharField(allow_null=True)
+    category = serializers.CharField()
+    lat = serializers.FloatField()
+    lng = serializers.FloatField()
+    distance_m = serializers.IntegerField(help_text="Straight line from the start.")
+    opening_hours = serializers.CharField(allow_null=True)
+    open_now = serializers.BooleanField(allow_null=True)
+    arrive_min = serializers.IntegerField(help_text="Minutes from the start of the trip.")
+    planned_minutes = serializers.IntegerField()
+    reason = serializers.CharField()
+
+
+class DroppedStopSerializer(serializers.Serializer):
+    poi_id = serializers.CharField()
+    name = serializers.CharField(allow_null=True)
+
+
+class TripIdeaResponseSerializer(serializers.Serializer):
+    engine = serializers.ChoiceField(choices=["rules", "claude_cli", "anthropic", "nvidia"])
+    source = serializers.ChoiceField(choices=["ors", "fixture", "mock"])
+    step_free_available = serializers.BooleanField(allow_null=True)
+    route = RouteSerializer()
+    baseline = RouteSerializer()
+    detour_m = serializers.IntegerField(allow_null=True)
+    extra_min = serializers.IntegerField(allow_null=True)
+    summary = serializers.CharField()
+    tips = serializers.ListField(child=serializers.CharField())
+    unmet_wishes = serializers.ListField(child=serializers.CharField())
+    stops = TripStopSerializer(many=True)
+    dropped_stops = DroppedStopSerializer(many=True, help_text="Removed to fit the time limit.")
+    walking_min = serializers.IntegerField()
+    stops_min = serializers.IntegerField()
+    total_min = serializers.IntegerField()
+    max_minutes = serializers.IntegerField()
+    over_limit = serializers.BooleanField(help_text="true = more than 10% over max_minutes.")
+    weather = WeatherSerializer(allow_null=True)
+    transit_stops = TransitStopSerializer(many=True)
+
+
+class TripIdeaErrorSerializer(serializers.Serializer):
+    code = serializers.ChoiceField(
+        choices=["no_places_nearby", "places_unavailable", "no_route", "no_routable_point"]
+    )
     detail = serializers.CharField()

@@ -6,6 +6,7 @@ import {
   Landmark,
   MapPin,
   PawPrint,
+  ShoppingBasket,
   Toilet,
   Trees,
   Umbrella,
@@ -13,7 +14,7 @@ import {
   type LucideIcon,
 } from 'lucide-react'
 
-// Categories from backend/planning/pois.py (CATEGORY_BY_TAG), in display order.
+// Categories from backend/planning/pois.py (CATEGORY_BY_TAG and TRIP_CATEGORY_BY_TAG), in display order.
 export const POI_CATEGORIES = [
   'playground',
   'toilets',
@@ -25,6 +26,7 @@ export const POI_CATEGORIES = [
   'zoo',
   'museum',
   'beach',
+  'shop',
 ] as const
 
 const ICONS: Record<string, LucideIcon> = {
@@ -38,6 +40,7 @@ const ICONS: Record<string, LucideIcon> = {
   zoo: PawPrint,
   museum: Landmark,
   beach: Umbrella,
+  shop: ShoppingBasket,
 }
 
 export function categoryIcon(category: string): LucideIcon {

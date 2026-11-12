@@ -15,11 +15,13 @@ import httpx
 from django.conf import settings
 from django.core.cache import cache
 
-from planning import geo
+from planning import geo, opening_hours
 
 logger = logging.getLogger(__name__)
 
 TIMEOUT_S = 25  # a bit more than the [timeout:20] inside the query
+# Trip ideas wait less: an overloaded server rarely answers later, and the LLM still follows.
+TRIP_TIMEOUT_S = 12
 CACHE_TIMEOUT_S = 24 * 60 * 60
 PLACE_RADIUS_M = 150
 TRANSIT_RADIUS_M = 400
@@ -61,9 +63,9 @@ class PoiResult:
     status: str
 
 
-def make_client():
+def make_client(timeout=TIMEOUT_S):
     """The HTTP client. Tests replace this function with one that uses a MockTransport."""
-    return httpx.Client(timeout=TIMEOUT_S)
+    return httpx.Client(timeout=timeout)
 
 
 def is_enabled():
@@ -103,10 +105,10 @@ def build_query(line, start, end):
 # --- Requests -------------------------------------------------------------------------
 
 
-def request_overpass(query):
+def request_overpass(query, timeout=TIMEOUT_S):
     """Call Overpass once. Return the raw body or raise OverpassUnavailable. Never sleeps."""
     try:
-        with make_client() as client:
+        with make_client(timeout=timeout) as client:
             response = client.post(
                 settings.OVERPASS_URL, data={"data": query}, headers={"User-Agent": USER_AGENT}
             )
@@ -123,12 +125,12 @@ def request_overpass(query):
     return body
 
 
-def fetch_overpass(query):
+def fetch_overpass(query, timeout=TIMEOUT_S):
     """Raw Overpass body with a 24 h cache. Only successful answers are cached."""
     key = "overpass:" + hashlib.sha256(query.encode()).hexdigest()
     body = cache.get(key)
     if body is None:
-        body = request_overpass(query)
+        body = request_overpass(query, timeout)
         cache.set(key, body, CACHE_TIMEOUT_S)
     return body
 
@@ -203,7 +205,7 @@ def _place(element, tags, category, point, geometry, distances, speed_m_per_min)
         "at_min": round(distances[index] / speed_m_per_min),
         "off_route_m": round(off_route),
         "opening_hours": tags.get("opening_hours") or None,
-        "open_now": None,  # stage 6 adds the opening hours parser
+        "open_now": opening_hours.is_open(tags.get("opening_hours")),
     }
 
 
@@ -269,3 +271,122 @@ def _pick_transit(stops):
         per_end[stop["near"]] += 1
         result.append(stop)
     return result
+
+
+# --- Places around a point (trip ideas) -------------------------------------------------
+
+TRIP_MAX_RADIUS_M = 1500
+TRIP_MIN_RADIUS_M = 300
+MAX_CANDIDATES = 40
+
+# No benches here: they are not a goal of a trip. Ice cream counts as a cafe ("lody").
+TRIP_CATEGORY_BY_TAG = {
+    ("leisure", "playground"): "playground",
+    ("amenity", "cafe"): "cafe",
+    ("amenity", "ice_cream"): "cafe",
+    ("amenity", "restaurant"): "restaurant",
+    ("amenity", "fast_food"): "restaurant",
+    ("amenity", "toilets"): "toilets",
+    ("amenity", "drinking_water"): "water",
+    ("leisure", "park"): "park",
+    ("tourism", "zoo"): "zoo",
+    ("tourism", "museum"): "museum",
+    ("natural", "beach"): "beach",
+    ("shop", "supermarket"): "shop",
+    ("shop", "convenience"): "shop",
+    ("shop", "bakery"): "shop",
+}
+
+
+def trip_radius_m(speed_m_per_min, max_minutes):
+    """Half of what the family can walk in the time limit (there and back), 300-1500 m."""
+    radius = speed_m_per_min * max_minutes / 2
+    return round(min(TRIP_MAX_RADIUS_M, max(TRIP_MIN_RADIUS_M, radius)))
+
+
+def build_around_query(start, radius_m):
+    """One query: trip places within `radius_m` and transit stops near the start."""
+    parts = []
+    center = _coords([start])
+    for key, regex in _tag_filters(TRIP_CATEGORY_BY_TAG).items():
+        for element in ("node", "way"):
+            parts.append(f'{element}["{key}"~"{regex}"](around:{radius_m},{center});')
+    for key, regex in _tag_filters(TRANSIT_KIND_BY_TAG).items():
+        parts.append(f'node["{key}"~"{regex}"](around:{TRANSIT_RADIUS_M},{center});')
+    return "[out:json][timeout:20];\n(\n" + "\n".join(parts) + "\n);\nout center tags;"
+
+
+def find_candidates(start, radius_m):
+    """Trip candidates and transit stops around the start. Never raises for upstream failures."""
+    try:
+        body = fetch_overpass(build_around_query(start, radius_m), TRIP_TIMEOUT_S)
+    except OverpassUnavailable as exc:
+        logger.warning("Overpass unavailable: %s", exc)
+        return PoiResult([], [], STATUS_UNAVAILABLE)
+    return parse_candidates(body, start, radius_m)
+
+
+def parse_candidates(body, start, radius_m, now=None):
+    """Turn a raw Overpass body into trip candidates (used for live data and fixtures).
+
+    `now` (local time) sets `open_now`; None means the current time.
+    """
+    places, transit = [], []
+    for element in body.get("elements", []):
+        point = _element_point(element)
+        if point is None:
+            continue
+        tags = element.get("tags", {})
+        category = _match(tags, TRIP_CATEGORY_BY_TAG)
+        if category:
+            candidate = _candidate(element, tags, category, point, start, now)
+            if candidate["distance_m"] <= radius_m:
+                places.append(candidate)
+            continue
+        kind = _match(tags, TRANSIT_KIND_BY_TAG)
+        if kind:
+            transit.append(_transit_stop(tags, kind, point, start, start))
+
+    places.sort(key=lambda p: p["distance_m"])
+    places = _drop_near_duplicates(places)
+    return PoiResult(_cap_per_category(places), _pick_transit(transit), STATUS_OK)
+
+
+def _candidate(element, tags, category, point, start, now=None):
+    east, north = geo.offset_m(start, point)
+    cuisine = tags.get("cuisine") or ("ice_cream" if tags.get("amenity") == "ice_cream" else None)
+    return {
+        "poi_id": f"{element['type']}/{element['id']}",
+        "name": tags.get("name") or None,
+        "category": category,
+        "cuisine": cuisine,
+        "lat": round(point[0], 6),
+        "lng": round(point[1], 6),
+        "distance_m": round(geo.haversine_m(start, point)),
+        "east_m": round(east),
+        "north_m": round(north),
+        "opening_hours": tags.get("opening_hours") or None,
+        "open_now": opening_hours.is_open(tags.get("opening_hours"), now),
+    }
+
+
+def _cap_per_category(places, limit=MAX_CANDIDATES):
+    """At most `limit` places, taken round-robin per category, closest first.
+
+    So 30 playground parts cannot push out the only cafe. Input is sorted by distance;
+    the result is sorted by distance too.
+    """
+    by_category = {}
+    for place in places:
+        by_category.setdefault(place["category"], []).append(place)
+    queues = list(by_category.values())
+    picked = []
+    while queues and len(picked) < limit:
+        for queue in list(queues):
+            if len(picked) >= limit:
+                break
+            picked.append(queue.pop(0))
+            if not queue:
+                queues.remove(queue)
+    picked.sort(key=lambda p: p["distance_m"])
+    return picked

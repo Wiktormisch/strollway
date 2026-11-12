@@ -9,7 +9,7 @@ ERROR_2010 = {"error": {"code": 2010, "message": "Could not find routable point"
 
 
 def fetcher(start=PAIR_3_START, end=PAIR_3_END):
-    return lambda avoid: routing.fetch_ors_route(start, end, avoid)
+    return lambda avoid: routing.fetch_ors_route([start, end], avoid)
 
 
 # --- Parsing ---------------------------------------------------------------------------
@@ -111,8 +111,8 @@ def test_failures_are_not_cached(ors):
     ors.add(status=503, body={}).add(body=load("ors_pair3_normal.json"))
 
     with pytest.raises(routing.UpstreamUnavailable):
-        routing.fetch_ors_route(PAIR_3_START, PAIR_3_END, False)
-    route = routing.fetch_ors_route(PAIR_3_START, PAIR_3_END, False)
+        routing.fetch_ors_route([PAIR_3_START, PAIR_3_END], False)
+    route = routing.fetch_ors_route([PAIR_3_START, PAIR_3_END], False)
 
     assert route.distance_m == 826.6
 
@@ -120,13 +120,13 @@ def test_failures_are_not_cached(ors):
 def test_timeout_is_upstream_failure(ors):
     ors.add(error=httpx.ReadTimeout("slow"))
     with pytest.raises(routing.UpstreamUnavailable):
-        routing.fetch_ors_route(PAIR_3_START, PAIR_3_END, False)
+        routing.fetch_ors_route([PAIR_3_START, PAIR_3_END], False)
 
 
 def test_invalid_json_is_upstream_failure(ors):
     ors.responses.append(httpx.Response(502, text="<html>Bad gateway</html>"))
     with pytest.raises(routing.UpstreamUnavailable):
-        routing.fetch_ors_route(PAIR_3_START, PAIR_3_END, False)
+        routing.fetch_ors_route([PAIR_3_START, PAIR_3_END], False)
 
 
 # --- Comparison ------------------------------------------------------------------------
@@ -201,3 +201,59 @@ def test_mock_comparison_is_straight_line_without_stairs():
     assert result.route.geometry[0] == list(PAIR_3_START)
     assert result.route.stairs_m is None
     assert result.step_free_available is None
+
+
+# --- Waypoints (trip ideas) -------------------------------------------------------------
+
+TRIP_POINTS = [(54.3385, 18.62), (54.3362, 18.6156), (54.3382, 18.6261), (54.3385, 18.62)]
+
+
+def test_waypoints_are_sent_in_lon_lat_order(ors):
+    ors.add(body=load("ors_pair3_normal.json"))
+
+    routing.fetch_ors_route(TRIP_POINTS, False)
+
+    sent = ors.json_bodies()[0]
+    assert sent["coordinates"] == [[lng, lat] for lat, lng in TRIP_POINTS]
+    assert "options" not in sent
+
+
+def test_waypoints_use_their_own_cache_entry(ors):
+    ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_normal.json"))
+
+    routing.fetch_ors_route(TRIP_POINTS, True)
+    routing.fetch_ors_route(TRIP_POINTS, True)
+    routing.fetch_ors_route(TRIP_POINTS[:3], True)
+
+    assert len(ors.requests) == 2
+    assert routing.cache_key(TRIP_POINTS, True) != routing.cache_key(TRIP_POINTS[:3], True)
+
+
+def test_two_point_cache_key_did_not_change():
+    # Stage 3 cache entries stay valid after the switch to point lists.
+    assert routing.cache_key([PAIR_3_START, PAIR_3_END], False) == (
+        "ors:54.4097:18.5655:54.4115:18.5745:avoid=0"
+    )
+
+
+def test_way_points_are_parsed():
+    route = routing.parse_ors_response(200, load("ors_pair3_normal.json"))
+    assert route.way_points == [0, 55]
+
+
+def test_2009_on_a_waypoint_leg_is_no_route(ors):
+    ors.add(status=404, body={"error": {"code": 2009, "message": "leg 2"}})
+    with pytest.raises(routing.NoRoute):
+        routing.fetch_ors_route(TRIP_POINTS, False)
+
+
+def test_mock_route_goes_through_all_points():
+    route = routing.mock_route(TRIP_POINTS, factor=1.3)
+
+    assert route.geometry[0] == list(TRIP_POINTS[0])
+    assert [route.geometry[i] for i in route.way_points] == [list(p) for p in TRIP_POINTS]
+    straight = sum(
+        routing.geo.haversine_m(a, b) for a, b in zip(TRIP_POINTS, TRIP_POINTS[1:], strict=False)
+    )
+    assert route.distance_m == pytest.approx(straight * 1.3)
+    assert route.stairs_m is None

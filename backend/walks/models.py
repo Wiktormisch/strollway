@@ -88,6 +88,7 @@ class Stop(models.Model):
         ZOO = "zoo", "Zoo"
         MUSEUM = "museum", "Museum"
         BEACH = "beach", "Beach"
+        SHOP = "shop", "Shop"
         OTHER = "other", "Other"
 
     class Source(models.TextChoices):

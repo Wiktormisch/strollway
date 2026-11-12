@@ -58,7 +58,7 @@ def test_parse_node_and_way_with_center():
         "at_min": 0,
         "off_route_m": 6,
         "opening_hours": "Mo-Su 10:00-20:00",
-        "open_now": None,
+        "open_now": True,  # the fixed test clock: Wednesday 10:00
     }
     assert toilets["poi_id"] == "way/2"
     assert toilets["name"] is None
