@@ -11,6 +11,7 @@ const STOP_CATEGORIES: readonly StopCategory[] = [
   'zoo',
   'museum',
   'beach',
+  'shop',
   'other',
 ]
 
