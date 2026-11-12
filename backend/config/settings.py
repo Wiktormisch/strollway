@@ -110,7 +110,10 @@ REST_FRAMEWORK = {
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "UNAUTHENTICATED_USER": None,
     # Per-IP limits for the endpoints that call shared external APIs.
-    "DEFAULT_THROTTLE_RATES": {"route_plans": os.getenv("ROUTE_PLANS_RATE", "60/hour")},
+    "DEFAULT_THROTTLE_RATES": {
+        "route_plans": os.getenv("ROUTE_PLANS_RATE", "60/hour"),
+        "trip_ideas": os.getenv("TRIP_IDEAS_RATE", "20/hour"),
+    },
 }
 
 # File cache for external API results (ORS and Overpass), 24 h. Survives restarts.
@@ -128,6 +131,19 @@ ORS_BASE_URL = os.getenv("ORS_BASE_URL", "https://api.heigit.org/openrouteservic
 ORS_API_KEY = os.getenv("ORS_API_KEY", "")
 POI_PROVIDER = os.getenv("POI_PROVIDER", "auto")  # auto | overpass | mock
 OVERPASS_URL = os.getenv("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
+
+WEATHER_PROVIDER = os.getenv("WEATHER_PROVIDER", "auto")  # auto | mock
+WEATHER_URL = os.getenv("WEATHER_URL", "https://api.open-meteo.com/v1/forecast")
+
+# Trip ideas (docs/PLAN.md D.6). Only planning/llm/factory.py reads the LLM_* settings.
+LLM_BACKEND = os.getenv("LLM_BACKEND", "mock")  # mock | claude_cli | anthropic | nvidia
+LLM_FALLBACKS = env_list("LLM_FALLBACKS", "")
+LLM_DAILY_LIMIT = int(os.getenv("LLM_DAILY_LIMIT", "300"))
+ANTHROPIC_API_KEY = os.getenv("ANTHROPIC_API_KEY", "")
+ANTHROPIC_MODEL = os.getenv("ANTHROPIC_MODEL", "")
+CLAUDE_CLI_MODEL = os.getenv("CLAUDE_CLI_MODEL", "")  # empty = the CLI default
+NVIDIA_API_KEY = os.getenv("NVIDIA_API_KEY", "")
+NVIDIA_MODEL = os.getenv("NVIDIA_MODEL", "nvidia/nemotron-3.5-lightning-30b-a3b")
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "StrollWay API",

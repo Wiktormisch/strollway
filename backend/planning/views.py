@@ -6,27 +6,45 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from planning import routing, services
+from planning import routing, services, trip_planner
 from planning.serializers import (
     RoutePlanErrorSerializer,
     RoutePlanRequestSerializer,
     RoutePlanResponseSerializer,
+    TripIdeaErrorSerializer,
+    TripIdeaRequestSerializer,
+    TripIdeaResponseSerializer,
 )
 from walks.scoping import CLIENT_ID_PARAMETER, get_client_id
 
 
 @extend_schema(
-    responses=inline_serializer("Health", fields={"status": serializers.CharField()}),
+    responses=inline_serializer(
+        "Health",
+        fields={
+            "status": serializers.CharField(),
+            "routing": serializers.ChoiceField(choices=["ors", "mock"]),
+            "llm": serializers.CharField(help_text='The first LLM backend, or "rules".'),
+        },
+    ),
 )
 @api_view(["GET"])
 def health(request: Request) -> Response:
-    """Tell the frontend that the API is up."""
-    return Response({"status": "ok"})
+    """Tell the frontend that the API is up and which engines are active."""
+    return Response(
+        {
+            "status": "ok",
+            "routing": "ors" if routing.is_enabled() else "mock",
+            "llm": trip_planner.active_engine(),
+        }
+    )
 
 
 ERROR_DETAILS = {
     "no_route": "No walking route was found between these points.",
     "no_routable_point": "A point is too far from any path (more than 350 m).",
+    "no_places_nearby": "No places for a trip were found near the start point.",
+    "places_unavailable": "The map data service did not answer. Try again in a moment.",
 }
 
 REQUEST_EXAMPLE = OpenApiExample(
@@ -118,3 +136,118 @@ class RoutePlanView(APIView):
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         return Response(plan)
+
+
+TRIP_REQUEST_EXAMPLE = OpenApiExample(
+    "Demo trip start (Gdansk Chelm)",
+    request_only=True,
+    value={
+        "start": {"lat": 54.3385, "lng": 18.62},
+        "max_minutes": 90,
+        "round_trip": True,
+        "language": "en",
+        "wishes": "playground, then ice cream, finally pizza",
+    },
+)
+TRIP_RESPONSE_EXAMPLE = OpenApiExample(
+    "A rule-based trip",
+    response_only=True,
+    value={
+        "engine": "rules",
+        "source": "mock",
+        "step_free_available": None,
+        "route": {
+            "geometry": [[54.3385, 18.62], [54.3391, 18.6195], [54.3385, 18.62]],
+            "distance_m": 180,
+            "duration_min": 3,
+            "stairs_m": None,
+            "stairs_segments": [],
+        },
+        "baseline": {
+            "geometry": [[54.3385, 18.62], [54.3391, 18.6195], [54.3385, 18.62]],
+            "distance_m": 180,
+            "duration_min": 3,
+            "stairs_m": None,
+            "stairs_segments": [],
+        },
+        "detour_m": None,
+        "extra_min": None,
+        "summary": "A plan from simple rules: playground.",
+        "tips": [],
+        "unmet_wishes": ["pizza: does not fit in the time limit"],
+        "stops": [
+            {
+                "poi_id": "node/1",
+                "name": None,
+                "category": "playground",
+                "lat": 54.3391,
+                "lng": 18.6195,
+                "distance_m": 70,
+                "opening_hours": None,
+                "open_now": None,
+                "arrive_min": 1,
+                "planned_minutes": 30,
+                "reason": "The closest place of this kind, about 70 m from the start.",
+            }
+        ],
+        "dropped_stops": [],
+        "walking_min": 3,
+        "stops_min": 30,
+        "total_min": 33,
+        "max_minutes": 45,
+        "over_limit": False,
+        "weather": None,
+        "transit_stops": [
+            {"name": "Sikorskiego", "kind": "bus", "near": "start", "distance_m": 40}
+        ],
+    },
+)
+
+
+class TripIdeaView(APIView):
+    """A calculation, not a resource: it saves nothing, so it answers 200, not 201."""
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "trip_ideas"
+
+    @extend_schema(
+        summary="Plan a short family trip from a start point",
+        description=(
+            "Finds places around the start (OpenStreetMap), lets an LLM or simple rules "
+            "pick and order 1-4 stops, then routes start -> stops (-> start) without stairs "
+            "and checks the time limit. `engine` tells who planned it. Only `wishes` (max "
+            "200 characters) is sent to the LLM as free text; never coordinates. Limited "
+            "to 20 requests per hour per IP."
+        ),
+        parameters=[CLIENT_ID_PARAMETER],
+        request=TripIdeaRequestSerializer,
+        responses={
+            200: TripIdeaResponseSerializer,
+            400: inline_serializer(
+                "TripValidationError", fields={"detail": serializers.DictField()}
+            ),
+            422: TripIdeaErrorSerializer,
+            429: inline_serializer("TripThrottled", fields={"detail": serializers.CharField()}),
+        },
+        examples=[TRIP_REQUEST_EXAMPLE, TRIP_RESPONSE_EXAMPLE],
+    )
+    def post(self, request: Request) -> Response:
+        client_id = get_client_id(request)
+        serializer = TripIdeaRequestSerializer(data=request.data, context={"client_id": client_id})
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        try:
+            idea = trip_planner.build_trip_idea(
+                data["start_point"],
+                data["max_minutes"],
+                round_trip=data["round_trip"],
+                language=data["language"],
+                wishes=data["wishes"],
+                profile=data["profile"],
+            )
+        except (routing.RoutingError, trip_planner.TripError) as exc:
+            return Response(
+                {"code": exc.code, "detail": ERROR_DETAILS[exc.code]},
+                status=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            )
+        return Response(idea)

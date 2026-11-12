@@ -43,7 +43,7 @@ def _route(start, end, avoid_stairs, fixture):
         try:
 
             def live(avoid):
-                return routing.fetch_ors_route(start, end, avoid)
+                return routing.fetch_ors_route([start, end], avoid)
 
             return routing.compare_routes(live, avoid_stairs), SOURCE_ORS
         except routing.UpstreamUnavailable:
@@ -94,8 +94,8 @@ def _serialize(comparison, source, poi_result, speed):
     return {
         "source": source,
         "step_free_available": comparison.step_free_available,
-        "route": _route_dict(comparison.route, speed),
-        "baseline": _route_dict(comparison.baseline, speed),
+        "route": route_dict(comparison.route, speed),
+        "baseline": route_dict(comparison.baseline, speed),
         "detour_m": None if detour is None else round(detour),
         "extra_min": None if detour is None else round(detour / speed),
         "pois_status": poi_result.status,
@@ -104,7 +104,7 @@ def _serialize(comparison, source, poi_result, speed):
     }
 
 
-def _route_dict(route, speed):
+def route_dict(route, speed):
     return {
         "geometry": [[round(lat, 6), round(lng, 6)] for lat, lng in route.geometry],
         "distance_m": round(route.distance_m),

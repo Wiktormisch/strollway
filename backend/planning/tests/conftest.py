@@ -1,11 +1,13 @@
 import json
+from datetime import datetime
 from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import httpx
 import pytest
 
-from planning import pois, routing
-from planning.views import RoutePlanView
+from planning import opening_hours, pois, routing
+from planning.views import RoutePlanView, TripIdeaView
 
 DATA_DIR = Path(__file__).parent / "data"
 
@@ -46,9 +48,19 @@ class FakeHttp:
         return [json.loads(r.content) for r in self.requests]
 
 
+# A fixed clock for opening hours: Wednesday 2026-11-11, 10:00 local time.
+FIXED_NOW = datetime(2026, 11, 11, 10, 0, tzinfo=ZoneInfo("Europe/Warsaw"))
+
+
+@pytest.fixture(autouse=True)
+def fixed_clock(monkeypatch):
+    monkeypatch.setattr(opening_hours, "_now", lambda: FIXED_NOW)
+
+
 @pytest.fixture(autouse=True)
 def no_throttling(monkeypatch):
     monkeypatch.setattr(RoutePlanView, "throttle_classes", [])
+    monkeypatch.setattr(TripIdeaView, "throttle_classes", [])
 
 
 @pytest.fixture

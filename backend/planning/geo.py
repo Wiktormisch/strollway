@@ -91,3 +91,13 @@ def straight_line(a, b, points=5):
         ]
         for i in range(points)
     ]
+
+
+def offset_m(origin, point):
+    """Position of `point` relative to `origin` as (east_m, north_m).
+
+    A flat-earth approximation: good to well under 1% for the 1-2 km of a walk.
+    """
+    north = math.radians(point[0] - origin[0]) * EARTH_RADIUS_M
+    east = math.radians(point[1] - origin[1]) * EARTH_RADIUS_M * math.cos(math.radians(origin[0]))
+    return east, north

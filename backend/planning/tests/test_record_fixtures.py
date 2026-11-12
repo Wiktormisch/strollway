@@ -60,3 +60,71 @@ def test_fixture_file_uses_lf_line_endings(ors, overpass, tmp_fixtures):
     call_command("record_fixtures", pair=[3])
 
     assert b"\r\n" not in (tmp_fixtures / "pair_3.json").read_bytes()
+
+
+def test_records_the_demo_trip_with_every_plan_prefix(ors, overpass, tmp_fixtures, monkeypatch):
+    from planning.management.commands import record_fixtures
+
+    monkeypatch.setattr(record_fixtures.time, "sleep", lambda s: None)
+    playground = {"type": "node", "id": 1, "lat": 54.3391, "lon": 18.6195,
+                  "tags": {"leisure": "playground"}}  # fmt: skip
+    overpass.add(body={"elements": [playground]})
+    for _ in range(20):
+        ors.add(body=load("ors_pair3_normal.json"))
+
+    call_command("record_fixtures", trip=True)
+
+    data = json.loads((tmp_fixtures / fixtures.TRIP_FILE).read_text(encoding="utf-8"))
+    assert data["overpass"]["elements"] == [playground]
+    # One stop: a loop and a one-way trip, each normal and avoid-steps.
+    assert len(data["ors"]) == 4
+    assert all(key.startswith("ors:54.3385:18.62:") for key in data["ors"])
+
+
+def test_trip_places_can_come_from_a_file(ors, overpass, tmp_fixtures, tmp_path, monkeypatch):
+    from planning.management.commands import record_fixtures
+
+    monkeypatch.setattr(record_fixtures.time, "sleep", lambda s: None)
+    playground = {"type": "node", "id": 1, "lat": 54.3391, "lon": 18.6195,
+                  "tags": {"leisure": "playground"}}  # fmt: skip
+    exported = tmp_path / "export.json"
+    exported.write_text(json.dumps({"version": 0.6, "elements": [playground]}), encoding="utf-8")
+    for _ in range(4):
+        ors.add(body=load("ors_pair3_normal.json"))
+
+    call_command("record_fixtures", trip=True, overpass_file=str(exported))
+
+    data = json.loads((tmp_fixtures / fixtures.TRIP_FILE).read_text(encoding="utf-8"))
+    assert data["overpass"]["elements"] == [playground]
+    assert overpass.requests == []  # no live Overpass call
+
+
+@pytest.mark.parametrize(
+    "content",
+    ["not json", '{"type": "FeatureCollection"}', '{"elements": [], "remark": "runtime error: x"}'],
+)
+def test_bad_overpass_file_is_a_clear_error(ors, tmp_fixtures, tmp_path, content):
+    exported = tmp_path / "export.json"
+    exported.write_text(content, encoding="utf-8")
+
+    with pytest.raises(CommandError):
+        call_command("record_fixtures", trip=True, overpass_file=str(exported))
+
+
+def test_overpass_file_needs_trip(ors, tmp_path):
+    with pytest.raises(CommandError):
+        call_command("record_fixtures", overpass_file=str(tmp_path / "x.json"))
+
+
+def test_trip_recording_stops_on_a_temporary_ors_error(ors, overpass, tmp_fixtures, monkeypatch):
+    from planning.management.commands import record_fixtures
+
+    monkeypatch.setattr(record_fixtures.time, "sleep", lambda s: None)
+    playground = {"type": "node", "id": 1, "lat": 54.3391, "lon": 18.6195,
+                  "tags": {"leisure": "playground"}}  # fmt: skip
+    overpass.add(body={"elements": [playground]})
+    ors.add(status=429, body={"error": "rate limit"})
+
+    with pytest.raises(CommandError):
+        call_command("record_fixtures", trip=True)
+    assert not (tmp_fixtures / fixtures.TRIP_FILE).exists()

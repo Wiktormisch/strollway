@@ -46,6 +46,8 @@ class Route:
     distance_m: float
     stairs_m: float | None  # None = unknown (mock route)
     stairs_segments: list = field(default_factory=list)  # list of [[lat, lng], ...]
+    # Index in `geometry` of each requested point (start, stops..., end), from ORS.
+    way_points: list = field(default_factory=list)
 
 
 @dataclass
@@ -115,53 +117,53 @@ def _parse_route(raw):
         distance_m=float(raw["summary"]["distance"]),
         stairs_m=round(stairs_m, 1),
         stairs_segments=segments,
+        way_points=[int(i) for i in raw.get("way_points", [0, len(geometry) - 1])],
     )
 
 
 # --- Live requests --------------------------------------------------------------------
 
 
-def _ors_coordinates(start, end):
+def _ors_coordinates(points):
     """[lat, lng] in our API -> [lon, lat] for ORS. The wrong order gives error 2010."""
-    return [[start[1], start[0]], [end[1], end[0]]]
+    return [[point[1], point[0]] for point in points]
 
 
-def build_ors_body(start, end, avoid_steps):
-    body = {"coordinates": _ors_coordinates(start, end), "extra_info": ["waytype"]}
+def build_ors_body(points, avoid_steps):
+    """`points` is [start, end] or [start, stop, ..., end]. ORS returns one route for all legs."""
+    body = {"coordinates": _ors_coordinates(points), "extra_info": ["waytype"]}
     if avoid_steps:
         body["options"] = {"avoid_features": ["steps"]}
     return body
 
 
-def _cache_key(start, end, avoid_steps):
-    rounded = [round(value, 5) for value in (*start, *end)]
+def cache_key(points, avoid_steps):
+    rounded = [round(value, 5) for point in points for value in point]
     return "ors:" + ":".join(map(str, rounded)) + f":avoid={int(avoid_steps)}"
 
 
-def request_ors(start, end, avoid_steps):
+def request_ors(points, avoid_steps):
     """Call ORS once and return the raw (status, body). Raises UpstreamUnavailable."""
     url = f"{settings.ORS_BASE_URL}/v2/directions/foot-walking/json"
     headers = {"Authorization": settings.ORS_API_KEY, "Accept": "application/json"}
     try:
         with make_client() as client:
-            response = client.post(
-                url, json=build_ors_body(start, end, avoid_steps), headers=headers
-            )
+            response = client.post(url, json=build_ors_body(points, avoid_steps), headers=headers)
         return response.status_code, response.json()
     except (httpx.HTTPError, ValueError) as exc:
         raise UpstreamUnavailable(str(exc)) from exc
 
 
-def fetch_ors_route(start, end, avoid_steps):
+def fetch_ors_route(points, avoid_steps):
     """A Route from ORS, with a 24 h cache.
 
     Only stable answers are cached: a route (200) and the known errors 2009 and 2010.
     Temporary failures (429, 5xx, timeouts) are not cached.
     """
-    key = _cache_key(start, end, avoid_steps)
+    key = cache_key(points, avoid_steps)
     raw = cache.get(key)
     if raw is None:
-        raw = request_ors(start, end, avoid_steps)
+        raw = request_ors(points, avoid_steps)
         status, body = raw
         if status == 200 or error_code(body) in (ORS_NO_ROUTE, ORS_NO_ROUTABLE_POINT):
             cache.set(key, raw, CACHE_TIMEOUT_S)
@@ -200,3 +202,16 @@ def mock_comparison(start, end):
     line = geo.straight_line(start, end)
     route = Route(geometry=line, distance_m=geo.haversine_m(start, end), stairs_m=None)
     return RouteComparison(route, route, None, None)
+
+
+def mock_route(points, factor=1.0):
+    """Straight lines through all points, with no stair data (the trip mock route).
+
+    `factor` makes the distance closer to a real walk (streets are not straight).
+    """
+    geometry, way_points, distance = [list(points[0])], [0], 0.0
+    for a, b in zip(points, points[1:], strict=False):
+        geometry.extend(geo.straight_line(a, b)[1:])
+        way_points.append(len(geometry) - 1)
+        distance += geo.haversine_m(a, b)
+    return Route(geometry, distance * factor, None, [], way_points)
