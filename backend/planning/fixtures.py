@@ -33,6 +33,11 @@ DEMO_PAIRS = [
 ]
 
 
+# The demo trip start in Gdansk Chelm (docs/DECISIONS.md, section 3, "Demo trip start").
+DEMO_TRIP_START = (54.3385, 18.6200)
+TRIP_FILE = "trip_demo.json"
+
+
 def find_demo_pair(start, end):
     """The demo pair whose start and end are both within ~100 m of the request, or None."""
     for pair in DEMO_PAIRS:
@@ -51,11 +56,30 @@ def load_fixture(pair):
     return json.loads(pair.path.read_text(encoding="utf-8"))
 
 
+def trip_path():
+    return FIXTURES_DIR / TRIP_FILE
+
+
+def load_trip_fixture(start):
+    """The recorded demo trip when `start` is within ~100 m of the demo start, else None.
+
+    Shape: {"start": [lat, lng], "overpass": {"elements": [...]} | None,
+            "ors": {routing.cache_key(points, avoid): {"status": ..., "body": ...}}}
+    """
+    if geo.haversine_m(start, DEMO_TRIP_START) > MATCH_RADIUS_M or not trip_path().exists():
+        return None
+    return json.loads(trip_path().read_text(encoding="utf-8"))
+
+
 def save_fixture(pair, data):
+    write_json(pair.path, data)
+
+
+def write_json(path, data):
     FIXTURES_DIR.mkdir(exist_ok=True)
     text = json.dumps(data, ensure_ascii=False, indent=1)
     # newline="\n": LF on Windows too (the repo uses LF, see .gitattributes).
-    pair.path.write_text(text + "\n", encoding="utf-8", newline="\n")
+    path.write_text(text + "\n", encoding="utf-8", newline="\n")
 
 
 def trim_ors_body(body):

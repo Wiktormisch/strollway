@@ -99,6 +99,7 @@ export type StopCategory =
   | 'zoo'
   | 'museum'
   | 'beach'
+  | 'shop'
   | 'other'
 
 export interface Stop {

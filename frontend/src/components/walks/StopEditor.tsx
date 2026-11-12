@@ -38,6 +38,7 @@ const CATEGORIES: StopCategory[] = [
   'zoo',
   'museum',
   'beach',
+  'shop',
   'other',
 ]
 

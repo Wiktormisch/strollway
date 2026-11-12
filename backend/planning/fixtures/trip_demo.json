@@ -1,0 +1,6374 @@
+{
+ "start": [
+  54.3385,
+  18.62
+ ],
+ "overpass": {
+  "elements": [
+   {
+    "type": "node",
+    "id": 762113280,
+    "lat": 54.3351951,
+    "lon": 18.6262946,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "11",
+     "addr:street": "Henryka Hubertusa Jabłońskiego",
+     "brand": "Lewiatan",
+     "brand:wikidata": "Q11755396",
+     "brand:wikipedia": "pl:Lewiatan (sieć handlowa)",
+     "name": "Lewiatan",
+     "shop": "convenience",
+     "website": "https://www.lewiatan.pl/znajdz-sklep/lewiatan-gdansk-jablonskiego-11"
+    }
+   },
+   {
+    "type": "node",
+    "id": 762113333,
+    "lat": 54.3377126,
+    "lon": 18.60779,
+    "tags": {
+     "amenity": "restaurant",
+     "cuisine": "pizza",
+     "name": "Bazylia"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1458087282,
+    "lat": 54.3406781,
+    "lon": 18.6197787,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "25",
+     "addr:street": "Tytusa Chałubińskiego",
+     "amenity": "restaurant",
+     "cuisine": "pizza",
+     "name": "Tino"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1647458546,
+    "lat": 54.3297313,
+    "lon": 18.6040263,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "8",
+     "addr:postcode": "80-809",
+     "addr:street": "Nieborowska",
+     "brand": "Spar",
+     "brand:wikidata": "Q610492",
+     "contact:fax": "+48 58 304 40 41",
+     "contact:phone": "+48 58 304 40 40",
+     "name": "Spar",
+     "opening_hours": "Mo-Sa 08:00-22:00; Su 09:00-21:00",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1755955739,
+    "lat": 54.3264254,
+    "lon": 18.6222823,
+    "tags": {
+     "name": "Delikatesy Familijne",
+     "opening_hours": "Mo-Th 06:30-21:00; Fr 06:30-22:00; Sa 06:30-22:00",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1755971450,
+    "lat": 54.326111,
+    "lon": 18.618833,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "8",
+     "addr:street": "Krzemowa",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1755971470,
+    "lat": 54.3261118,
+    "lon": 18.6221723,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "1B",
+     "addr:street": "Biskupa Hieronima Rozrażewskiego",
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID04928-gdansk-biskupa-h-rozrazewskiego-1-3/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1755971521,
+    "lat": 54.3251258,
+    "lon": 18.6178185,
+    "tags": {
+     "name": "Cymes",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2228775998,
+    "lat": 54.3433251,
+    "lon": 18.6094485,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "8B",
+     "addr:postcode": "80-119",
+     "addr:street": "Wojskiego",
+     "name": "Koksa",
+     "shop": "convenience",
+     "source:addr": "Urząd Miasta Gdańsk"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2320574054,
+    "lat": 54.3385081,
+    "lon": 18.6184836,
+    "tags": {
+     "name": "Sikorskiego",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gdańskie Autobusy i Tramwaje",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref": "2217",
+     "ref:ztm": "2217",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2676569361,
+    "lat": 54.3359568,
+    "lon": 18.6267836,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2686139053,
+    "lat": 54.3505809,
+    "lon": 18.6246354,
+    "tags": {
+     "brand": "abc",
+     "brand:wikidata": "Q11683985",
+     "brand:wikipedia": "pl:Abc (sieć handlowa)",
+     "name": "abc",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2686392541,
+    "lat": 54.3500197,
+    "lon": 18.6141265,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "2",
+     "addr:postcode": "80-134",
+     "addr:street": "Seweryna Goszczyńskiego",
+     "name": "Drewno Hermanowska",
+     "opening_hours": "Mo-Fr 08:00-18:00; Sa 09:00-14:00",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3036630094,
+    "lat": 54.3486801,
+    "lon": 18.6065774,
+    "tags": {
+     "amenity": "restaurant",
+     "check_date": "2024-10-12",
+     "contact:phone": "+48 58 309 19 90",
+     "contact:website": "http://www.pizzeriaplaneta.com.pl/",
+     "cuisine": "pizza",
+     "name": "Pizzeria Planeta",
+     "opening_hours": "11:00-22:00"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3336873131,
+    "lat": 54.3407148,
+    "lon": 18.6281574,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3336873134,
+    "lat": 54.3416498,
+    "lon": 18.6270191,
+    "tags": {
+     "addr:street": "Jana Styp-Rekowskiego",
+     "old_addr:street": "Mariana Buczka",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3336889546,
+    "lat": 54.3417611,
+    "lon": 18.6259466,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3655520539,
+    "lat": 54.3371357,
+    "lon": 18.617076,
+    "tags": {
+     "name": "Chełm Witosa 02",
+     "name:de": "Stolzenberg",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gdańskie Autobusy i Tramwaje",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref": "2219",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3655520540,
+    "lat": 54.337181,
+    "lon": 18.6171491,
+    "tags": {
+     "name": "Chełm Witosa 02",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gdańskie Autobusy i Tramwaje",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2219",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3655520541,
+    "lat": 54.3374553,
+    "lon": 18.6179057,
+    "tags": {
+     "bus": "yes",
+     "departures_board": "yes",
+     "highway": "bus_stop",
+     "name": "Chełm Witosa 01",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref:ztm": "220"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3655520542,
+    "lat": 54.3377235,
+    "lon": 18.6177449,
+    "tags": {
+     "name": "Chełm Witosa 01",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gdańskie Autobusy i Tramwaje",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "220",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3655520554,
+    "lat": 54.3387908,
+    "lon": 18.6184763,
+    "tags": {
+     "name": "Sikorskiego",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gdańskie Autobusy i Tramwaje",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref": "2218",
+     "ref:ztm": "2218",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3669806433,
+    "lat": 54.3379305,
+    "lon": 18.6112644,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "1C",
+     "addr:postcode": "80-809",
+     "addr:street": "Władysława Cieszyńskiego",
+     "amenity": "fast_food",
+     "cuisine": "burger",
+     "delivery": "yes",
+     "drive_through": "no",
+     "name": "Surf Burger",
+     "opening_hours": "Mo-Su 12:00-22:00",
+     "smoking": "no",
+     "takeaway": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3673914335,
+    "lat": 54.3414851,
+    "lon": 18.6166419,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3673914364,
+    "lat": 54.3412029,
+    "lon": 18.6168253,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "brand:wikipedia": "pl:Żabka (sieć sklepów)",
+     "name": "Żabka",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3675282227,
+    "lat": 54.3382609,
+    "lon": 18.6172268,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Sikorskiego 05",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1753",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3675282230,
+    "lat": 54.3388673,
+    "lon": 18.6189277,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Sikorskiego 03",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1247",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3675436661,
+    "lat": 54.3380376,
+    "lon": 18.6202542,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Sikorskiego 04",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1780",
+     "ref:ztm": "1780",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3678657321,
+    "lat": 54.3379811,
+    "lon": 18.6258351,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "44",
+     "addr:street": "Stanisława Worcella",
+     "brand": "Biedronka",
+     "brand:wikidata": "Q857182",
+     "brand:wikipedia": "pl:Biedronka (sieć handlowa)",
+     "email": "bok@biedronka.eu",
+     "name": "Biedronka",
+     "name:ru": "Бедронка",
+     "operator": "Jeronimo Martins Polska S.A.",
+     "shop": "supermarket",
+     "website": "https://www.biedronka.pl/pl/shop,id,2660"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3678726285,
+    "lat": 54.3360617,
+    "lon": 18.6125107,
+    "tags": {
+     "name": "Mega Supermarket",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3678726286,
+    "lat": 54.3358843,
+    "lon": 18.612514,
+    "tags": {
+     "level": "0",
+     "name": "Przyjaciel Piekarz",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3678726291,
+    "lat": 54.3369225,
+    "lon": 18.6126765,
+    "tags": {
+     "brand": "Lewiatan",
+     "brand:wikidata": "Q11755396",
+     "level": "0",
+     "name": "Lewiatan",
+     "opening_hours": "Mo-Sa 07:00-22:00; Su 10:00-20:00",
+     "shop": "convenience",
+     "website": "https://www.lewiatan.pl/znajdz-sklep/lewiatan-gdansk-cieszynskiego-384"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3686236836,
+    "lat": 54.3415664,
+    "lon": 18.617725,
+    "tags": {
+     "name": "Chałubińskiego",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gdańskie Autobusy i Tramwaje",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref": "2215",
+     "ref:ztm": "2215",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3764975244,
+    "lat": 54.3376127,
+    "lon": 18.6126023,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "1A",
+     "addr:postcode": "80-809",
+     "addr:street": "Władysława Cieszyńskiego",
+     "brand": "Biedronka",
+     "brand:wikidata": "Q857182",
+     "brand:wikipedia": "pl:Biedronka (sieć handlowa)",
+     "name": "Biedronka",
+     "opening_hours": "Mo-Sa 08:00-22:00; Su 09:00-21:00",
+     "shop": "supermarket",
+     "website": "https://www.biedronka.pl/pl/shop,id,3180"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3764975247,
+    "lat": 54.3378402,
+    "lon": 18.6113402,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "1C",
+     "addr:postcode": "80-809",
+     "addr:street": "Władysława Cieszyńskiego",
+     "amenity": "restaurant",
+     "brand": "Pizzeria 105",
+     "brand:wikidata": "Q123090276",
+     "cuisine": "pizza",
+     "name": "Pizzeria 105",
+     "opening_hours": "Mo-Th 12:00-22:00; Fr-Sa 12:00-23:00; Su 12:00-22:00",
+     "phone": "+48 500 801 105",
+     "website": "https://105.pl/pizzeria-gdansk-chelm/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 4643758854,
+    "lat": 54.3303114,
+    "lon": 18.6074288,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "23d",
+     "addr:postcode": "80-034",
+     "addr:street": "Wawelska",
+     "name": "Piekarnia Kawiarnia Szydłowski",
+     "opening_hours": "Mo-Fr 06:00-17:00; Sa 07:00-17:00; Su 08:00-16:00",
+     "phone": "+48 58 300 43 42",
+     "shop": "bakery",
+     "shop_1": "pastry"
+    }
+   },
+   {
+    "type": "node",
+    "id": 4780401789,
+    "lat": 54.3398805,
+    "lon": 18.6189737,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "brand:wikipedia": "pl:Żabka (sieć sklepów)",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID04979-gdansk-chalubinskiego-31/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 4908568165,
+    "lat": 54.3382454,
+    "lon": 18.6260731,
+    "tags": {
+     "amenity": "restaurant",
+     "brand": "Pizza Hut",
+     "brand:wikidata": "Q191615",
+     "brand:wikipedia": "en:Pizza Hut",
+     "cuisine": "pizza",
+     "name": "Pizza Hut"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5045991025,
+    "lat": 54.3269673,
+    "lon": 18.6301818,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5045991030,
+    "lat": 54.3290986,
+    "lon": 18.6297773,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5045991034,
+    "lat": 54.3311368,
+    "lon": 18.6338619,
+    "tags": {
+     "check_date": "2024-10-15",
+     "name": "Turbut",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5045991037,
+    "lat": 54.3287322,
+    "lon": 18.6342543,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5045991038,
+    "lat": 54.3287783,
+    "lon": 18.6353614,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5154702839,
+    "lat": 54.3304359,
+    "lon": 18.6074032,
+    "tags": {
+     "name": "Delikatesy Mini",
+     "shop": "supermarket"
+    }
+   },
+   {
+    "type": "node",
+    "id": 5630474024,
+    "lat": 54.3488976,
+    "lon": 18.6070807,
+    "tags": {
+     "check_date": "2025-04-27",
+     "check_date:opening_hours": "2025-04-27",
+     "name": "Sławomir Mielnik",
+     "opening_hours": "Mo-Fr 06:00-18:00; Sa 06:00-14:00",
+     "pastry": "yes",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6516165785,
+    "lat": 54.3481834,
+    "lon": 18.6065459,
+    "tags": {
+     "amenity": "toilets"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6532669807,
+    "lat": 54.3299781,
+    "lon": 18.605264,
+    "tags": {
+     "amenity": "fast_food",
+     "brand": "Domino's",
+     "brand:wikidata": "Q839466",
+     "brand:wikipedia": "en:Domino's Pizza",
+     "cuisine": "pizza",
+     "level": "1",
+     "name": "Domino's",
+     "opening_hours": "Su,Mo 11:00-23:00, Fr,Sa 11:00-24:00",
+     "phone": "+48585010001",
+     "takeaway": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6834775385,
+    "lat": 54.3274771,
+    "lon": 18.6135332,
+    "tags": {
+     "amenity": "fast_food"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7725316022,
+    "lat": 54.3339003,
+    "lon": 18.6057589,
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727348282,
+    "lat": 54.3351049,
+    "lon": 18.6132413,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727348283,
+    "lat": 54.33518,
+    "lon": 18.6133946,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727348284,
+    "lat": 54.3351724,
+    "lon": 18.6135234,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727413935,
+    "lat": 54.3370136,
+    "lon": 18.6053745,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727413936,
+    "lat": 54.3369042,
+    "lon": 18.6054576,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727413937,
+    "lat": 54.33756,
+    "lon": 18.6052589,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 7727413950,
+    "lat": 54.3375669,
+    "lon": 18.6050857,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 8458471613,
+    "lat": 54.3298073,
+    "lon": 18.6053858,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:street": "Nieborowska 10 wejście od, Anny Jagiellonki",
+     "amenity": "ice_cream",
+     "level": "1",
+     "name": "Perfetto Naturalnie"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9035611269,
+    "lat": 54.3488041,
+    "lon": 18.6068499,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "check_date": "2024-10-12",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "opening_hours": "Mo-Su 06:00-23:00",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9041522007,
+    "lat": 54.3494109,
+    "lon": 18.612604,
+    "tags": {
+     "brand": "Lewiatan",
+     "brand:wikidata": "Q11755396",
+     "check_date:opening_hours": "2025-04-13",
+     "name": "Lewiatan",
+     "opening_hours": "Mo-Sa 07:00-22:00; Su 09:00-19:00",
+     "shop": "supermarket",
+     "website": "https://www.lewiatan.pl/znajdz-sklep/lewiatan-gdansk-kartuska-149",
+     "wheelchair": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9041522008,
+    "lat": 54.349479,
+    "lon": 18.6250858,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9041596520,
+    "lat": 54.3502086,
+    "lon": 18.6296046,
+    "tags": {
+     "addr:floor": "0",
+     "addr:housenumber": "37",
+     "addr:street": "Kartuska",
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "check_date": "2024-10-01",
+     "level": "0",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "opening_hours": "06:00-22:00",
+     "payment:cash": "yes",
+     "payment:credit_cards": "yes",
+     "payment:debit_cards": "yes",
+     "shop": "convenience",
+     "wheelchair": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9043361399,
+    "lat": 54.3486732,
+    "lon": 18.6187718,
+    "tags": {
+     "addr:housenumber": "124",
+     "addr:street": "Kartuska",
+     "check_date": "2025-12-23",
+     "opening_hours": "Mo-Fr 06:00-20:00; Sa 07:00-20:00",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9043910329,
+    "lat": 54.3486579,
+    "lon": 18.6183804,
+    "tags": {
+     "addr:housenumber": "126",
+     "addr:street": "Kartuska",
+     "check_date": "2025-12-23",
+     "name": "Pellowski",
+     "opening_hours": "Mo-Fr 06:00-18:00; Sa-Su 07:00-14:00",
+     "payment:cash": "yes",
+     "payment:credit_cards": "yes",
+     "payment:debit_cards": "yes",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9174342308,
+    "lat": 54.3373022,
+    "lon": 18.6166215,
+    "tags": {
+     "bus": "yes",
+     "departures_board": "yes",
+     "highway": "bus_stop",
+     "name": "Chełm Witosa 02",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref:ztm": "2219"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9754843698,
+    "lat": 54.3322808,
+    "lon": 18.6341583,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "check_date": "2026-05-19",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID05696-gdansk-trakt-sw-wojciecha-18a/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9754843699,
+    "lat": 54.3261559,
+    "lon": 18.6107447,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID06120-gdansk-platynowa-2-lok-10/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9754843701,
+    "lat": 54.334375,
+    "lon": 18.6261578,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID03670-gdansk-henryka-h-jablonskiego-17-1a/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9757621645,
+    "lat": 54.3299616,
+    "lon": 18.6051167,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "level": "0",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "opening_hours": "Mo-Sa 06:00-23:00; Su 10:00-21:00",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID05143-gdansk-nieborowska-10/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9757621646,
+    "lat": 54.3378685,
+    "lon": 18.6069016,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "opening_hours": "Mo-Sa 06:00-23:00; Su 10:00-21:00",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID08780-gdansk-wladyslawa-cieszynskiego-6/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9757621647,
+    "lat": 54.3376493,
+    "lon": 18.6119814,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID04816-gdansk-cieszynskiego-1b/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9757621648,
+    "lat": 54.3336261,
+    "lon": 18.6159992,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID09530-gdansk-ul-cieszynskiego-29/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9757621649,
+    "lat": 54.3484024,
+    "lon": 18.6127954,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "check_date": "2024-08-22",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "opening_hours": "06:00-23:00",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID08597-gdansk-szara-35/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9757621650,
+    "lat": 54.3488315,
+    "lon": 18.623435,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID01829-gdansk-kartuska-78/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9988667756,
+    "lat": 54.3409184,
+    "lon": 18.6203813,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "21",
+     "addr:postcode": "80-807",
+     "addr:street": "Tytusa Chałubińskiego",
+     "amenity": "ice_cream",
+     "email": "fabrykalodowgdansk@gmail.com",
+     "name": "Fabryka Lodów",
+     "opening_hours": "Mo-Su 12:00-19:00",
+     "outdoor_seating": "yes",
+     "website": "https://www.facebook.com/fabrykalodowgdansk"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10067884143,
+    "lat": 54.3420098,
+    "lon": 18.6272371,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10239347467,
+    "lat": 54.3285653,
+    "lon": 18.6226357,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10307627915,
+    "lat": 54.3301215,
+    "lon": 18.6298338,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10307628082,
+    "lat": 54.3263821,
+    "lon": 18.6283816,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10544439702,
+    "lat": 54.339669,
+    "lon": 18.6145198,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10554845015,
+    "lat": 54.3277823,
+    "lon": 18.6320871,
+    "tags": {
+     "name": "Raszczyk",
+     "pastry": "yes",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10557286386,
+    "lat": 54.3376943,
+    "lon": 18.6118024,
+    "tags": {
+     "name": "Pellowski",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10557286387,
+    "lat": 54.3250952,
+    "lon": 18.6188359,
+    "tags": {
+     "amenity": "fast_food",
+     "cuisine": "kebab",
+     "drive_through": "no",
+     "name": "Kebab Laahm"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10684185442,
+    "lat": 54.3502044,
+    "lon": 18.6090676,
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10708978655,
+    "lat": 54.3468973,
+    "lon": 18.6025478,
+    "tags": {
+     "access": "yes",
+     "amenity": "toilets",
+     "changing_table": "yes",
+     "check_date": "2023-08-30",
+     "fee": "no",
+     "level": "0",
+     "toilets:disposal": "flush",
+     "wheelchair": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10753920479,
+    "lat": 54.3341428,
+    "lon": 18.6266203,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10753920489,
+    "lat": 54.3340286,
+    "lon": 18.6248849,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10847740199,
+    "lat": 54.3294587,
+    "lon": 18.6227296,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10847753015,
+    "lat": 54.3297879,
+    "lon": 18.6270708,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10847753356,
+    "lat": 54.3291038,
+    "lon": 18.6257782,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10847753416,
+    "lat": 54.329406,
+    "lon": 18.6288204,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10853043072,
+    "lat": 54.325273,
+    "lon": 18.6176574,
+    "tags": {
+     "amenity": "toilets",
+     "charge": "1 PLN",
+     "fee": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10859120435,
+    "lat": 54.3285353,
+    "lon": 18.6213511,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10904087131,
+    "lat": 54.3352238,
+    "lon": 18.6059115,
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10916599112,
+    "lat": 54.3430204,
+    "lon": 18.6077979,
+    "tags": {
+     "access": "yes",
+     "amenity": "drinking_water",
+     "bottle": "yes",
+     "capacity": "1",
+     "drinking_water": "yes",
+     "fountain": "bubbler",
+     "man_made": "water_tap",
+     "opening_hours": "May-Nov 00:00-24:00",
+     "operator": "Gdańska Infrastruktura Wodociągowo-Kanalizacyjna Sp z o.o.",
+     "seasonal": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11104518340,
+    "lat": 54.3478067,
+    "lon": 18.6073714,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "2",
+     "addr:postcode": "80-116",
+     "addr:street": "Andrzeja Struga",
+     "addr:unit": "2",
+     "contact:facebook": "https://www.facebook.com/Piekarnia.Janca/",
+     "name": "Janca",
+     "opening_hours": "Mo-Fr 06:00-18:00;Sa 07:00-15:00;Su off",
+     "pastry": "yes",
+     "pastry_shop": "yes",
+     "phone": "+48 793 838 110",
+     "shop": "bakery",
+     "website": "https://www.janca.pl/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11139364606,
+    "lat": 54.3318768,
+    "lon": 18.605173,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11172365210,
+    "lat": 54.3379586,
+    "lon": 18.6105449,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2023-09-06",
+     "cuisine": "kebab",
+     "name": "Kebab Emporium",
+     "opening_hours": "Mo-Sa 10:00-24:00, Su 11:00-23:00"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11349705418,
+    "lat": 54.3426167,
+    "lon": 18.5989729,
+    "tags": {
+     "amenity": "toilets",
+     "check_date": "2026-10-11",
+     "portable": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11390201048,
+    "lat": 54.3298034,
+    "lon": 18.6051238,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "10",
+     "addr:postcode": "80-034",
+     "addr:street": "Nieborowska",
+     "amenity": "fast_food",
+     "check_date:opening_hours": "2026-02-07",
+     "cuisine": "burger",
+     "delivery": "yes",
+     "drive_through": "no",
+     "name": "ChoNoTu Burger",
+     "note": "Wejście od strony ul. Anny Jagiellonki",
+     "opening_hours": "Tu-Th 12:00-21:00; Fr-Sa 12:00-22:00; Su 12:00-20:00",
+     "phone": "+48 664 475 639",
+     "website": "https://www.chonotu-burger.pl",
+     "website:menu": "https://www.chonotu-burger.pl/en/menu"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11451453455,
+    "lat": 54.3385315,
+    "lon": 18.6223424,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11455664443,
+    "lat": 54.3356875,
+    "lon": 18.6149758,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11457487093,
+    "lat": 54.3331812,
+    "lon": 18.6174548,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11457487109,
+    "lat": 54.332848,
+    "lon": 18.6174857,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11457487295,
+    "lat": 54.3297482,
+    "lon": 18.6163223,
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11457487332,
+    "lat": 54.3336546,
+    "lon": 18.6172295,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11464472214,
+    "lat": 54.3287232,
+    "lon": 18.6056169,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11464472340,
+    "lat": 54.3289091,
+    "lon": 18.6072826,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11464472344,
+    "lat": 54.3282522,
+    "lon": 18.6069104,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11464472413,
+    "lat": 54.3290424,
+    "lon": 18.6049128,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11542703328,
+    "lat": 54.3487342,
+    "lon": 18.6203578,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "108",
+     "addr:street": "Kartuska",
+     "amenity": "cafe",
+     "cuisine": "coffee_shop;sandwich;cake",
+     "internet_access": "wlan",
+     "internet_access:fee": "no",
+     "name": "Caffe Aktywni",
+     "opening_hours": "Mo-Fr 09:00-17:00",
+     "payment:cards": "yes",
+     "payment:cash": "yes",
+     "payment:qr_code": "no",
+     "phone": "+48 882 089 933",
+     "smoking": "no",
+     "website": "https://www.swiatwrazliwy.pl/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11904741018,
+    "lat": 54.3341876,
+    "lon": 18.6049912,
+    "tags": {
+     "amenity": "toilets",
+     "check_date": "2024-08-15",
+     "fee": "no",
+     "portable": "yes",
+     "toilets:disposal": "chemical",
+     "toilets:type": "mobile",
+     "wheelchair": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11904741020,
+    "lat": 54.3372172,
+    "lon": 18.6133905,
+    "tags": {
+     "amenity": "ice_cream",
+     "check_date": "2024-05-14",
+     "name": "Przystanek Gelato"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11904741021,
+    "lat": 54.337271,
+    "lon": 18.6134354,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2024-05-14",
+     "cuisine": "burger",
+     "name": "Na Bogato"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11904741022,
+    "lat": 54.3372551,
+    "lon": 18.613577,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2024-05-14",
+     "cuisine": "pizza",
+     "name": "Mobile Pizza Italiana"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11904741049,
+    "lat": 54.3330222,
+    "lon": 18.6052703,
+    "tags": {
+     "access": "yes",
+     "amenity": "drinking_water",
+     "bottle": "yes",
+     "capacity": "1",
+     "dog": "designated",
+     "fountain": "bubbler",
+     "man_made": "water_tap",
+     "opening_hours": "May-Nov 00:00-24:00",
+     "operator": "Gdańska Infrastruktura Wodociągowo-Kanalizacyjna Sp z o.o.",
+     "seasonal": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11940009917,
+    "lat": 54.3358928,
+    "lon": 18.6124862,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "level": "0",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID0C823-gdansk-ul-cieszynskiego-38-lok-1/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12071866311,
+    "lat": 54.3378673,
+    "lon": 18.6068522,
+    "tags": {
+     "name": "Konkol",
+     "opening_hours": "Mo-Fr 06:00-18:00; Sa 07:00-15:00; Su off",
+     "pastry": "yes",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12128226674,
+    "lat": 54.3487905,
+    "lon": 18.613015,
+    "tags": {
+     "check_date": "2025-12-23",
+     "name": "Ciepła Bułeczka",
+     "opening_hours": "Mo-Sa 07:00-20:00; Su off",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12128226675,
+    "lat": 54.3487429,
+    "lon": 18.6130093,
+    "tags": {
+     "alt_name": "Limonka",
+     "check_date": "2025-12-23",
+     "name": "Rożek",
+     "opening_hours": "Mo-Fr 07:00-19:00; Sa 07:00-15:00; Su off",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12128226678,
+    "lat": 54.3487101,
+    "lon": 18.612798,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2025-12-23",
+     "cuisine": "kebab",
+     "name": "Kebab Lamh",
+     "opening_hours": "Su-Th 10:00-24:00, Fr,Sa 10:00-02:00"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12213881509,
+    "lat": 54.3507586,
+    "lon": 18.6270509,
+    "tags": {
+     "addr:floor": "0",
+     "addr:housenumber": "31",
+     "addr:street": "Zakopiańska",
+     "check_date": "2025-10-06",
+     "check_date:opening_hours": "2025-10-06",
+     "level": "0",
+     "name": "Da-Kar",
+     "opening_hours": "Mo-Fr 06:00-21:00; Sa 06:00-20:00; Su 09:00-17:00",
+     "payment:cash": "yes",
+     "payment:credit_cards": "yes",
+     "payment:debit_cards": "yes",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12374602456,
+    "lat": 54.3324123,
+    "lon": 18.6272452,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12400928758,
+    "lat": 54.3281736,
+    "lon": 18.6115793,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "2A",
+     "addr:postcode": "80-034",
+     "addr:street": "Wawelska",
+     "brand": "Biedronka",
+     "brand:wikidata": "Q857182",
+     "brand:wikipedia": "pl:Biedronka (sieć handlowa)",
+     "name": "Biedronka",
+     "opening_hours": "Mo-Sa 07:00-21:00; Su 09:00-20:00",
+     "operator": "Jeronimo Martins Polska S.A.",
+     "shop": "supermarket"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12400928759,
+    "lat": 54.3279402,
+    "lon": 18.6149336,
+    "tags": {
+     "amenity": "fast_food",
+     "cuisine": "kebab",
+     "name": "Kebab Drwal"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12400928761,
+    "lat": 54.3279745,
+    "lon": 18.6147566,
+    "tags": {
+     "amenity": "restaurant",
+     "contact:facebook": "https://www.facebook.com/Zaufajni/",
+     "email": "biuro@zaufajni.pl",
+     "level": "0",
+     "name": "Zaufajni",
+     "opening_hours": "Mo-Su 12:00-21:00; Fr,Sa 12:00-22:00",
+     "outdoor_seating": "yes",
+     "phone": "+48 515 522 355",
+     "strapline": "Food & Coctail Bar",
+     "website": "https://www.zaufajni.pl"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12400928762,
+    "lat": 54.3279432,
+    "lon": 18.614646,
+    "tags": {
+     "amenity": "restaurant",
+     "cuisine": "japanese;sushi",
+     "email": "restauracja@qmamsushi.pl",
+     "level": "0",
+     "name": "Qmam Sushi",
+     "opening_hours": "Mo-Su 12:00-22:00; Sa 12:00-23:00",
+     "phone": "+48 451 087 276",
+     "website": "https://www.facebook.com/qmamsushi/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12400928763,
+    "lat": 54.3278987,
+    "lon": 18.6144938,
+    "tags": {
+     "amenity": "restaurant",
+     "cuisine": "pizza",
+     "email": "biuropizzanapoli@gmail.com",
+     "level": "0",
+     "name": "Napoli",
+     "opening_hours": "Mo-Fr 13:00-22:00; Sa,Su 12:00-22:00",
+     "outdoor_seating": "yes",
+     "phone": "+48 511 673 512",
+     "website": "https://www.pizzanapoligdansk.pl"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12480442033,
+    "lat": 54.3283039,
+    "lon": 18.6341034,
+    "tags": {
+     "name": "Sobowidz",
+     "pastry": "yes",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12484853325,
+    "lat": 54.3300759,
+    "lon": 18.6264974,
+    "tags": {
+     "alt_name": "Sklep spożywczo-przemysłowy Plus",
+     "brand": "abc",
+     "brand:wikidata": "Q11683985",
+     "check_date": "2025-12-19",
+     "name": "abc",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12509844233,
+    "lat": 54.3303308,
+    "lon": 18.6273141,
+    "tags": {
+     "check_date": "2025-12-19",
+     "name": "Tadeusz Dąbrowski",
+     "shop": "bakery"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12602294297,
+    "lat": 54.3290636,
+    "lon": 18.6247981,
+    "tags": {
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12608300709,
+    "lat": 54.3304469,
+    "lon": 18.6158032,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "1K",
+     "addr:postcode": "80-034",
+     "addr:street": "Antoniego Madalińskiego",
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID0E458-gdansk-ul-madalinskiego-1k-lok-34-i-35/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12638596947,
+    "lat": 54.3376713,
+    "lon": 18.6118953,
+    "tags": {
+     "amenity": "restaurant",
+     "cuisine": "sushi",
+     "name": "Sayana Sushi"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12842041455,
+    "lat": 54.3342452,
+    "lon": 18.620638,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12842041576,
+    "lat": 54.3330138,
+    "lon": 18.619,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12842102932,
+    "lat": 54.3329388,
+    "lon": 18.6097913,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12842105143,
+    "lat": 54.3313438,
+    "lon": 18.6157133,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12842105193,
+    "lat": 54.3311634,
+    "lon": 18.6173434,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12853828757,
+    "lat": 54.3362152,
+    "lon": 18.6087597,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2026-03-22",
+     "check_date:opening_hours": "2026-03-22",
+     "cuisine": "kebab",
+     "name": "Kebab Center",
+     "opening_hours": "Su-Th 10:00-23:00; Fr,Sa 10:00-24:00"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12853828758,
+    "lat": 54.3362175,
+    "lon": 18.6085995,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "check_date": "2025-05-21",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID0C663-gdansk-ul-cebertowicza-7/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12873757259,
+    "lat": 54.3476385,
+    "lon": 18.6175786,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID0B565-gdansk-ul-malczewskiego-85-lok-101-i-102/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12873757261,
+    "lat": 54.3279269,
+    "lon": 18.6145889,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID0D774-gdansk-ul-fieldorfa-2/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13030852101,
+    "lat": 54.3373891,
+    "lon": 18.6127166,
+    "tags": {
+     "addr:housenumber": "1A",
+     "addr:postcode": "80-809",
+     "addr:street": "Władysława Cieszyńskiego",
+     "amenity": "restaurant",
+     "cuisine": "polish",
+     "name": "Papudajnia",
+     "opening_hours": "Mo-Fr 11:00-17:00; Sa-Su 11:00-16:00",
+     "website": "http://papudajnia.com",
+     "website:menu": "http://papudajnia.com"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13031380688,
+    "lat": 54.3495896,
+    "lon": 18.6179256,
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13081772355,
+    "lat": 54.3494017,
+    "lon": 18.6084668,
+    "tags": {
+     "brand": "Żabka",
+     "brand:wikidata": "Q2589061",
+     "brand:wikipedia": "pl:Żabka (sieć sklepów)",
+     "check_date": "2024-12-01",
+     "name": "Żabka",
+     "name:pl": "Żabka",
+     "name:uk": "Жабка",
+     "opening_hours": "Mo-Sa 06:00-23:00; Su 08:00-22:00",
+     "payment:cash": "yes",
+     "payment:credit_cards": "yes",
+     "payment:debit_cards": "yes",
+     "shop": "convenience",
+     "website": "https://www.zabka.pl/znajdz-sklep/ID08228-gdansk-ul-kolonia-zreby-14/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13149495043,
+    "lat": 54.3481643,
+    "lon": 18.6136055,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13286280246,
+    "lat": 54.3297598,
+    "lon": 18.6155023,
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13531542209,
+    "lat": 54.3298955,
+    "lon": 18.6053716,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date:opening_hours": "2026-02-07",
+     "cuisine": "kebab",
+     "level": "1",
+     "name": "Altin Kebab",
+     "opening_hours:signed": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13713990726,
+    "lat": 54.3405962,
+    "lon": 18.6006994,
+    "tags": {
+     "amenity": "toilets",
+     "check_date": "2026-04-07",
+     "portable": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13713990727,
+    "lat": 54.341235,
+    "lon": 18.599977,
+    "tags": {
+     "amenity": "toilets",
+     "check_date": "2026-08-02",
+     "portable": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13713990728,
+    "lat": 54.3416865,
+    "lon": 18.5985288,
+    "tags": {
+     "access": "yes",
+     "amenity": "toilets",
+     "check_date": "2026-07-11",
+     "fee": "no",
+     "opening_hours": "Mo-Sa 07:00-15:00; Su,PH off",
+     "toilets:disposal": "flush"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13791943565,
+    "lat": 54.3387915,
+    "lon": 18.5985569,
+    "tags": {
+     "access": "private",
+     "amenity": "toilets",
+     "check_date": "2026-05-03",
+     "portable": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13817517582,
+    "lat": 54.3271992,
+    "lon": 18.6110007,
+    "tags": {
+     "access": "yes",
+     "amenity": "drinking_water",
+     "bottle": "yes",
+     "capacity": "1",
+     "dog": "designated",
+     "fountain": "bubbler",
+     "man_made": "water_tap",
+     "opening_hours": "May-Nov 00:00-24:00",
+     "operator": "Gdańska Infrastruktura Wodociągowo-Kanalizacyjna Sp z o.o.",
+     "seasonal": "yes"
+    }
+   },
+   {
+    "type": "way",
+    "id": 104419280,
+    "center": {
+     "lat": 54.3498072,
+     "lon": 18.6239856
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "73A",
+     "addr:postcode": "80-136",
+     "addr:street": "Kartuska",
+     "building": "yes",
+     "name": "Delikatesy Fart",
+     "shop": "supermarket",
+     "source:addr": "Urząd Miasta Gdańsk"
+    }
+   },
+   {
+    "type": "way",
+    "id": 104999598,
+    "center": {
+     "lat": 54.3443065,
+     "lon": 18.6219275
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "25",
+     "addr:postcode": "80-807",
+     "addr:street": "Władysława Biegańskiego",
+     "building": "retail",
+     "building:levels": "1",
+     "name": "Merkus",
+     "shop": "supermarket",
+     "source:addr": "Urząd Miasta Gdańsk",
+     "source:building": "BDOT",
+     "source:geometry": "EGiB"
+    }
+   },
+   {
+    "type": "way",
+    "id": 104999705,
+    "center": {
+     "lat": 54.3414899,
+     "lon": 18.6298071
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "20",
+     "addr:postcode": "80-808",
+     "addr:street": "Jana Styp-Rekowskiego",
+     "building": "retail",
+     "name": "Merkus",
+     "name:en": "Merkus",
+     "name:pl": "Merkus",
+     "old_addr:street": "Mariana Buczka",
+     "shop": "supermarket",
+     "source:addr": "Urząd Miasta Gdańsk"
+    }
+   },
+   {
+    "type": "way",
+    "id": 105308553,
+    "center": {
+     "lat": 54.340827,
+     "lon": 18.6192515
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "27",
+     "addr:postcode": "80-807",
+     "addr:street": "Tytusa Chałubińskiego",
+     "brand": "Biedronka",
+     "brand:wikidata": "Q857182",
+     "brand:wikipedia": "pl:Biedronka (sieć handlowa)",
+     "building": "retail",
+     "building:levels": "1",
+     "name": "Biedronka",
+     "opening_hours": "Mo-Sa 07:00-21:00; Su 09:00-20:00",
+     "shop": "supermarket",
+     "source:addr": "Urząd Miasta Gdańsk",
+     "source:building": "BDOT",
+     "source:geometry": "EGiB"
+    }
+   },
+   {
+    "type": "way",
+    "id": 151350426,
+    "center": {
+     "lat": 54.3260383,
+     "lon": 18.6135692
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "3",
+     "addr:postcode": "80-041",
+     "addr:street": "Platynowa",
+     "brand": "Lidl",
+     "brand:wikidata": "Q151954",
+     "brand:wikipedia": "en:Lidl",
+     "building": "retail",
+     "name": "Lidl",
+     "opening_hours": "Mo-Sa 06:00-22:00",
+     "shop": "supermarket"
+    }
+   },
+   {
+    "type": "way",
+    "id": 160718679,
+    "center": {
+     "lat": 54.3361547,
+     "lon": 18.5973767
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "19",
+     "addr:postcode": "80-180",
+     "addr:street": "Warszawska",
+     "brand": "Netto",
+     "brand:wikidata": "Q552652",
+     "building": "retail",
+     "building:material": "brick",
+     "contact:website": "http://www.netto.pl",
+     "name": "Netto",
+     "opening_hours": "Mo-Sa 07:00-21:00; Su 08:00-20:00",
+     "roof:colour": "brown",
+     "roof:shape": "hipped",
+     "shop": "supermarket",
+     "source:addr": "Urząd Miasta Gdańsk",
+     "website": "http://www.netto.pl"
+    }
+   },
+   {
+    "type": "way",
+    "id": 163934441,
+    "center": {
+     "lat": 54.3264655,
+     "lon": 18.623984
+    },
+    "tags": {
+     "building": "retail",
+     "name": "Piekarnia Spółdzielnia Kolbudy",
+     "nohousenumber": "yes",
+     "opening_hours": "Mo-Fr 06:00-17:00; Sa 07:00-14:00",
+     "shop": "convenience",
+     "source:building": "EGiB"
+    }
+   },
+   {
+    "type": "way",
+    "id": 164040887,
+    "center": {
+     "lat": 54.327058,
+     "lon": 18.623005
+    },
+    "tags": {
+     "access": "yes",
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 175295043,
+    "center": {
+     "lat": 54.3268321,
+     "lon": 18.6262405
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground",
+     "sport": "volleyball"
+    }
+   },
+   {
+    "type": "way",
+    "id": 177328744,
+    "center": {
+     "lat": 54.3388114,
+     "lon": 18.6077287
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 177328763,
+    "center": {
+     "lat": 54.3369414,
+     "lon": 18.609172
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 177328765,
+    "center": {
+     "lat": 54.3369754,
+     "lon": 18.6075059
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 179686632,
+    "center": {
+     "lat": 54.3260564,
+     "lon": 18.6228623
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 179686634,
+    "center": {
+     "lat": 54.3250003,
+     "lon": 18.6194938
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 179686635,
+    "center": {
+     "lat": 54.3261238,
+     "lon": 18.6213362
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 179686636,
+    "center": {
+     "lat": 54.3269796,
+     "lon": 18.6212927
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180465314,
+    "center": {
+     "lat": 54.3261268,
+     "lon": 18.619475
+    },
+    "tags": {
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180465315,
+    "center": {
+     "lat": 54.3271199,
+     "lon": 18.6194276
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180465316,
+    "center": {
+     "lat": 54.3262338,
+     "lon": 18.6251229
+    },
+    "tags": {
+     "leisure": "playground",
+     "playground": "playhouse"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180467731,
+    "center": {
+     "lat": 54.325637,
+     "lon": 18.6133757
+    },
+    "tags": {
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180541478,
+    "center": {
+     "lat": 54.3301863,
+     "lon": 18.6034612
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180541480,
+    "center": {
+     "lat": 54.3312749,
+     "lon": 18.6036291
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180541481,
+    "center": {
+     "lat": 54.3310233,
+     "lon": 18.6018837
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180624159,
+    "center": {
+     "lat": 54.3275235,
+     "lon": 18.6213957
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180624161,
+    "center": {
+     "lat": 54.3260935,
+     "lon": 18.6247048
+    },
+    "tags": {
+     "barrier": "fence",
+     "fence_type": "chain_link",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180733685,
+    "center": {
+     "lat": 54.3356319,
+     "lon": 18.6224331
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground",
+     "surface": "grass"
+    }
+   },
+   {
+    "type": "way",
+    "id": 180733686,
+    "center": {
+     "lat": 54.335862,
+     "lon": 18.6250019
+    },
+    "tags": {
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 182584423,
+    "center": {
+     "lat": 54.3413061,
+     "lon": 18.6230635
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 183639541,
+    "center": {
+     "lat": 54.3437289,
+     "lon": 18.6209154
+    },
+    "tags": {
+     "covered": "no",
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 204915671,
+    "center": {
+     "lat": 54.3490565,
+     "lon": 18.6261877
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 232765082,
+    "center": {
+     "lat": 54.3484879,
+     "lon": 18.610307
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 234531257,
+    "center": {
+     "lat": 54.3406184,
+     "lon": 18.6417428
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "1",
+     "addr:postcode": "80-044",
+     "addr:street": "Trakt Świętego Wojciecha",
+     "building": "retail",
+     "building:levels": "1",
+     "name": "Watis",
+     "shop": "convenience",
+     "source:building": "EGiB",
+     "toilets": "yes"
+    }
+   },
+   {
+    "type": "way",
+    "id": 255913020,
+    "center": {
+     "lat": 54.3324066,
+     "lon": 18.6366258
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "11",
+     "addr:postcode": "80-042",
+     "addr:street": "Sandomierska",
+     "brand": "Lidl",
+     "brand:wikidata": "Q151954",
+     "brand:wikipedia": "en:Lidl",
+     "building": "retail",
+     "name": "Lidl",
+     "opening_hours": "Mo-Sa 08:00-21:00; Su 09:00-18:00",
+     "shop": "supermarket",
+     "source:addr": "Urząd Miasta Gdańsk",
+     "source:geometry": "geoportal.gov.pl:ortofoto"
+    }
+   },
+   {
+    "type": "way",
+    "id": 262945618,
+    "center": {
+     "lat": 54.35137,
+     "lon": 18.6240011
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 262973517,
+    "center": {
+     "lat": 54.3499992,
+     "lon": 18.6260015
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 263005301,
+    "center": {
+     "lat": 54.3500954,
+     "lon": 18.61183
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 263005302,
+    "center": {
+     "lat": 54.3509934,
+     "lon": 18.6110487
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 263005303,
+    "center": {
+     "lat": 54.3499878,
+     "lon": 18.6133613
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 292853231,
+    "center": {
+     "lat": 54.331058,
+     "lon": 18.6117932
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293133873,
+    "center": {
+     "lat": 54.349673,
+     "lon": 18.6171506
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293401279,
+    "center": {
+     "lat": 54.3471613,
+     "lon": 18.6368765
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293401283,
+    "center": {
+     "lat": 54.3469255,
+     "lon": 18.6362717
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293976002,
+    "center": {
+     "lat": 54.3371125,
+     "lon": 18.6108214
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293976003,
+    "center": {
+     "lat": 54.3392663,
+     "lon": 18.6102458
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293976006,
+    "center": {
+     "lat": 54.3363669,
+     "lon": 18.6105954
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293976007,
+    "center": {
+     "lat": 54.3355352,
+     "lon": 18.6092265
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294003121,
+    "center": {
+     "lat": 54.3366842,
+     "lon": 18.6249737
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294003125,
+    "center": {
+     "lat": 54.3365067,
+     "lon": 18.626753
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602927,
+    "center": {
+     "lat": 54.340631,
+     "lon": 18.6162778
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602931,
+    "center": {
+     "lat": 54.3402466,
+     "lon": 18.6103809
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602938,
+    "center": {
+     "lat": 54.3397507,
+     "lon": 18.6094888
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602944,
+    "center": {
+     "lat": 54.3386928,
+     "lon": 18.6258846
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602948,
+    "center": {
+     "lat": 54.3404787,
+     "lon": 18.6153507
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602951,
+    "center": {
+     "lat": 54.3405662,
+     "lon": 18.6144564
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602952,
+    "center": {
+     "lat": 54.3390076,
+     "lon": 18.6150645
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602961,
+    "center": {
+     "lat": 54.3400701,
+     "lon": 18.6125792
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602962,
+    "center": {
+     "lat": 54.3392372,
+     "lon": 18.6125141
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 294602964,
+    "center": {
+     "lat": 54.3385236,
+     "lon": 18.6210567
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 299781471,
+    "center": {
+     "lat": 54.3485893,
+     "lon": 18.6230327
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 299781472,
+    "center": {
+     "lat": 54.3475986,
+     "lon": 18.6124237
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 299969457,
+    "center": {
+     "lat": 54.3286045,
+     "lon": 18.6118531
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 332375356,
+    "center": {
+     "lat": 54.3270502,
+     "lon": 18.6083829
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "2",
+     "addr:postcode": "80-041",
+     "addr:street": "Świętokrzyska",
+     "amenity": "fast_food",
+     "brand": "McDonald's",
+     "brand:wikidata": "Q38076",
+     "brand:wikipedia": "en:McDonald's",
+     "building": "commercial",
+     "building:levels": "1",
+     "cuisine": "burger",
+     "name": "McDonald's",
+     "takeaway": "yes",
+     "website": "https://mcdonalds.pl/restauracje/pomorskie/gdansk/gdansk-swietokrzyska-2"
+    }
+   },
+   {
+    "type": "way",
+    "id": 369346470,
+    "center": {
+     "lat": 54.328006,
+     "lon": 18.620062
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 469177145,
+    "center": {
+     "lat": 54.3359198,
+     "lon": 18.6224552
+    },
+    "tags": {
+     "leisure": "park"
+    }
+   },
+   {
+    "type": "way",
+    "id": 483236277,
+    "center": {
+     "lat": 54.3365039,
+     "lon": 18.6229611
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 489020907,
+    "center": {
+     "lat": 54.325253,
+     "lon": 18.6246631
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 515200536,
+    "center": {
+     "lat": 54.3500566,
+     "lon": 18.6321211
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 515204209,
+    "center": {
+     "lat": 54.3331032,
+     "lon": 18.6210374
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 516866626,
+    "center": {
+     "lat": 54.3271655,
+     "lon": 18.6301558
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 516981925,
+    "center": {
+     "lat": 54.327574,
+     "lon": 18.6325376
+    },
+    "tags": {
+     "building": "yes",
+     "name": "Delikatesik Raduński Młyn",
+     "shop": "convenience"
+    }
+   },
+   {
+    "type": "way",
+    "id": 545327542,
+    "center": {
+     "lat": 54.3301389,
+     "lon": 18.6068427
+    },
+    "tags": {
+     "access": "customers",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 588398797,
+    "center": {
+     "lat": 54.3464862,
+     "lon": 18.6078486
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 616925941,
+    "center": {
+     "lat": 54.3406435,
+     "lon": 18.6232293
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 622122456,
+    "center": {
+     "lat": 54.3347924,
+     "lon": 18.6029617
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 622122457,
+    "center": {
+     "lat": 54.333756,
+     "lon": 18.6001936
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 644518622,
+    "center": {
+     "lat": 54.3424708,
+     "lon": 18.6314208
+    },
+    "tags": {
+     "leisure": "playground",
+     "surface": "grass"
+    }
+   },
+   {
+    "type": "way",
+    "id": 644518631,
+    "center": {
+     "lat": 54.3423072,
+     "lon": 18.6317724
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 644526001,
+    "center": {
+     "lat": 54.3426455,
+     "lon": 18.6215165
+    },
+    "tags": {
+     "access": "yes",
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 644526004,
+    "center": {
+     "lat": 54.3435388,
+     "lon": 18.6222197
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 644526017,
+    "center": {
+     "lat": 54.339365,
+     "lon": 18.6240486
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 644526018,
+    "center": {
+     "lat": 54.3393865,
+     "lon": 18.6235091
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 676598338,
+    "center": {
+     "lat": 54.3349196,
+     "lon": 18.6107928
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 685392768,
+    "center": {
+     "lat": 54.3400883,
+     "lon": 18.6114248
+    },
+    "tags": {
+     "leisure": "park",
+     "name": "Park Dragana"
+    }
+   },
+   {
+    "type": "way",
+    "id": 691700032,
+    "center": {
+     "lat": 54.3452735,
+     "lon": 18.6005365
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "224",
+     "addr:postcode": "80-122",
+     "addr:street": "Kartuska",
+     "brand": "Lidl",
+     "brand:wikidata": "Q151954",
+     "brand:wikipedia": "en:Lidl",
+     "building": "retail",
+     "building:levels": "1",
+     "check_date": "2026-11-07",
+     "name": "Lidl",
+     "opening_hours": "Mo-Sa 06:00-22:00; Su off",
+     "payment:cash": "yes",
+     "payment:credit_cards": "yes",
+     "payment:debit_cards": "yes",
+     "shop": "supermarket",
+     "source:building": "BDOT",
+     "source:geometry": "EGiB",
+     "wheelchair": "yes"
+    }
+   },
+   {
+    "type": "way",
+    "id": 702916610,
+    "center": {
+     "lat": 54.3398425,
+     "lon": 18.6168319
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "27",
+     "addr:postcode": "80-807",
+     "addr:street": "Marcina Dragana",
+     "brand": "Lidl",
+     "brand:wikidata": "Q151954",
+     "brand:wikipedia": "en:Lidl",
+     "building": "retail",
+     "building:levels": "1",
+     "name": "Lidl",
+     "shop": "supermarket",
+     "source:building": "BDOT",
+     "source:geometry": "EGiB"
+    }
+   },
+   {
+    "type": "way",
+    "id": 715827946,
+    "center": {
+     "lat": 54.3478737,
+     "lon": 18.6161229
+    },
+    "tags": {
+     "leisure": "park",
+     "name": "Placyk rekreacyjny im. Jacka Malczewskiego"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827471137,
+    "center": {
+     "lat": 54.334218,
+     "lon": 18.5981681
+    },
+    "tags": {
+     "access": "yes",
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827471144,
+    "center": {
+     "lat": 54.334045,
+     "lon": 18.6042783
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827471146,
+    "center": {
+     "lat": 54.3337306,
+     "lon": 18.608207
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827471147,
+    "center": {
+     "lat": 54.3336642,
+     "lon": 18.6078105
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827492533,
+    "center": {
+     "lat": 54.3345226,
+     "lon": 18.5988172
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827713405,
+    "center": {
+     "lat": 54.3362249,
+     "lon": 18.6156418
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827713419,
+    "center": {
+     "lat": 54.3327778,
+     "lon": 18.6166323
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827724622,
+    "center": {
+     "lat": 54.3353664,
+     "lon": 18.6133578
+    },
+    "tags": {
+     "leisure": "playground",
+     "surface": "sand"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827724629,
+    "center": {
+     "lat": 54.3339582,
+     "lon": 18.6127075
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827724635,
+    "center": {
+     "lat": 54.3335571,
+     "lon": 18.6147197
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 827724660,
+    "center": {
+     "lat": 54.3352334,
+     "lon": 18.6101078
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1053587503,
+    "center": {
+     "lat": 54.3414481,
+     "lon": 18.6260731
+    },
+    "tags": {
+     "building": "retail",
+     "building:levels": "1",
+     "name": "Raszczyk",
+     "shop": "bakery",
+     "source:building": "BDOT",
+     "source:geometry": "EGiB"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1097791607,
+    "center": {
+     "lat": 54.3436811,
+     "lon": 18.6233995
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1099763341,
+    "center": {
+     "lat": 54.342112,
+     "lon": 18.6276145
+    },
+    "tags": {
+     "leisure": "park",
+     "start_date": "2021"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1151320859,
+    "center": {
+     "lat": 54.3432481,
+     "lon": 18.607431
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1162938966,
+    "center": {
+     "lat": 54.3254061,
+     "lon": 18.6234227
+    },
+    "tags": {
+     "access": "yes",
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1234442886,
+    "center": {
+     "lat": 54.3346533,
+     "lon": 18.6173278
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1235856965,
+    "center": {
+     "lat": 54.3427076,
+     "lon": 18.6415911
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1300274329,
+    "center": {
+     "lat": 54.331191,
+     "lon": 18.6293325
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1311976430,
+    "center": {
+     "lat": 54.3350552,
+     "lon": 18.5999608
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1367962879,
+    "center": {
+     "lat": 54.3496771,
+     "lon": 18.6102556
+    },
+    "tags": {
+     "leisure": "park"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1381641936,
+    "center": {
+     "lat": 54.3498429,
+     "lon": 18.6087452
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1387268336,
+    "center": {
+     "lat": 54.3340168,
+     "lon": 18.6206862
+    },
+    "tags": {
+     "barrier": "fence",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1423300737,
+    "center": {
+     "lat": 54.3480558,
+     "lon": 18.6193978
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1488375534,
+    "center": {
+     "lat": 54.3351837,
+     "lon": 18.607579
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1553314137,
+    "center": {
+     "lat": 54.3320968,
+     "lon": 18.6111699
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1573906973,
+    "center": {
+     "lat": 54.3350004,
+     "lon": 18.6060888
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground",
+     "playground": "sandpit"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1573913594,
+    "center": {
+     "lat": 54.349436,
+     "lon": 18.6221528
+    },
+    "tags": {
+     "leisure": "playground",
+     "playground": "sandpit"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1573995750,
+    "center": {
+     "lat": 54.3254652,
+     "lon": 18.6212255
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   }
+  ]
+ },
+ "ors": {
+  "ors:54.3385:18.62:54.33852:18.62106:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 230.2,
+       "duration": 165.8
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@Cn@IbAAhA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 197.6,
+          "amount": 85.83
+         },
+         {
+          "value": 7.0,
+          "distance": 32.6,
+          "amount": 14.17
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          18,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       18
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 230.2,
+       "duration": 165.8
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@Cn@IbAAhA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 197.6,
+          "amount": 85.83
+         },
+         {
+          "value": 7.0,
+          "distance": 32.6,
+          "amount": 14.17
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          18,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       18
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 115.1,
+       "duration": 82.9
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOX",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 98.8,
+          "amount": 85.83
+         },
+         {
+          "value": 7.0,
+          "distance": 16.3,
+          "amount": 14.17
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          9,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 115.1,
+       "duration": 82.9
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOX",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 98.8,
+          "amount": 85.83
+         },
+         {
+          "value": 7.0,
+          "distance": 16.3,
+          "amount": 14.17
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          9,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33722:18.61339:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1115.2,
+       "duration": 802.8
+      },
+      "geometry": "}}sjI}uspB?B@x@FLAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJHHNTD?J@?@lA~ADD?Y@QAP?XEEmA_B?AKAE?OUIIGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[CQJCJC@M@[@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 580.5,
+          "amount": 52.05
+         },
+         {
+          "value": 7.0,
+          "distance": 497.5,
+          "amount": 44.61
+         },
+         {
+          "value": 8.0,
+          "distance": 37.3,
+          "amount": 3.34
+         }
+        ],
+        "values": [
+         [
+          0,
+          8,
+          4
+         ],
+         [
+          8,
+          20,
+          7
+         ],
+         [
+          20,
+          29,
+          4
+         ],
+         [
+          29,
+          38,
+          7
+         ],
+         [
+          38,
+          39,
+          8
+         ],
+         [
+          39,
+          40,
+          7
+         ],
+         [
+          40,
+          41,
+          8
+         ],
+         [
+          41,
+          51,
+          7
+         ],
+         [
+          51,
+          52,
+          8
+         ],
+         [
+          52,
+          53,
+          7
+         ],
+         [
+          53,
+          54,
+          8
+         ],
+         [
+          54,
+          63,
+          7
+         ],
+         [
+          63,
+          72,
+          4
+         ],
+         [
+          72,
+          84,
+          7
+         ],
+         [
+          84,
+          92,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       46,
+       92
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33722:18.61339:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1117.4,
+       "duration": 804.6
+      },
+      "geometry": "}}sjI}uspB?B@x@FLAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJJBPTL@nA`BBJ?Y@QAP?XCKoAaBMAQUKCGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[CQJCJC@M@[@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 580.4,
+          "amount": 51.94
+         },
+         {
+          "value": 7.0,
+          "distance": 365.1,
+          "amount": 32.67
+         },
+         {
+          "value": 6.0,
+          "distance": 171.9,
+          "amount": 15.39
+         }
+        ],
+        "values": [
+         [
+          0,
+          8,
+          4
+         ],
+         [
+          8,
+          20,
+          7
+         ],
+         [
+          20,
+          29,
+          4
+         ],
+         [
+          29,
+          37,
+          7
+         ],
+         [
+          37,
+          42,
+          6
+         ],
+         [
+          42,
+          46,
+          7
+         ],
+         [
+          46,
+          51,
+          6
+         ],
+         [
+          51,
+          59,
+          7
+         ],
+         [
+          59,
+          68,
+          4
+         ],
+         [
+          68,
+          80,
+          7
+         ],
+         [
+          80,
+          88,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       44,
+       88
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33722:18.61339:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 557.6,
+       "duration": 401.4
+      },
+      "geometry": "}}sjI}uspB?B@x@FLAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJHHNTD?J@?@lA~ADD?Y@Q",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 290.2,
+          "amount": 52.05
+         },
+         {
+          "value": 7.0,
+          "distance": 248.7,
+          "amount": 44.61
+         },
+         {
+          "value": 8.0,
+          "distance": 18.6,
+          "amount": 3.34
+         }
+        ],
+        "values": [
+         [
+          0,
+          8,
+          4
+         ],
+         [
+          8,
+          20,
+          7
+         ],
+         [
+          20,
+          29,
+          4
+         ],
+         [
+          29,
+          38,
+          7
+         ],
+         [
+          38,
+          39,
+          8
+         ],
+         [
+          39,
+          40,
+          7
+         ],
+         [
+          40,
+          41,
+          8
+         ],
+         [
+          41,
+          46,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       46
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33722:18.61339:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 558.7,
+       "duration": 402.3
+      },
+      "geometry": "}}sjI}uspB?B@x@FLAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJJBPTL@nA`BBJ?Y@Q",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 290.2,
+          "amount": 51.94
+         },
+         {
+          "value": 7.0,
+          "distance": 182.5,
+          "amount": 32.67
+         },
+         {
+          "value": 6.0,
+          "distance": 86.0,
+          "amount": 15.39
+         }
+        ],
+        "values": [
+         [
+          0,
+          8,
+          4
+         ],
+         [
+          8,
+          20,
+          7
+         ],
+         [
+          20,
+          29,
+          4
+         ],
+         [
+          29,
+          37,
+          7
+         ],
+         [
+          37,
+          42,
+          6
+         ],
+         [
+          42,
+          44,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       44
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.34092:18.62038:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 723.2,
+       "duration": 520.6
+      },
+      "geometry": "}}sjI}uspB?B@x@FLAj@w@IC?Cc@MDIq@CAU]Uc@CIi@CQEQWKGSAs@?CDM?ODUD_@EKAa@Cy@IQAP@x@H`@BJ@^DTENEL?BEr@?R@JFPVPDh@BBHTb@T\\B@Hp@LEBb@B?v@H@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 7.0,
+          "distance": 383.5,
+          "amount": 53.03
+         },
+         {
+          "value": 3.0,
+          "distance": 243.7,
+          "amount": 33.7
+         },
+         {
+          "value": 4.0,
+          "distance": 81.5,
+          "amount": 11.27
+         },
+         {
+          "value": 8.0,
+          "distance": 14.5,
+          "amount": 2.0
+         }
+        ],
+        "values": [
+         [
+          0,
+          4,
+          4
+         ],
+         [
+          4,
+          7,
+          7
+         ],
+         [
+          7,
+          9,
+          3
+         ],
+         [
+          9,
+          13,
+          7
+         ],
+         [
+          13,
+          20,
+          3
+         ],
+         [
+          20,
+          21,
+          8
+         ],
+         [
+          21,
+          35,
+          7
+         ],
+         [
+          35,
+          36,
+          8
+         ],
+         [
+          36,
+          43,
+          3
+         ],
+         [
+          43,
+          47,
+          7
+         ],
+         [
+          47,
+          49,
+          3
+         ],
+         [
+          49,
+          52,
+          7
+         ],
+         [
+          52,
+          56,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       28,
+       56
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.34092:18.62038:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 761.8,
+       "duration": 548.4
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@YJe@AYFSZCQGVSR[DuAG?QM?KPc@AEBSd@UD_@EKAa@Cy@IQAP@x@H`@BJ@^DTERe@DCb@@JQL??PtAFZERSFWBPR[XGd@@XKCn@IbAAhA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 526.6,
+          "amount": 69.13
+         },
+         {
+          "value": 7.0,
+          "distance": 209.3,
+          "amount": 27.48
+         },
+         {
+          "value": 3.0,
+          "distance": 25.8,
+          "amount": 3.39
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          8,
+          7
+         ],
+         [
+          8,
+          12,
+          4
+         ],
+         [
+          12,
+          14,
+          3
+         ],
+         [
+          14,
+          18,
+          4
+         ],
+         [
+          18,
+          30,
+          7
+         ],
+         [
+          30,
+          34,
+          4
+         ],
+         [
+          34,
+          36,
+          3
+         ],
+         [
+          36,
+          40,
+          4
+         ],
+         [
+          40,
+          41,
+          7
+         ],
+         [
+          41,
+          48,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       24,
+       48
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.34092:18.62038:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 361.6,
+       "duration": 260.3
+      },
+      "geometry": "}}sjI}uspB?B@x@FLAj@w@IC?Cc@MDIq@CAU]Uc@CIi@CQEQWKGSAs@?CDM?ODUD_@EKAa@Cy@IQA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 7.0,
+          "distance": 191.8,
+          "amount": 53.03
+         },
+         {
+          "value": 3.0,
+          "distance": 121.8,
+          "amount": 33.7
+         },
+         {
+          "value": 4.0,
+          "distance": 40.8,
+          "amount": 11.27
+         },
+         {
+          "value": 8.0,
+          "distance": 7.2,
+          "amount": 2.0
+         }
+        ],
+        "values": [
+         [
+          0,
+          4,
+          4
+         ],
+         [
+          4,
+          7,
+          7
+         ],
+         [
+          7,
+          9,
+          3
+         ],
+         [
+          9,
+          13,
+          7
+         ],
+         [
+          13,
+          20,
+          3
+         ],
+         [
+          20,
+          21,
+          8
+         ],
+         [
+          21,
+          28,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       28
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.34092:18.62038:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 380.9,
+       "duration": 274.2
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@YJe@AYFSZCQGVSR[DuAG?QM?KPc@AEBSd@UD_@EKAa@Cy@IQA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 263.3,
+          "amount": 69.13
+         },
+         {
+          "value": 7.0,
+          "distance": 104.7,
+          "amount": 27.48
+         },
+         {
+          "value": 3.0,
+          "distance": 12.9,
+          "amount": 3.39
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          8,
+          7
+         ],
+         [
+          8,
+          12,
+          4
+         ],
+         [
+          12,
+          14,
+          3
+         ],
+         [
+          14,
+          18,
+          4
+         ],
+         [
+          18,
+          24,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       24
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 786.6,
+       "duration": 566.3
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJHHNTD?J@?@lA~ADD?Y@Q",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 486.6,
+          "amount": 61.86
+         },
+         {
+          "value": 7.0,
+          "distance": 281.4,
+          "amount": 35.77
+         },
+         {
+          "value": 8.0,
+          "distance": 18.6,
+          "amount": 2.37
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          51,
+          7
+         ],
+         [
+          51,
+          52,
+          8
+         ],
+         [
+          52,
+          53,
+          7
+         ],
+         [
+          53,
+          54,
+          8
+         ],
+         [
+          54,
+          59,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       59
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 787.7,
+       "duration": 567.2
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJJBPTL@nA`BBJ?Y@Q",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 486.6,
+          "amount": 61.77
+         },
+         {
+          "value": 7.0,
+          "distance": 215.2,
+          "amount": 27.31
+         },
+         {
+          "value": 6.0,
+          "distance": 86.0,
+          "amount": 10.91
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          50,
+          7
+         ],
+         [
+          50,
+          55,
+          6
+         ],
+         [
+          55,
+          57,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       57
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 842.9,
+       "duration": 606.8
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAGAZs@?CDM?ODUD_@EKAa@Cy@IQAP@x@H`@BJ@^DTENEL?BEr@?R@JFPVPDh@BBHTb@T\\B@Hp@LEBb@B?v@H@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 7.0,
+          "distance": 338.8,
+          "amount": 40.19
+         },
+         {
+          "value": 4.0,
+          "distance": 326.0,
+          "amount": 38.68
+         },
+         {
+          "value": 3.0,
+          "distance": 163.6,
+          "amount": 19.41
+         },
+         {
+          "value": 8.0,
+          "distance": 14.5,
+          "amount": 1.72
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          27,
+          3
+         ],
+         [
+          27,
+          28,
+          8
+         ],
+         [
+          28,
+          42,
+          7
+         ],
+         [
+          42,
+          43,
+          8
+         ],
+         [
+          43,
+          50,
+          3
+         ],
+         [
+          50,
+          54,
+          7
+         ],
+         [
+          54,
+          56,
+          3
+         ],
+         [
+          56,
+          59,
+          7
+         ],
+         [
+          59,
+          63,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       35,
+       63
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 865.7,
+       "duration": 623.3
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAG?QM?KPc@AEBSd@UD_@EKAa@Cy@IQAP@x@H`@BJ@^DTERe@DCb@@JQL??PtAFZERSFWBPR[XGd@@XKCn@IbAAhA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 597.9,
+          "amount": 69.07
+         },
+         {
+          "value": 7.0,
+          "distance": 242.0,
+          "amount": 27.95
+         },
+         {
+          "value": 3.0,
+          "distance": 25.8,
+          "amount": 2.98
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          26,
+          3
+         ],
+         [
+          26,
+          30,
+          4
+         ],
+         [
+          30,
+          42,
+          7
+         ],
+         [
+          42,
+          46,
+          4
+         ],
+         [
+          46,
+          48,
+          3
+         ],
+         [
+          48,
+          52,
+          4
+         ],
+         [
+          52,
+          53,
+          7
+         ],
+         [
+          53,
+          60,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       36,
+       60
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 481.3,
+       "duration": 346.5
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAGAZs@?CDM?ODUD_@EKAa@Cy@IQA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 285.3,
+          "amount": 59.27
+         },
+         {
+          "value": 7.0,
+          "distance": 147.0,
+          "amount": 30.55
+         },
+         {
+          "value": 3.0,
+          "distance": 41.8,
+          "amount": 8.68
+         },
+         {
+          "value": 8.0,
+          "distance": 7.2,
+          "amount": 1.5
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          27,
+          3
+         ],
+         [
+          27,
+          28,
+          8
+         ],
+         [
+          28,
+          35,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       35
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 484.8,
+       "duration": 349.1
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAG?QM?KPc@AEBSd@UD_@EKAa@Cy@IQA",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 334.6,
+          "amount": 69.02
+         },
+         {
+          "value": 7.0,
+          "distance": 137.3,
+          "amount": 28.32
+         },
+         {
+          "value": 3.0,
+          "distance": 12.9,
+          "amount": 2.66
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          26,
+          3
+         ],
+         [
+          26,
+          30,
+          4
+         ],
+         [
+          30,
+          36,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       36
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1344.2,
+       "duration": 967.6999999999999
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJHHNTD?J@?@lA~ADD?Y@QAP?XEEmA_B?AKAE?OUIIGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[CQJCJC@M@[@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 776.8,
+          "amount": 57.79
+         },
+         {
+          "value": 7.0,
+          "distance": 530.1,
+          "amount": 39.43
+         },
+         {
+          "value": 8.0,
+          "distance": 37.3,
+          "amount": 2.77
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          51,
+          7
+         ],
+         [
+          51,
+          52,
+          8
+         ],
+         [
+          52,
+          53,
+          7
+         ],
+         [
+          53,
+          54,
+          8
+         ],
+         [
+          54,
+          64,
+          7
+         ],
+         [
+          64,
+          65,
+          8
+         ],
+         [
+          65,
+          66,
+          7
+         ],
+         [
+          66,
+          67,
+          8
+         ],
+         [
+          67,
+          76,
+          7
+         ],
+         [
+          76,
+          85,
+          4
+         ],
+         [
+          85,
+          97,
+          7
+         ],
+         [
+          97,
+          105,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       59,
+       105
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1346.4,
+       "duration": 969.5
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJJBPTL@nA`BBJ?Y@QAP?XCKoAaBMAQUKCGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[CQJCJC@M@[@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 776.8,
+          "amount": 57.69
+         },
+         {
+          "value": 7.0,
+          "distance": 397.7,
+          "amount": 29.54
+         },
+         {
+          "value": 6.0,
+          "distance": 171.9,
+          "amount": 12.77
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          50,
+          7
+         ],
+         [
+          50,
+          55,
+          6
+         ],
+         [
+          55,
+          59,
+          7
+         ],
+         [
+          59,
+          64,
+          6
+         ],
+         [
+          64,
+          72,
+          7
+         ],
+         [
+          72,
+          81,
+          4
+         ],
+         [
+          81,
+          93,
+          7
+         ],
+         [
+          93,
+          101,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       57,
+       101
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:54.34068:18.61978:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 902.3,
+       "duration": 649.6
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAGAZs@?CDM?ODUD_@EKAa@Cy@IQAP@G\\CB?N@@FD`@`@OPNQ^]BIH?V@@F|@R@H@@F?D@AfAD@XB?GDKHCLS\\XP?LB`@d@l@FXCTBB?v@H@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 441.5,
+          "amount": 48.93
+         },
+         {
+          "value": 7.0,
+          "distance": 361.3,
+          "amount": 40.04
+         },
+         {
+          "value": 3.0,
+          "distance": 83.6,
+          "amount": 9.26
+         },
+         {
+          "value": 8.0,
+          "distance": 16.0,
+          "amount": 1.77
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          27,
+          3
+         ],
+         [
+          27,
+          28,
+          8
+         ],
+         [
+          28,
+          36,
+          7
+         ],
+         [
+          36,
+          38,
+          4
+         ],
+         [
+          38,
+          40,
+          7
+         ],
+         [
+          40,
+          41,
+          8
+         ],
+         [
+          41,
+          52,
+          7
+         ],
+         [
+          52,
+          53,
+          8
+         ],
+         [
+          53,
+          54,
+          7
+         ],
+         [
+          54,
+          57,
+          3
+         ],
+         [
+          57,
+          58,
+          7
+         ],
+         [
+          58,
+          62,
+          4
+         ],
+         [
+          62,
+          64,
+          7
+         ],
+         [
+          64,
+          67,
+          4
+         ],
+         [
+          67,
+          70,
+          7
+         ],
+         [
+          70,
+          74,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       35,
+       43,
+       74
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:54.34068:18.61978:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 934.9,
+       "duration": 673.2
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAG?QM?KPc@AEBSd@UD_@EKAa@Cy@IQAP@G\\CB?NA~@LNNSNQ^]BIH?V@@F|@R@HA|AGPL@?CBUDKD@XB?GDKHCLS\\XP?LB`@d@l@FXCTBB?v@H@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 490.8,
+          "amount": 52.5
+         },
+         {
+          "value": 7.0,
+          "distance": 399.3,
+          "amount": 42.72
+         },
+         {
+          "value": 3.0,
+          "distance": 44.8,
+          "amount": 4.79
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          26,
+          3
+         ],
+         [
+          26,
+          30,
+          4
+         ],
+         [
+          30,
+          37,
+          7
+         ],
+         [
+          37,
+          39,
+          4
+         ],
+         [
+          39,
+          54,
+          7
+         ],
+         [
+          54,
+          59,
+          3
+         ],
+         [
+          59,
+          60,
+          7
+         ],
+         [
+          60,
+          64,
+          4
+         ],
+         [
+          64,
+          66,
+          7
+         ],
+         [
+          66,
+          69,
+          4
+         ],
+         [
+          69,
+          72,
+          7
+         ],
+         [
+          72,
+          76,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       36,
+       43,
+       76
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:54.34068:18.61978:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 548.0,
+       "duration": 394.5
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAGAZs@?CDM?ODUD_@EKAa@Cy@IQAP@G\\CB?N@@FD`@`@OP",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 298.4,
+          "amount": 54.46
+         },
+         {
+          "value": 7.0,
+          "distance": 195.9,
+          "amount": 35.75
+         },
+         {
+          "value": 3.0,
+          "distance": 41.8,
+          "amount": 7.62
+         },
+         {
+          "value": 8.0,
+          "distance": 11.9,
+          "amount": 2.17
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          27,
+          3
+         ],
+         [
+          27,
+          28,
+          8
+         ],
+         [
+          28,
+          36,
+          7
+         ],
+         [
+          36,
+          38,
+          4
+         ],
+         [
+          38,
+          40,
+          7
+         ],
+         [
+          40,
+          41,
+          8
+         ],
+         [
+          41,
+          43,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       35,
+       43
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.34092:18.62038:54.34068:18.61978:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 555.1,
+       "duration": 399.70000000000005
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNAx@YJe@AYFSZCQGVSR[DuAG?QM?KPc@AEBSd@UD_@EKAa@Cy@IQAP@G\\CB?NA~@LNNS",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 347.7,
+          "amount": 62.64
+         },
+         {
+          "value": 7.0,
+          "distance": 194.5,
+          "amount": 35.03
+         },
+         {
+          "value": 3.0,
+          "distance": 12.9,
+          "amount": 2.33
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          19,
+          4
+         ],
+         [
+          19,
+          20,
+          7
+         ],
+         [
+          20,
+          24,
+          4
+         ],
+         [
+          24,
+          26,
+          3
+         ],
+         [
+          26,
+          30,
+          4
+         ],
+         [
+          30,
+          37,
+          7
+         ],
+         [
+          37,
+          39,
+          4
+         ],
+         [
+          39,
+          43,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       36,
+       43
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:54.34068:18.61978:54.3385:18.62:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1924.3,
+       "duration": 1385.3999999999999
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJHHNTD?J@?@lA~ADD?Y@QAP?XEEmA_B?AKAE?OUIIGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[KBWIcAWSRc@c@k@i@a@KQIYCEA@gAEAG?AAAI}@SAGWAI?CH_@\\OPNQ^]BIH?V@@F|@R@H@@F?D@AfAD@XB?GDKHCLS\\XP?LB`@d@l@FXCTBB?v@H@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 904.4,
+          "amount": 47.0
+         },
+         {
+          "value": 7.0,
+          "distance": 832.5,
+          "amount": 43.26
+         },
+         {
+          "value": 3.0,
+          "distance": 141.9,
+          "amount": 7.38
+         },
+         {
+          "value": 8.0,
+          "distance": 45.4,
+          "amount": 2.36
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          51,
+          7
+         ],
+         [
+          51,
+          52,
+          8
+         ],
+         [
+          52,
+          53,
+          7
+         ],
+         [
+          53,
+          54,
+          8
+         ],
+         [
+          54,
+          64,
+          7
+         ],
+         [
+          64,
+          65,
+          8
+         ],
+         [
+          65,
+          66,
+          7
+         ],
+         [
+          66,
+          67,
+          8
+         ],
+         [
+          67,
+          76,
+          7
+         ],
+         [
+          76,
+          85,
+          4
+         ],
+         [
+          85,
+          97,
+          7
+         ],
+         [
+          97,
+          99,
+          4
+         ],
+         [
+          99,
+          101,
+          7
+         ],
+         [
+          101,
+          107,
+          3
+         ],
+         [
+          107,
+          108,
+          7
+         ],
+         [
+          108,
+          109,
+          8
+         ],
+         [
+          109,
+          127,
+          7
+         ],
+         [
+          127,
+          128,
+          8
+         ],
+         [
+          128,
+          129,
+          7
+         ],
+         [
+          129,
+          132,
+          3
+         ],
+         [
+          132,
+          133,
+          7
+         ],
+         [
+          133,
+          137,
+          4
+         ],
+         [
+          137,
+          139,
+          7
+         ],
+         [
+          139,
+          142,
+          4
+         ],
+         [
+          142,
+          145,
+          7
+         ],
+         [
+          145,
+          149,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       59,
+       118,
+       149
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:54.34068:18.61978:54.3385:18.62:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1977.6,
+       "duration": 1423.9
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJJBPTL@nA`BBJ?Y@QAP?XCKoAaBMAQUKCGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[KBWIcAWSRc@c@k@i@a@KQIYCEAEJCT?BMAFQ@}AAI}@SAGWAI?CH_@\\OPNQ^]BIH?V@@F|@R@HA|AGPL@?CBUDKD@XB?GDKHCLS\\XP?LB`@d@l@FXCTBB?v@H@k@GMAy@?C",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 904.4,
+          "amount": 45.73
+         },
+         {
+          "value": 7.0,
+          "distance": 779.2,
+          "amount": 39.4
+         },
+         {
+          "value": 6.0,
+          "distance": 171.9,
+          "amount": 8.69
+         },
+         {
+          "value": 3.0,
+          "distance": 122.0,
+          "amount": 6.17
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          50,
+          7
+         ],
+         [
+          50,
+          55,
+          6
+         ],
+         [
+          55,
+          59,
+          7
+         ],
+         [
+          59,
+          64,
+          6
+         ],
+         [
+          64,
+          72,
+          7
+         ],
+         [
+          72,
+          81,
+          4
+         ],
+         [
+          81,
+          93,
+          7
+         ],
+         [
+          93,
+          95,
+          4
+         ],
+         [
+          95,
+          97,
+          7
+         ],
+         [
+          97,
+          105,
+          3
+         ],
+         [
+          105,
+          127,
+          7
+         ],
+         [
+          127,
+          132,
+          3
+         ],
+         [
+          132,
+          133,
+          7
+         ],
+         [
+          133,
+          137,
+          4
+         ],
+         [
+          137,
+          139,
+          7
+         ],
+         [
+          139,
+          142,
+          4
+         ],
+         [
+          142,
+          145,
+          7
+         ],
+         [
+          145,
+          149,
+          4
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       57,
+       116,
+       149
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:54.34068:18.61978:avoid=0": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1570.0,
+       "duration": 1130.3
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJHHNTD?J@?@lA~ADD?Y@QAP?XEEmA_B?AKAE?OUIIGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[KBWIcAWSRc@c@k@i@a@KQIYCEA@gAEAG?AAAI}@SAGWAI?CH_@\\OP",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 761.4,
+          "amount": 48.5
+         },
+         {
+          "value": 7.0,
+          "distance": 667.2,
+          "amount": 42.5
+         },
+         {
+          "value": 3.0,
+          "distance": 100.1,
+          "amount": 6.38
+         },
+         {
+          "value": 8.0,
+          "distance": 41.3,
+          "amount": 2.63
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          51,
+          7
+         ],
+         [
+          51,
+          52,
+          8
+         ],
+         [
+          52,
+          53,
+          7
+         ],
+         [
+          53,
+          54,
+          8
+         ],
+         [
+          54,
+          64,
+          7
+         ],
+         [
+          64,
+          65,
+          8
+         ],
+         [
+          65,
+          66,
+          7
+         ],
+         [
+          66,
+          67,
+          8
+         ],
+         [
+          67,
+          76,
+          7
+         ],
+         [
+          76,
+          85,
+          4
+         ],
+         [
+          85,
+          97,
+          7
+         ],
+         [
+          97,
+          99,
+          4
+         ],
+         [
+          99,
+          101,
+          7
+         ],
+         [
+          101,
+          107,
+          3
+         ],
+         [
+          107,
+          108,
+          7
+         ],
+         [
+          108,
+          109,
+          8
+         ],
+         [
+          109,
+          118,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       59,
+       118
+      ]
+     }
+    ]
+   }
+  },
+  "ors:54.3385:18.62:54.33852:18.62106:54.33722:18.61339:54.34068:18.61978:avoid=1": {
+   "status": 200,
+   "body": {
+    "routes": [
+     {
+      "summary": {
+       "distance": 1597.8,
+       "duration": 1150.4
+      },
+      "geometry": "}}sjI}uspB@iAHcABo@@y@GOI?EAALOXNY@MD@H?FNFJOvHAj@AZALKBKBBP@ZBx@Bb@Br@@LA\\GNLHFH@LD|@FhAP~ADzBAdAELAXEtBA~ACz@N?H?F?L@B?H??LFJJBPTL@nA`BBJ?Y@QAP?XCKoAaBMAQUKCGK?MI?C?MAG?I?O?B{@@_BDuB@YDM@eAE{BQ_BGiAE}@AMGIMIFO@]AMCs@Cc@Cy@A[KBWIcAWSRc@c@k@i@a@KQIYCEAEJCT?BMAFQ@}AAI}@SAGWAI?CH_@\\OP",
+      "extras": {
+       "waytype": {
+        "summary": [
+         {
+          "value": 4.0,
+          "distance": 761.4,
+          "amount": 47.65
+         },
+         {
+          "value": 7.0,
+          "distance": 574.3,
+          "amount": 35.94
+         },
+         {
+          "value": 6.0,
+          "distance": 171.9,
+          "amount": 10.76
+         },
+         {
+          "value": 3.0,
+          "distance": 90.2,
+          "amount": 5.64
+         }
+        ],
+        "values": [
+         [
+          0,
+          7,
+          4
+         ],
+         [
+          7,
+          11,
+          7
+         ],
+         [
+          11,
+          21,
+          4
+         ],
+         [
+          21,
+          33,
+          7
+         ],
+         [
+          33,
+          42,
+          4
+         ],
+         [
+          42,
+          50,
+          7
+         ],
+         [
+          50,
+          55,
+          6
+         ],
+         [
+          55,
+          59,
+          7
+         ],
+         [
+          59,
+          64,
+          6
+         ],
+         [
+          64,
+          72,
+          7
+         ],
+         [
+          72,
+          81,
+          4
+         ],
+         [
+          81,
+          93,
+          7
+         ],
+         [
+          93,
+          95,
+          4
+         ],
+         [
+          95,
+          97,
+          7
+         ],
+         [
+          97,
+          105,
+          3
+         ],
+         [
+          105,
+          116,
+          7
+         ]
+        ]
+       }
+      },
+      "way_points": [
+       0,
+       9,
+       57,
+       116
+      ]
+     }
+    ]
+   }
+  }
+ }
+}

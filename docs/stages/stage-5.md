@@ -1,6 +1,6 @@
 # Stage 5: Frontend, CRUD of walks, stops and profiles
 
-**Status:** done on branch `feat/walks-ui` (2026-11-11), not committed or merged yet.
+**Status:** done (2026-11-11). Merged to `dev` in PR #12 and released to `main` in PR #13.
 **Spec:** `docs/PLAN.md`, section E, "Stage 5".
 
 ## Goal

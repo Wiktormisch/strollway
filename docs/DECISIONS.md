@@ -122,7 +122,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - A second AI's summary of these limits was checked against the sources. Two of its numbers are **not confirmed**: "2 parallel slots per IP" (the Commons page only says the number of slots is in the status response; the one number on the wiki, 4, is for a different instance) and "10 minutes of total query time per day" (the wiki says "no more than 10 minutes" in sum, without "per day"). The values "1 GiB maximum declared memory" and the list of alternative servers were not found either.
 - Rules for the app: one combined query per stroll; a small area; `[timeout:20]`; cache by area; on 429, 504 or a timeout do not wait, return the route with `pois_status: "unavailable"`. Our use is far below 10,000 requests per day.
 
-## 4. `claude -p` flags (read from `claude --help`, not tested)
+## 4. `claude -p` flags (read from `claude --help`; tested in stage 6, see section 10)
 
 - `-p` / `--print`: non-interactive, prints the answer and exits.
 - `--output-format json`: one JSON result (other values: `text`, `stream-json`).
@@ -132,7 +132,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - `--model <name>`, `--system-prompt <text>`, `--max-budget-usd <n>`, `--fallback-model <list>` (only with `-p`).
 - `--disable-slash-commands` turns off skills. `--setting-sources` limits which settings are loaded.
 - **Do not use `--bare`** for local dev: it reads only `ANTHROPIC_API_KEY`, never the subscription login. It also skips `CLAUDE.md`, hooks and auto-memory.
-- Open question for stage 6: `-p` loads `CLAUDE.md` and settings from the working directory, which can change the answer. Run the CLI in an empty temporary directory and test it.
+- Answered in stage 6: an empty temporary directory is not enough, because the CLI also loads the user's global `~/.claude/CLAUDE.md`. `--safe-mode` stops that (section 10).
 - First test to run: `claude -p "Return JSON: {\"ok\": true}" --output-format json --tools "" --no-session-persistence`
 
 ## 5. Plan review: errors of the first version, corrected in version 2
@@ -205,3 +205,42 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - **Retries:** app-wide `retry: 1`, because the default 3 retries with growing delays kept a stopped backend "loading" for about 7 s. Route plans set `retry: false` themselves: `fetchQuery` turns retries off only when no default is set, and a 422 or 429 will not change.
 - **Planner panel z-index** went from `z-1000` to `z-10`, so dialogs and selects (`z-50`) open above it. The map is in an `isolate` box, so Leaflet stays under the panel.
 - **No `next-themes`:** the shadcn Sonner wrapper is replaced by a small `Toaster` with `theme="system"`.
+
+## 10. Stage 6: trip ideas (backend)
+
+Checked by hand on 2026-11-12.
+
+### Overpass is overloaded; the demo uses recorded places
+
+- From the developer's machine, `overpass-api.de`, `overpass.private.coffee`, `maps.mail.ru` and `overpass.kumi.systems` all failed, even for `[out:json];node(1);out;`: DNS, TCP and TLS took under 0.4 s, then no answer for 20-30 s, or a 502 at once. IPv4 and IPv6 behaved the same. So the network and our query were fine; the servers were full.
+- The `overpass-api.de` page says: "Nowadays this server is overloaded ... do not expect high reliability. Use alternatives if possible." For regular use it asks for fewer than 100 queries per day, a User-Agent that names the app, caching, and no use from AI app platforms.
+- Decision: **the demo must work on recorded data; live Overpass is a bonus.** `record_fixtures --trip --overpass-file <file>` takes places exported from Overpass Turbo (raw data, same JSON as the API) and records only the ORS routes. The trip search waits at most 12 s (`TRIP_TIMEOUT_S`); route plans keep 25 s.
+- Later (medium): a list of servers (`OVERPASS_URLS`) or a self-hosted Overpass for the public deploy.
+
+### Demo trip recording
+
+- `planning/fixtures/trip_demo.json` holds the Overpass answer around the demo start and the ORS routes of every rule-based plan prefix, keyed like the live cache (`routing.cache_key`).
+- Opening hours change which places the rules pick, so plans are computed for every hour of a week. A route that is not recorded (for example a plan from an LLM) falls back to straight lines x 1.3 (`source: "mock"`).
+- Only stable ORS answers are recorded (200, 2009, 2010); a 429 or 5xx stops the command.
+
+### Trip planning in code
+
+- **Radius:** pace x time limit / 2, between 300 and 1500 m.
+- **Candidates:** at most 40, taken round-robin per category, closest first, so 30 playground parts cannot push out the only cafe. `amenity=ice_cream` is a cafe with `cuisine=ice_cream`.
+- **New categories:** park, zoo, museum, beach and `shop` (supermarket, convenience, bakery). `shop` was added to `Stop.Category` (migration `0002`) and to the frontend lists. A place out of range goes to `unmet_wishes`; there is no public transport routing (later, large). Transit stops near the start are in the answer. For big areas (park, beach) the distance is to the centre, not to the entrance.
+- **Time budget:** the plan may be 10% over `max_minutes`. Before routing, code drops the last stops while the straight-line estimate (x 1.3) is too long. After routing, it drops the last stop and routes again, at most twice, keeping at least one stop; then `over_limit` is set. Each dropped stop gets a tip ("skipped to fit the time limit") and is listed in `dropped_stops`, because the LLM summary may still mention it. Each re-route asks ORS for both routes; this is simpler than the planned "baseline only at the end", and the pre-trim makes re-routes rare.
+- **No route to a stop is not an error.** In route plans, ORS 2009/2010 give 422, because the user chose the points. In trips the stops come from map data (a park or a beach is its centre point, often more than 350 m from a path), so the trip falls back to straight lines x 1.3 (`source: "mock"`) and logs a warning.
+- **Errors:** 422 `no_places_nearby` (Overpass answered with nothing, or every place is closed) and 422 `places_unavailable` (Overpass failed). In both cases no LLM is called.
+- **Rules engine:** keywords in PL and EN, in the order of the text. A keyword matches at a word start; a final `$` means the whole word ("kawa$" is coffee, "kawałek" is not). Unknown wishes use the default list by age. Toilets and water are never a trip on their own.
+- **Weather:** Open-Meteo, coordinates rounded to 0.01 degree (about 1 km) before sending, cached 1 h per cell, 5 s timeout, `None` on any failure.
+- **Opening hours:** own parser for `24/7`, day ranges and lists, several time ranges, `off`, and rules separated by `;` (a later rule wins for its days). Months, holidays, times past midnight and anything else give `null`. `open_now` is now set in route plans too.
+
+### LLM backends
+
+- **Anthropic (production):** official SDK `anthropic==2.8.0`, default model `claude-opus-5-5` (from the `claude-api` skill). JSON is forced with `output_config.format` (`json_schema`). Thinking is always on for this model and counts toward `max_tokens` (cap 4000). Timeout 30 s, one retry. The server-side refusal fallback is on (`fallbacks: "default"`, beta `server-side-fallback-2026-07-01`). Not tested against the real API yet (no key used in stage 6).
+- **`claude -p` (local):** tested from Python on Windows (`claude.EXE`). Without `--safe-mode` the answer followed the global `CLAUDE.md` (it printed the triage block). With `--safe-mode --system-prompt ... --json-schema ...` the answer object is in `structured_output`. Flags used: `-p --output-format json --tools "" --no-session-persistence --safe-mode --system-prompt --json-schema` (+ `--model` when `CLAUDE_CLI_MODEL` is set). A `.cmd`/`.bat` launcher is refused, because `cmd.exe` would parse the arguments again. PowerShell 5.1 itself breaks quotes and drops `""` when you type such commands by hand; Python is not affected.
+- **NVIDIA (spare):** `/v1/models` lists the whole catalogue, not what the account can use: most models answer 404 "Function ... Not found for account". Working free models: `nvidia/nemotron-3.5-lightning-30b-a3b` (default; reasons first, about 230 tokens even for `{"ok": true}`, so `max_tokens` 2000) and `nvidia/nemotron-3.5-bolt-e4b` (small and fast). `response_format: json_object` works; `nvext.guided_json` returns 400 on both. `llama-3.1-nemotron-safety-guard-8b-v3` is a safety classifier, not a planner.
+- **Chain:** `LLM_BACKEND`, then `LLM_FALLBACKS`, then always the rules. No new backend is tried after 60 s. Every attempt counts toward `LLM_DAILY_LIMIT` (cache key per day, kept 25 h; the file cache is not atomic, so two requests at the edge can both pass; accepted for a demo).
+- **Logs:** a warning with the backend name and a short reason (our own text or the names of invalid fields). Never the prompt, the wishes or the model answer.
+- **Display note:** `Invoke-RestMethod` in PowerShell 5.1 shows Polish letters broken, because DRF sends `application/json` without `charset` (JSON is UTF-8 by definition). Browsers and the frontend read it correctly.
+
