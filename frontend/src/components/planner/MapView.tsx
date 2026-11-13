@@ -14,7 +14,7 @@ import {
   useMapEvents,
 } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
-import type { LatLng, LatLngTuple, Poi, RoutePlan } from '@/api/types'
+import type { LatLng, LatLngTuple, Poi, RouteComparison } from '@/api/types'
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '@/constants/demoRoutes'
 import { BASELINE_STYLE, ROUTE_STYLE, STAIRS_STYLE } from '@/constants/mapStyles'
 import { categoryIcon } from '@/constants/poiCategories'
@@ -23,13 +23,24 @@ import { PoiDetails } from './PoiDetails'
 
 interface MapViewProps {
   start: LatLng | null
+  /** A round trip: the start is also the finish, so it gets a finish flag. */
+  startIsFinish?: boolean
   end: LatLng | null
-  plan: RoutePlan | undefined
+  plan: RouteComparison | undefined
   pois: Poi[]
+  /** Trip stops, drawn as numbered markers in this order. */
+  stops?: NumberedStop[]
   poiLabel: (poi: Poi) => string
   pointLabels: { start: string; end: string }
   onMapClick: (point: LatLng) => void
   onCenterChange: (center: LatLng) => void
+}
+
+export interface NumberedStop {
+  id: string
+  lat: number
+  lng: number
+  title: string
 }
 
 export function MapView(props: MapViewProps) {
@@ -72,8 +83,22 @@ export function MapView(props: MapViewProps) {
           </Popup>
         </Marker>
       ))}
+      {props.stops?.map((stop, index) => (
+        <Marker
+          key={stop.id}
+          position={[stop.lat, stop.lng]}
+          icon={letterIcon(String(index + 1), '#0369a1')}
+          title={stop.title}
+          alt={stop.title}
+        />
+      ))}
       {props.start && (
-        <PointMarker point={props.start} letter="A" title={props.pointLabels.start} />
+        <PointMarker
+          point={props.start}
+          letter="A"
+          finish={props.startIsFinish}
+          title={props.pointLabels.start}
+        />
       )}
       {props.end && <PointMarker point={props.end} letter="B" title={props.pointLabels.end} />}
     </MapContainer>
@@ -106,12 +131,19 @@ function FitBounds({ points }: { points: LatLngTuple[] }) {
   return null
 }
 
-function PointMarker({ point, letter, title }: { point: LatLng; letter: string; title: string }) {
+interface PointMarkerProps {
+  point: LatLng
+  letter: string
+  title: string
+  finish?: boolean
+}
+
+function PointMarker({ point, letter, title, finish }: PointMarkerProps) {
   const color = letter === 'A' ? '#059669' : '#7c3aed'
   return (
     <Marker
       position={[point.lat, point.lng]}
-      icon={letterIcon(letter, color)}
+      icon={finish ? finishIcon() : letterIcon(letter, color)}
       title={title}
       alt={title}
     />
@@ -138,8 +170,37 @@ function poiIcon(category: string): DivIcon {
   return icon
 }
 
+function finishIcon(): DivIcon {
+  const cached = iconCache.get('finish')
+  if (cached) return cached
+  const svg = renderToStaticMarkup(<FlagIcon />)
+  const icon = divIcon({
+    html: `<span class="sw-point-icon" style="background:#059669">${svg}</span>`,
+    className: '',
+    iconSize: [30, 30],
+    iconAnchor: [15, 15],
+  })
+  iconCache.set('finish', icon)
+  return icon
+}
+
+/** A small chequered flag: start and finish at the same point. */
+function FlagIcon() {
+  return (
+    <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
+      <path d="M3 1v14" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
+      <rect x="4" y="2" width="10" height="7" fill="white" />
+      <path
+        d="M4 2h2.5v1.75H4zM9 2h2.5v1.75H9zM6.5 3.75H9V5.5H6.5zM11.5 3.75H14V5.5h-2.5zM4 5.5h2.5v1.75H4zM9 5.5h2.5v1.75H9zM6.5 7.25H9V9H6.5zM11.5 7.25H14V9h-2.5z"
+        fill="#0f172a"
+      />
+    </svg>
+  )
+}
+
 function letterIcon(letter: string, color: string): DivIcon {
-  const cached = iconCache.get(letter)
+  const cacheKey = `${letter}:${color}`
+  const cached = iconCache.get(cacheKey)
   if (cached) return cached
   const icon = divIcon({
     html: `<span class="sw-point-icon" style="background:${color}">${letter}</span>`,
@@ -147,6 +208,6 @@ function letterIcon(letter: string, color: string): DivIcon {
     iconSize: [30, 30],
     iconAnchor: [15, 15],
   })
-  iconCache.set(letter, icon)
+  iconCache.set(cacheKey, icon)
   return icon
 }

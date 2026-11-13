@@ -127,6 +127,15 @@
   html {
     @apply font-sans;
   }
+  /*
+   * A visible keyboard focus for plain elements (chips, stars, map markers, checkboxes).
+   * :where() has zero specificity, so shadcn components keep their own ring styles.
+   * The colour has at least 3:1 contrast on white and on the dark background (WCAG 2.4.11).
+   */
+  :where(button, a, input, [tabindex]):focus-visible {
+    outline: 2px solid oklch(0.5 0.13 160);
+    outline-offset: 2px;
+  }
 }
 
 /* Map markers (Leaflet divIcon HTML, see components/planner/MapView.tsx). */
@@ -150,4 +159,16 @@
   color: white;
   font-weight: 700;
   font-size: 14px;
+}
+
+/* Native controls (scrollbars, date pickers) follow the theme too. */
+.dark {
+  color-scheme: dark;
+}
+
+/* Leaflet paints popups white; in the dark theme they follow the app colours instead. */
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+  background: var(--popover);
+  color: var(--popover-foreground);
 }

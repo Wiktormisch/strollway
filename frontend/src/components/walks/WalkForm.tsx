@@ -18,7 +18,8 @@ export interface WalkFormValues {
 }
 
 interface WalkFormProps {
-  pois: Poi[]
+  /** Places to choose stops from; null hides the choice (a trip idea brings its own stops). */
+  pois: Poi[] | null
   profiles: FamilyProfile[]
   /** The profile the route was planned with; the walking time matches its pace. */
   defaultProfileId: number | null
@@ -41,7 +42,7 @@ export function WalkForm(props: WalkFormProps) {
     ...props.serverErrors,
     ...(nameError ? { name: nameError } : {}),
   }
-  const sortedPois = [...props.pois].sort((a, b) => a.at_min - b.at_min)
+  const sortedPois = [...(props.pois ?? [])].sort((a, b) => a.at_min - b.at_min)
 
   function toggle(poiId: string) {
     const next = new Set(chosen)
@@ -90,41 +91,44 @@ export function WalkForm(props: WalkFormProps) {
         <FieldError id="walk-profile-error" message={errors.profile} />
       </div>
 
-      <fieldset className="space-y-1.5">
-        <legend className="text-sm font-medium">{t('walkForm.stops')}</legend>
-        {sortedPois.length === 0 ? (
-          <p className="text-sm text-muted-foreground">{t('walkForm.noPlaces')}</p>
-        ) : (
-          <>
-            <p className="text-xs text-muted-foreground">
-              {t('walkForm.stopsHint', { max: MAX_STOPS })}
-            </p>
-            <ul className="max-h-60 space-y-1 overflow-y-auto rounded-md border p-2">
-              {sortedPois.map((poi) => {
-                const checked = chosen.has(poi.poi_id)
-                return (
-                  <li key={poi.poi_id}>
-                    <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 text-sm hover:bg-muted">
-                      <input
-                        type="checkbox"
-                        className="size-4 accent-primary"
-                        checked={checked}
-                        disabled={!checked && chosen.size >= MAX_STOPS}
-                        onChange={() => toggle(poi.poi_id)}
-                      />
-                      <span className="flex-1">{poiLabel(poi)}</span>
-                      <span className="text-xs text-muted-foreground">
-                        {t('poi.fromStart', { minutes: poi.at_min })}
-                      </span>
-                    </label>
-                  </li>
-                )
-              })}
-            </ul>
-          </>
-        )}
-        <FieldError id="walk-stops-error" message={errors.stops} />
-      </fieldset>
+      {props.pois !== null && (
+        <fieldset className="space-y-1.5">
+          <legend className="text-sm font-medium">{t('walkForm.stops')}</legend>
+          {sortedPois.length === 0 ? (
+            <p className="text-sm text-muted-foreground">{t('walkForm.noPlaces')}</p>
+          ) : (
+            <>
+              <p className="text-xs text-muted-foreground">
+                {t('walkForm.stopsHint', { max: MAX_STOPS })}
+              </p>
+              <ul className="max-h-60 space-y-1 overflow-y-auto rounded-md border p-2">
+                {sortedPois.map((poi) => {
+                  const checked = chosen.has(poi.poi_id)
+                  return (
+                    <li key={poi.poi_id}>
+                      <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 text-sm hover:bg-muted">
+                        <input
+                          type="checkbox"
+                          className="size-4 accent-primary"
+                          checked={checked}
+                          disabled={!checked && chosen.size >= MAX_STOPS}
+                          onChange={() => toggle(poi.poi_id)}
+                        />
+                        <span className="flex-1">{poiLabel(poi)}</span>
+                        <span className="text-xs text-muted-foreground">
+                          {t('poi.fromStart', { minutes: poi.at_min })}
+                        </span>
+                      </label>
+                    </li>
+                  )
+                })}
+              </ul>
+            </>
+          )}
+          <FieldError id="walk-stops-error" message={errors.stops} />
+        </fieldset>
+      )}
+      {props.pois === null && <FieldError id="walk-stops-error" message={errors.stops} />}
 
       <div className="flex justify-end gap-2">
         <Button type="button" variant="outline" onClick={props.onCancel}>

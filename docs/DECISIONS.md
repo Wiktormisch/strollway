@@ -244,3 +244,11 @@ Checked by hand on 2026-11-12.
 - **Logs:** a warning with the backend name and a short reason (our own text or the names of invalid fields). Never the prompt, the wishes or the model answer.
 - **Display note:** `Invoke-RestMethod` in PowerShell 5.1 shows Polish letters broken, because DRF sends `application/json` without `charset` (JSON is UTF-8 by definition). Browsers and the frontend read it correctly.
 
+
+### Trip ideas in the UI (stage 7)
+
+- **Removing a stop does not recalculate the route.** `route-plans` takes only A -> B, and the trip-ideas contract has no "recalculate with these stops" call. So after a removal the UI keeps the planned geometry, subtracts the stop minutes from the total, and says plainly that the route and the arrival times are still the planned ones. The saved walk keeps that geometry. A recalculation endpoint is a possible next step.
+- **The last stop cannot be removed:** a trip walk always has at least one stop.
+- **Saved data:** stops get `order` 1..n in the trip order, `source` `"rules"` for the rule engine and `"ai"` for any LLM engine, the LLM `reason`, and the trip `summary` as `ai_summary`. A round trip ends at the start; a one-way trip ends at the last kept stop.
+- **One request, no cache:** trip ideas are a TanStack Query mutation. Every "Suggest" is a new call, and the client sets no timeout, because the backend ends the LLM call after 60 s and answers with rules.
+- **Language:** the UI language is sent as `pl` or `en` (`en-GB` becomes `en`).

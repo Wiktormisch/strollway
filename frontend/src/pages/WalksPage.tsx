@@ -8,12 +8,14 @@ import { WalkCard } from '@/components/walks/WalkCard'
 import { Button } from '@/components/ui/button'
 import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage } from '@/lib/fieldErrors'
+import { usePageTitle } from '@/lib/usePageTitle'
 
 type Filter = 'all' | WalkStatus
 const FILTERS: Filter[] = ['all', 'planned', 'done']
 
 export function WalksPage() {
   const { t } = useTranslation()
+  usePageTitle(t('pages.walks.title'))
   const [filter, setFilter] = useState<Filter>('all')
   const walks = useWalks(filter === 'all' ? undefined : filter)
   const demo = useLoadDemoData()

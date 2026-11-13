@@ -45,7 +45,7 @@
     "retry": "Try again",
     "tabs": {
       "route": "Route A → B",
-      "trip": "Trip idea (soon)"
+      "trip": "Trip idea"
     },
     "sheet": {
       "collapse": "Hide the panel",
@@ -115,7 +115,10 @@
       "invalid": "These points cannot be used. Put the end closer to the start.",
       "tooManyRequests": "Too many requests. Wait a moment and try again.",
       "network": "No connection to the server.",
-      "unknown": "Something went wrong while planning the route."
+      "unknown": "Something went wrong while planning the route.",
+      "noPlacesNearby": "We found no playgrounds, cafes or restaurants near this start point. Try another start, or a longer time limit.",
+      "placesUnavailable": "The places service did not answer. Wait a moment and try again.",
+      "invalidTrip": "The form has an invalid value. Check the start point and the profile, then try again."
     },
     "save": "Save walk",
     "profile": {
@@ -335,6 +338,63 @@
       "saveFailed": "Could not save the profile. {{reason}}",
       "deleted": "Profile deleted.",
       "deleteFailed": "Could not delete the profile. {{reason}}"
+    }
+  },
+  "trip": {
+    "empty": "Set a start on the map (or try the demo start), say what you would like, and press \"Suggest a trip\".",
+    "form": {
+      "hint": "Click the map to set the start. The trip starts and ends there.",
+      "start": "Start",
+      "useCenter": "Set the start at the map centre",
+      "clearStart": "Clear the start",
+      "demoStart": "Try the demo start",
+      "minutes": "Time limit",
+      "minutesOption": "{{minutes}} min",
+      "roundTrip": "Come back to the start",
+      "wishes": "Your wishes (optional)",
+      "wishesCount": "{{count}} / {{max}}",
+      "wishesPlaceholder": "e.g. playground, then coffee, finally pizza; we do not want to walk much",
+      "privacy": "Do not enter personal data. This text is sent to the AI model.",
+      "submit": "Suggest a trip",
+      "planning": "Planning the trip…",
+      "planningHint": "The AI model can take 10-20 seconds. Please wait."
+    },
+    "engine": {
+      "ai": "Planned by AI",
+      "rules": "Planned by rules (demo mode)"
+    },
+    "timeline": {
+      "title": "Your trip",
+      "arrive": "arrive at {{minutes}} min",
+      "stay": "{{minutes}} min here",
+      "remove": "Remove stop {{name}}"
+    },
+    "totals": {
+      "total": "Total: {{total}} of {{max}}",
+      "split": "Walking {{walking}} + stops {{stops}}",
+      "overLimit": "This trip is longer than your time limit. Remove a stop or choose a longer limit.",
+      "edited": "You removed a stop. The route and the arrival times are still the planned ones."
+    },
+    "summary": {
+      "unmet": "What we could not find",
+      "tips": "Tips",
+      "dropped": "{{name}} (removed to fit the time limit)"
+    },
+    "weather": {
+      "label": "Weather",
+      "temp": "{{value}}°C",
+      "rain": "rain {{value}}%",
+      "wind": "wind {{value}} km/h"
+    },
+    "saveDescription": "Give the trip a name. Stops to save: {{count}}.",
+    "map": {
+      "startFinish": "Start and finish"
+    }
+  },
+  "theme": {
+    "switchTo": {
+      "dark": "Switch to dark theme",
+      "light": "Switch to light theme"
     }
   }
 }

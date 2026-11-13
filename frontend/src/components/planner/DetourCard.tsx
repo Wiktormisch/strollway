@@ -1,6 +1,6 @@
 import { Trans, useTranslation } from 'react-i18next'
 import { CircleCheck, Info, TriangleAlert } from 'lucide-react'
-import type { RoutePlan } from '@/api/types'
+import type { RouteComparison } from '@/api/types'
 import { formatDistance, formatDuration } from '@/lib/format'
 import { detourCase, type DetourCase } from '@/lib/planner'
 import { cn } from '@/lib/utils'
@@ -24,7 +24,7 @@ const TONE_STYLE = {
 const TONE_ICON = { good: CircleCheck, info: Info, warn: TriangleAlert }
 
 interface DetourCardProps {
-  plan: RoutePlan
+  plan: RouteComparison
   /** What the user asked for; tells "not searched" from "the check failed". */
   avoidStairs: boolean
 }
