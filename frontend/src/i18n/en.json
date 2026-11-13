@@ -252,6 +252,7 @@
     "back": "Back to my walks",
     "editName": "Edit the name",
     "stairsOnRoute": "Stairs on the route",
+    "statsLabel": "The walk in numbers",
     "notFound": {
       "title": "Walk not found.",
       "text": "It may have been deleted, or it was saved in another browser."

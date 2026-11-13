@@ -251,6 +251,7 @@
   "walkDetail": {
     "back": "Wróć do moich spacerów",
     "editName": "Zmień nazwę",
+    "statsLabel": "Spacer w liczbach",
     "stairsOnRoute": "Schody na trasie",
     "notFound": {
       "title": "Nie znaleziono spaceru.",

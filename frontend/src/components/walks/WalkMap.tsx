@@ -1,12 +1,13 @@
-// A thin Leaflet wrapper for a saved walk: the route, A/B and numbered stops.
+// A thin Leaflet wrapper for a saved walk: the route, A/B and numbered stops in category colours.
 // The planner map is built around a RoutePlan, so this one stays separate and simple.
 import { useEffect } from 'react'
-import { divIcon, latLngBounds, type DivIcon } from 'leaflet'
+import { latLngBounds } from 'leaflet'
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { LatLng, LatLngTuple, Stop } from '@/api/types'
 import { mapLineStyles } from '@/constants/mapStyles'
 import { useMapColors } from '@/lib/cssColors'
+import { letterIcon, stopIcon } from '@/lib/mapIcons'
 
 export interface WalkMapProps {
   geometry: LatLngTuple[]
@@ -38,13 +39,16 @@ export function WalkMap(props: WalkMapProps) {
       <Polyline positions={props.geometry} pathOptions={lines.routeGlow} />
       <Polyline positions={props.geometry} pathOptions={lines.routeCasing} />
       <Polyline positions={props.geometry} pathOptions={lines.route} />
-      <Marker position={[props.start.lat, props.start.lng]} icon={badgeIcon('A', 'var(--brand)')} />
-      <Marker position={[props.end.lat, props.end.lng]} icon={badgeIcon('B', 'var(--primary)')} />
+      <Marker
+        position={[props.start.lat, props.start.lng]}
+        icon={letterIcon('A', 'var(--brand)')}
+      />
+      <Marker position={[props.end.lat, props.end.lng]} icon={letterIcon('B', 'var(--primary)')} />
       {props.stops.map((stop, index) => (
         <Marker
           key={stop.id}
           position={[stop.lat, stop.lng]}
-          icon={badgeIcon(String(index + 1), 'var(--primary)')}
+          icon={stopIcon(index + 1, stop.category)}
           title={props.stopLabel(stop)}
           alt={props.stopLabel(stop)}
         />
@@ -52,7 +56,7 @@ export function WalkMap(props: WalkMapProps) {
       {props.draft && (
         <Marker
           position={[props.draft.lat, props.draft.lng]}
-          icon={badgeIcon('+', 'var(--sage-500)')}
+          icon={letterIcon('+', 'var(--sage-500)')}
         />
       )}
     </MapContainer>
@@ -73,20 +77,4 @@ function FitBounds({ points }: { points: LatLngTuple[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, key])
   return null
-}
-
-const iconCache = new Map<string, DivIcon>()
-
-function badgeIcon(text: string, color: string): DivIcon {
-  const cacheKey = `${text}-${color}`
-  const cached = iconCache.get(cacheKey)
-  if (cached) return cached
-  const icon = divIcon({
-    html: `<span class="sw-point-icon" style="background:${color}">${text}</span>`,
-    className: '',
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
-  })
-  iconCache.set(cacheKey, icon)
-  return icon
 }
