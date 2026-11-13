@@ -19,7 +19,7 @@ This page describes how the developer worked with AI tools on StrollWay: what th
 5. **A human reads the diff.** The agent never commits, pushes, merges or opens a PR on its own (`AGENTS.md`).
 6. **Self-review with named gaps.** At the end of a task the agent scores its own work from 1 to 10 and must name what is missing. A score without named gaps is not accepted.
 
-Each finished stage has a short log in `docs/stages/` (for example `docs/stages/stage-1.md`, `stage-2.md` and `stage-3.md`): what was built, which checks ran, and what went wrong.
+Each finished stage has a short log in `docs/stages/` (`docs/stages/stage-1.md` to `stage-7.md`): what was built, which checks ran, and what went wrong.
 
 ## Verify before building
 
@@ -35,7 +35,9 @@ Before any code, the riskiest assumptions of the plan were checked by hand again
 - Coordinates for demo routes proposed by the agent were written from memory and flagged as approximate. One pair turned out to have no stairs at all and was rejected; another gave the most useful case (no step-free route).
 - In stage 2 the developer asked the agent to review its own plan before coding. The review found three real gaps (a bad client id could give 404 instead of 400, a `PATCH` with only a rating ignored the saved status, a stop could move to another walk). All were fixed and tested before the first commit.
 - In stage 3 the agent reviewed its plan (9 gaps) and later its diff. The second review found that the tests read files which `record_fixtures` rewrites, and that the command wrote Windows line endings. Both were fixed before the first commit. Overpass was down during the stage; the app returned routes without places, as designed, instead of waiting.
-- The flags of `claude -p` were read from `claude --help`, not guessed, and are marked "not tested" until stage 6.
+- The flags of `claude -p` were read from `claude --help`, not guessed, and were tested in stage 6. The test showed that without `--safe-mode` the CLI read the developer's global `CLAUDE.md` and answered with a triage block instead of JSON.
+- In stage 7 the developer asked whether the agent had followed the global rules and to review its plan critically. The agent admitted two misses (it wrote in English instead of Polish, and gave no score) and found a contract gap it had played down: after removing a stop, the route and the arrival times are out of date, and the browser cannot recalculate them. The developer chose to keep the route and say so in the UI. Later reviews of the agent's own diff found a wrong error message, unsafe list keys and a light theme flash, all fixed before commit.
+- Manual testing by the developer (a checklist of about 45 points) found what automated tests did not: a missing map button on phones, the ignored dark system theme, and a cached favicon. The agent also proposed a merge commit prefix (`release:`) that is not a Conventional Commits type, and corrected it itself when the developer asked for the exact merge texts.
 
 ## What the AI is allowed to do inside the app
 
