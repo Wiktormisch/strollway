@@ -52,6 +52,14 @@ Before any code, the riskiest assumptions of the plan were checked by hand again
   developer checked it by hand. When asked to review its own plan critically, the agent found that
   the mock-up implied reverse geocoding (sending coordinates to a new service, against rule 5) and a
   draggable sheet (a feature, not a style); the developer chose to leave both out.
+- In stage 7b, session 3 (planner layout), the developer asked the agent to check its plan in the
+  code before starting. The check found 32 px buttons (under the 44 px touch target), the Leaflet
+  zoom hidden by the new floating top bar, and a second start row in the trip form. The developer
+  split the work into four parts, each checked on screenshots and committed on its own. Screenshots
+  again found what tests could not: the legend chip covered point B, and the white marker outline
+  disappeared on the light B marker in the dark theme. New ideas from the developer (a time slider,
+  centring the map on a demo, the tab order) were logged for later instead of growing the session.
+  One `git add` ran in the wrong folder; the agent saw that nothing was committed and repeated it.
 
 ## What the AI is allowed to do inside the app
 
