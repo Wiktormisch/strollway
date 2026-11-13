@@ -252,3 +252,20 @@ Checked by hand on 2026-11-12.
 - **Saved data:** stops get `order` 1..n in the trip order, `source` `"rules"` for the rule engine and `"ai"` for any LLM engine, the LLM `reason`, and the trip `summary` as `ai_summary`. A round trip ends at the start; a one-way trip ends at the last kept stop.
 - **One request, no cache:** trip ideas are a TanStack Query mutation. Every "Suggest" is a new call, and the client sets no timeout, because the backend ends the LLM call after 60 s and answers with rules.
 - **Language:** the UI language is sent as `pl` or `en` (`en-GB` becomes `en`).
+
+### Visual redesign "Nordic Sage" (stage 7b)
+
+- **Why a redesign:** an audit of the code (2026-11-13) found that all colour tokens were the
+  default grey shadcn palette, about 40 raw colours lived in components and map code, the stairs
+  result was a small alert in a long list, and most text was 12-14 px.
+- **Direction:** three directions were compared (warm natural, calm tool-like, playful). The
+  developer chose the warm natural one with a Scandinavian, minimal style and a deep navy
+  (`#12334A`) from an earlier idea. Spec: `docs/DESIGN.md`.
+- **No reverse geocoding.** The mock-up showed a place name for a clicked point. Getting it would
+  send the user's coordinates to a new outside service (AGENTS.md rule 5). The UI shows
+  "Point on the map" instead; demo routes keep their names.
+- **No dragging of the bottom sheet.** It needs gestures, keyboard access, tests and maybe a new
+  package. The handle is visual only and the sheet opens and closes as before.
+- **Figma:** Light and Dark are two variable collections, because the free Figma plan allows one
+  mode per collection. The Figma MCP Starter plan has a monthly call limit, so `docs/DESIGN.md`,
+  not Figma, is the source of truth for agents.
