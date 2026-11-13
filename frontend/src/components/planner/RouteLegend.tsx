@@ -1,11 +1,10 @@
 import { useTranslation } from 'react-i18next'
-import { BASELINE_STYLE, ROUTE_STYLE, STAIRS_STYLE } from '@/constants/mapStyles'
-
-// The samples use the same styles as the lines on the map.
+// The samples use the same colours as the lines on the map. A CSS style (not the SVG
+// attribute) can read var(), so the legend follows the theme without JavaScript.
 const ITEMS = [
-  { key: 'route', stroke: ROUTE_STYLE.color, width: 5, dash: undefined },
-  { key: 'baseline', stroke: BASELINE_STYLE.color, width: 3, dash: '5 5' },
-  { key: 'stairs', stroke: STAIRS_STYLE.color, width: 6, dash: undefined },
+  { key: 'route', stroke: 'var(--route)', width: 5, dash: undefined },
+  { key: 'baseline', stroke: 'var(--muted-foreground)', width: 3, dash: '5 5' },
+  { key: 'stairs', stroke: 'var(--stairs)', width: 6, dash: undefined },
 ] as const
 
 export function RouteLegend() {
@@ -20,7 +19,7 @@ export function RouteLegend() {
               y1="4"
               x2="28"
               y2="4"
-              stroke={item.stroke}
+              style={{ stroke: item.stroke }}
               strokeWidth={item.width}
               strokeDasharray={item.dash}
             />
