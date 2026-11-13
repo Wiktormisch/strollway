@@ -1116,6 +1116,28 @@ First show me a short plan and wait for my OK. At the end: run the checks, show 
 diff, list anything unfinished, propose Conventional Commit message(s). Then stop.
 ```
 
+### Stage 7b: Visual redesign "Nordic Sage"
+
+- **Goal:** a calm, Scandinavian look with its own identity (sage green, deep navy, warm off-white),
+  and the stairs result as the hero of the planner. Added after the feature freeze: no new features,
+  only the look and the layout.
+- **Depends on:** stage 7. Done before stage 9, so the README and the demo video show the new look.
+- **Spec:** `docs/DESIGN.md`; visual reference in Figma (link in that file).
+- **Sessions (one branch each, PR to `dev`):**
+  1. `docs/design-system`: `DESIGN.md`, this stage, decision log, agent rules.
+  2. `feat/ui-tokens`: Nordic Sage tokens in `index.css` (light and dark), new tokens (`brand`,
+     `brand-soft`, `stairs`, `stairs-text`), focus ring, map colours read from CSS variables, all raw
+     palette colours and hex values replaced by tokens.
+  3. `feat/ui-planner`: the planner as in the mock-up: floating top bar, bottom sheet with a visual
+     handle, point rows without raw coordinates, result hero card, pill buttons and tabs, new map
+     markers. Every current element keeps a place (`DESIGN.md` section 8).
+  4. `feat/ui-pages`: walks list, walk detail, profiles, dialogs and empty / error states.
+- **Out of scope:** dragging the bottom sheet, reverse geocoding (point names), new map tiles,
+  new fonts.
+- **DoD:** no raw colours in components (a grep finds none); light and dark, phone and desktop
+  checked by hand; before / after screenshots in each PR; tests, lint and build pass; tests that
+  check changed texts are updated.
+
 ### Stage 8: Deploy (optional)
 
 - **Goal:** a working demo at `strollway.wiktormischker.dev`.
