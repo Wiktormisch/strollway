@@ -18,7 +18,7 @@ import type { LatLng, LatLngTuple, Poi, RouteComparison } from '@/api/types'
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '@/constants/demoRoutes'
 import { mapLineStyles } from '@/constants/mapStyles'
 import { useMapColors } from '@/lib/cssColors'
-import { categoryIcon } from '@/constants/poiCategories'
+import { categoryColor, categoryIcon } from '@/constants/poiCategories'
 import { planBounds } from '@/lib/planner'
 import { PoiDetails } from './PoiDetails'
 
@@ -167,7 +167,7 @@ function poiIcon(category: string): DivIcon {
   const Icon = categoryIcon(category)
   const svg = renderToStaticMarkup(<Icon size={16} strokeWidth={2.25} aria-hidden />)
   const icon = divIcon({
-    html: `<span class="sw-poi-icon">${svg}</span>`,
+    html: `<span class="sw-poi-icon" style="color:${categoryColor(category)}">${svg}</span>`,
     className: '',
     iconSize: [28, 28],
     iconAnchor: [14, 14],
@@ -184,8 +184,8 @@ function finishIcon(): DivIcon {
   const icon = divIcon({
     html: `<span class="sw-point-icon" style="background:var(--brand)">${svg}</span>`,
     className: '',
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
   })
   iconCache.set('finish', icon)
   return icon
@@ -212,8 +212,8 @@ function letterIcon(letter: string, color: string): DivIcon {
   const icon = divIcon({
     html: `<span class="sw-point-icon" style="background:${color}">${letter}</span>`,
     className: '',
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
+    iconSize: [36, 36],
+    iconAnchor: [18, 18],
   })
   iconCache.set(cacheKey, icon)
   return icon

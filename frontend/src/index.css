@@ -146,19 +146,24 @@
   width: 100%;
   height: 100%;
   border-radius: 9999px;
-  border: 2px solid white;
-  box-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+  /* Floating over the map: a soft shadow (DESIGN.md section 4). */
+  box-shadow: 0 2px 8px rgb(0 0 0 / 0.25);
 }
 .sw-poi-icon {
+  /* 28 px, sage outline; the icon colour comes from the category (inline style). */
   background: var(--card);
-  color: var(--foreground);
-  border-color: var(--sage-500);
+  border: 2px solid var(--sage-500);
+}
+.sw-point-icon {
+  /* 36 px with a 3 px outline: white in the light theme, navy in the dark one, where B is
+     light and a white outline disappears (developer check, session 3). */
+  border: 3px solid var(--card);
 }
 .sw-point-icon {
   /* White on navy and green in the light theme, navy on light colours in the dark theme. */
   color: var(--primary-foreground);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 16px;
 }
 
 /* Native controls (scrollbars, date pickers) follow the theme too. */

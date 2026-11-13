@@ -113,7 +113,9 @@
       "title": "Map legend",
       "route": "Route to follow",
       "baseline": "Shortest route",
-      "stairs": "Stairs"
+      "stairs": "Stairs",
+      "show": "Show the map legend",
+      "hide": "Hide the map legend"
     },
     "demoMode": {
       "fixture": "Demo mode: a recorded route (no routing key, or the service did not answer).",

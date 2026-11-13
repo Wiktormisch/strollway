@@ -1,6 +1,6 @@
 import { useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Play, Sparkles } from 'lucide-react'
+import { Loader2, Play, Repeat, Sparkles } from 'lucide-react'
 import type { FamilyProfile, LatLng, TripIdeaRequest } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
@@ -99,8 +99,11 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
         />
       </div>
 
-      <div className="flex items-center justify-between gap-2">
-        <Label htmlFor={`${ids}-round`}>{t('trip.form.roundTrip')}</Label>
+      <div className="flex min-h-11 items-center justify-between gap-2">
+        <Label htmlFor={`${ids}-round`}>
+          <Repeat aria-hidden className="size-5 text-brand" />
+          {t('trip.form.roundTrip')}
+        </Label>
         <Switch id={`${ids}-round`} checked={roundTrip} onCheckedChange={setRoundTrip} />
       </div>
 

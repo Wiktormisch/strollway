@@ -7,6 +7,7 @@ import { Switch } from '@/components/ui/switch'
 import { DEMO_ROUTES, type DemoRoute } from '@/constants/demoRoutes'
 import { demoRouteOf } from '@/lib/planner'
 import { PointRow } from './PointRow'
+import { StairsIcon } from './StairsIcon'
 
 interface RouteFormProps {
   start: LatLng | null
@@ -63,7 +64,9 @@ export function RouteForm(props: RouteFormProps) {
       {props.profileField}
 
       <div className="flex min-h-11 items-center justify-between gap-2">
-        <label htmlFor={switchId} className="text-sm font-medium">
+        <label htmlFor={switchId} className="flex items-center gap-2 text-sm font-medium">
+          {/* Terracotta is only for stairs (DESIGN.md section 1). */}
+          <StairsIcon aria-hidden className="size-5 text-stairs" />
           {t('planner.form.avoidStairs')}
         </label>
         <Switch

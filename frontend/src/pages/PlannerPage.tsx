@@ -16,7 +16,7 @@ import { MapView } from '@/components/planner/MapView'
 import { PlacesSection } from '@/components/planner/PlacesSection'
 import { PlannerSheet } from '@/components/planner/PlannerSheet'
 import { RouteForm } from '@/components/planner/RouteForm'
-import { RouteLegend } from '@/components/planner/RouteLegend'
+import { LegendChip } from '@/components/planner/LegendChip'
 import { TransitStops } from '@/components/planner/TransitStops'
 import { Label } from '@/components/ui/label'
 import { ProfileSelect } from '@/components/walks/ProfileSelect'
@@ -172,7 +172,6 @@ export function PlannerPage() {
                 <Button className="w-full" onClick={() => setSaveOpen(true)}>
                   {t('planner.save')}
                 </Button>
-                <RouteLegend />
                 <TransitStops stops={trip.transit_stops} />
               </>
             )}
@@ -229,7 +228,6 @@ export function PlannerPage() {
                 <Button className="w-full" onClick={() => setSaveOpen(true)}>
                   {t('planner.save')}
                 </Button>
-                <RouteLegend />
                 <PlacesSection
                   plan={result}
                   hidden={hidden}
@@ -293,7 +291,7 @@ export function PlannerPage() {
       {/* Phone only: with the panel folded, the next step is a button on the map. */}
       {!sheetOpen && mode === 'trip' && tripStart && (
         <Button
-          className="absolute bottom-16 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
           disabled={tripIdea.isPending}
           // Without a result it submits the folded form (the `form` attribute), so the
           // request has the same limit and wishes as the panel shows.
@@ -310,7 +308,7 @@ export function PlannerPage() {
       )}
       {!sheetOpen && mode === 'route' && request && (
         <Button
-          className="absolute bottom-16 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
           disabled={fetching}
           onClick={result ? () => setSaveOpen(true) : plan}
         >
@@ -323,7 +321,9 @@ export function PlannerPage() {
       )}
 
       {/* `isolate` keeps the Leaflet z-indexes inside the map, under the bottom sheet. */}
-      <div className="sw-under-topbar isolate h-full md:flex-1">
+      <div className="sw-under-topbar relative isolate h-full md:flex-1">
+        {/* Only with a route on the map. z-[1000] in LegendChip puts it over the Leaflet panes. */}
+        {((mode === 'route' && result) || (mode === 'trip' && trip)) && <LegendChip />}
         {/* One map for both modes: it shows and edits the points of the open tab. */}
         <MapView
           start={mode === 'route' ? points.start : tripStart}

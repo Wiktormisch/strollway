@@ -10,7 +10,10 @@ const ITEMS = [
 export function RouteLegend() {
   const { t } = useTranslation()
   return (
-    <ul aria-label={t('planner.legend.title')} className="flex flex-wrap gap-x-4 gap-y-1 text-xs">
+    <ul
+      aria-label={t('planner.legend.title')}
+      className="flex flex-wrap gap-x-4 gap-y-1 text-[13px] leading-4"
+    >
       {ITEMS.map((item) => (
         <li key={item.key} className="flex items-center gap-1.5">
           <svg aria-hidden width="28" height="8">

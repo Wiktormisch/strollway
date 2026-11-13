@@ -35,6 +35,7 @@ describe('PlannerPage', () => {
     renderWithProviders(<PlannerPage />)
 
     expect(screen.getByText(/Set a start and an end/)).toBeInTheDocument()
+    expect(screen.queryByRole('list', { name: 'Map legend' })).not.toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Big detour' }))
 
     expect(await screen.findByText(/Stair-free route: \+288 m, \+4 min\./)).toBeInTheDocument()
@@ -50,6 +51,13 @@ describe('PlannerPage', () => {
     expect(screen.getAllByText('Big detour')).toHaveLength(3) // the demo button + rows A and B
     expect(screen.queryByText('Point on the map')).not.toBeInTheDocument()
     expect(screen.getByText('map route: drawn')).toBeInTheDocument()
+    // With a result, the legend chip appears on the map.
+    expect(screen.getByRole('list', { name: 'Map legend' })).toBeInTheDocument()
+    // Phones open it from the "i" button, so it does not cover the route.
+    const legendButton = screen.getByRole('button', { name: 'Show the map legend' })
+    await user.click(legendButton)
+    expect(legendButton).toHaveAttribute('aria-expanded', 'true')
+    expect(legendButton).toHaveAccessibleName('Hide the map legend')
     expect(screen.getByText('Fake Cafe')).toBeInTheDocument()
     expect(screen.getByText('Fake Stop')).toBeInTheDocument()
 

@@ -113,7 +113,9 @@
       "title": "Legenda mapy",
       "route": "Trasa do przejścia",
       "baseline": "Najkrótsza trasa",
-      "stairs": "Schody"
+      "stairs": "Schody",
+      "show": "Pokaż legendę mapy",
+      "hide": "Ukryj legendę mapy"
     },
     "demoMode": {
       "fixture": "Tryb demo: nagrana trasa (brak klucza do routingu albo usługa nie odpowiedziała).",
