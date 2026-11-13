@@ -9,11 +9,13 @@ The Figma MCP plan has a monthly call limit, so agents work from this file, not 
 ## 1. Idea
 
 Scandinavian minimalism for families on a walk: a light, warm background, a lot of space,
-sage green for nature and the route, deep navy for text and decisions.
+forest green for actions and nature, turquoise for the route, deep navy for text.
 
-Three colour roles, one meaning each:
-- **Navy** = content and decisions (text, the main button).
-- **Sage** = nature and the stair-free route (route line, success, selected states).
+Four colour roles, one meaning each:
+- **Navy** = content (text, badges, point B).
+- **Forest green** (`brand`) = actions and success (main button, selected states, switches, point A).
+- **Turquoise** (`route`) = the stair-free route line on the map. It stands out from the parks and
+  grey streets of the OSM tiles (changed 2026-11-13 after a review of the map).
 - **Terracotta** = stairs only (stairs on the map, stairs warnings). Never used as decoration.
 
 ## 2. Colour tokens
@@ -29,9 +31,11 @@ Contrast was checked against WCAG 2.2: text needs 4.5:1, graphics need 3:1.
 | `muted-foreground` | `#5F6B73` | `#A7B4BC` | secondary text, captions | 5.1:1 |
 | `primary` | `#12334A` | `#E8EEF1` | main button | - |
 | `primary-foreground` | `#FFFFFF` | `#12334A` | text on the main button | 13.1:1 |
-| `brand` | `#4E7360` | `#9DBCA8` | route line, links, switches, success | 4.9:1 (text allowed) |
-| `brand-soft` | `#E3ECE5` | `#1E3A33` | result card, chips, secondary button | navy on it 10.9:1 |
-| `sage-500` | `#6B8F7B` | `#7FA38E` | icons and graphics only, **not text** | 3.3:1 |
+| `brand` | `#2D6A4F` | `#74C69D` | main button, switches, selected states, success | white on it 6.4:1 |
+| `brand-foreground` | `#FFFFFF` | `#0E1E2A` | text on `brand` | - |
+| `brand-soft` | `#D8F3DC` | `#1B4332` | result card, active navigation, secondary button | navy on it > 10:1 |
+| `sage-500` | `#40916C` | `#52B788` | icons and graphics only, **not text** | > 3:1 |
+| `route` | `#0096C7` | `#48CAE4` | route line on the map (graphics only) | > 3:1 |
 | `stairs` | `#C2662D` | `#E08A52` | stairs on the map, warning icons | 3.7:1 (graphics only) |
 | `stairs-text` | `#A8531F` | `#F0A574` | text about stairs | 4.9:1 (dark: 8.3:1) |
 | `border` | `#E4E2DC` | `#24394A` | lines, outlines | - |
@@ -73,13 +77,13 @@ Titles 24 px and up use -1% letter spacing. Avoid `text-xs` for anything a user 
 
 | Component | Rules |
 |---|---|
-| Button | Pill shape. **Primary** = navy, one per screen (for example "Save walk"). **Secondary** = `brand-soft` with navy text. Ghost for icon buttons. |
+| Button | Pill shape. **Primary** = `brand` green, one per screen (for example "Save walk"). **Secondary** = `brand-soft` with navy text. Ghost for icon buttons. |
 | Tabs | Pill track in `muted`, active tab is `card` with Body Strong text. |
-| Point row | Rounded row with a 1 px border: badge (A = navy, B = sage), label, a "Change" text action. Shows "Point on the map" and never raw coordinates; the coordinates are in a "Details" line that is closed by default. Demo routes may show their demo name. |
+| Point row | Rounded row with a 1 px border: badge (A = `brand`, B = navy), label, a "Change" text action. Shows "Point on the map" and never raw coordinates; the coordinates are in a "Details" line that is closed by default. Demo routes may show their demo name. |
 | Result hero | `brand-soft` card: small uppercase tag ("STAIR-FREE"), Title "You avoid 120 m of stairs", Body "Only +3 min longer", then a row of stats (distance, time, places). The other detour cases use the same layout with their status colour. |
 | Banner | Status colour, icon, one short sentence, optional action. |
-| Map markers | A = navy circle, B = sage circle, white 3 px outline, soft shadow, 36 px. Places = white circle with a sage outline and the category icon, 28 px. |
-| Map lines | Stair-free route `brand` 6-7 px; shortest route `muted-foreground` 3 px dashed; stairs `stairs` 6-7 px. |
+| Map markers | A = `brand` circle, B = navy circle, white 3 px outline, soft shadow, 36 px. Places = white circle with a sage outline and the category icon, 28 px. |
+| Map lines | Stair-free route `route` 7 px with a white casing and a soft glow; shortest route `muted-foreground` 3 px dashed; stairs `stairs` 6-7 px. |
 
 ## 6. Layout
 

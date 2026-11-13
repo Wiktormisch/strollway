@@ -16,7 +16,8 @@ import {
 import 'leaflet/dist/leaflet.css'
 import type { LatLng, LatLngTuple, Poi, RouteComparison } from '@/api/types'
 import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '@/constants/demoRoutes'
-import { BASELINE_STYLE, ROUTE_STYLE, STAIRS_STYLE } from '@/constants/mapStyles'
+import { mapLineStyles } from '@/constants/mapStyles'
+import { useMapColors } from '@/lib/cssColors'
 import { categoryIcon } from '@/constants/poiCategories'
 import { planBounds } from '@/lib/planner'
 import { PoiDetails } from './PoiDetails'
@@ -45,6 +46,7 @@ export interface NumberedStop {
 
 export function MapView(props: MapViewProps) {
   const { plan } = props
+  const lines = mapLineStyles(useMapColors())
   return (
     <MapContainer
       center={[DEFAULT_MAP_CENTER.lat, DEFAULT_MAP_CENTER.lng]}
@@ -63,10 +65,15 @@ export function MapView(props: MapViewProps) {
       {plan && (
         <>
           <FitBounds points={planBounds(plan)} />
-          <Polyline positions={plan.baseline.geometry} pathOptions={BASELINE_STYLE} />
-          <Polyline positions={plan.route.geometry} pathOptions={ROUTE_STYLE} />
+          <Polyline positions={plan.baseline.geometry} pathOptions={lines.baseline} />
+          <Polyline positions={plan.route.geometry} pathOptions={lines.routeGlow} />
+          <Polyline positions={plan.route.geometry} pathOptions={lines.routeCasing} />
+          <Polyline positions={plan.route.geometry} pathOptions={lines.route} />
           {plan.baseline.stairs_segments.map((segment, index) => (
-            <Polyline key={index} positions={segment} pathOptions={STAIRS_STYLE} />
+            <Polyline key={`c${index}`} positions={segment} pathOptions={lines.stairsCasing} />
+          ))}
+          {plan.baseline.stairs_segments.map((segment, index) => (
+            <Polyline key={index} positions={segment} pathOptions={lines.stairs} />
           ))}
         </>
       )}
@@ -87,7 +94,7 @@ export function MapView(props: MapViewProps) {
         <Marker
           key={stop.id}
           position={[stop.lat, stop.lng]}
-          icon={letterIcon(String(index + 1), '#0369a1')}
+          icon={letterIcon(String(index + 1), 'var(--primary)')}
           title={stop.title}
           alt={stop.title}
         />
@@ -139,7 +146,7 @@ interface PointMarkerProps {
 }
 
 function PointMarker({ point, letter, title, finish }: PointMarkerProps) {
-  const color = letter === 'A' ? '#059669' : '#7c3aed'
+  const color = letter === 'A' ? 'var(--brand)' : 'var(--primary)'
   return (
     <Marker
       position={[point.lat, point.lng]}
@@ -175,7 +182,7 @@ function finishIcon(): DivIcon {
   if (cached) return cached
   const svg = renderToStaticMarkup(<FlagIcon />)
   const icon = divIcon({
-    html: `<span class="sw-point-icon" style="background:#059669">${svg}</span>`,
+    html: `<span class="sw-point-icon" style="background:var(--brand)">${svg}</span>`,
     className: '',
     iconSize: [30, 30],
     iconAnchor: [15, 15],
@@ -188,11 +195,11 @@ function finishIcon(): DivIcon {
 function FlagIcon() {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-      <path d="M3 1v14" stroke="white" strokeWidth="1.6" strokeLinecap="round" />
-      <rect x="4" y="2" width="10" height="7" fill="white" />
+      <path d="M3 1v14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />
+      <rect x="4" y="2" width="10" height="7" fill="currentColor" />
       <path
         d="M4 2h2.5v1.75H4zM9 2h2.5v1.75H9zM6.5 3.75H9V5.5H6.5zM11.5 3.75H14V5.5h-2.5zM4 5.5h2.5v1.75H4zM9 5.5h2.5v1.75H9zM6.5 7.25H9V9H6.5zM11.5 7.25H14V9h-2.5z"
-        fill="#0f172a"
+        style={{ fill: 'var(--primary)' }}
       />
     </svg>
   )

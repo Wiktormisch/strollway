@@ -5,7 +5,8 @@ import { divIcon, latLngBounds, type DivIcon } from 'leaflet'
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { LatLng, LatLngTuple, Stop } from '@/api/types'
-import { ROUTE_STYLE } from '@/constants/mapStyles'
+import { mapLineStyles } from '@/constants/mapStyles'
+import { useMapColors } from '@/lib/cssColors'
 
 export interface WalkMapProps {
   geometry: LatLngTuple[]
@@ -20,6 +21,7 @@ export interface WalkMapProps {
 }
 
 export function WalkMap(props: WalkMapProps) {
+  const lines = mapLineStyles(useMapColors())
   return (
     <MapContainer
       center={[props.start.lat, props.start.lng]}
@@ -33,20 +35,25 @@ export function WalkMap(props: WalkMapProps) {
       />
       <FitBounds points={props.geometry} />
       {props.onMapClick && <ClickHandler onClick={props.onMapClick} />}
-      <Polyline positions={props.geometry} pathOptions={ROUTE_STYLE} />
-      <Marker position={[props.start.lat, props.start.lng]} icon={badgeIcon('A', '#059669')} />
-      <Marker position={[props.end.lat, props.end.lng]} icon={badgeIcon('B', '#7c3aed')} />
+      <Polyline positions={props.geometry} pathOptions={lines.routeGlow} />
+      <Polyline positions={props.geometry} pathOptions={lines.routeCasing} />
+      <Polyline positions={props.geometry} pathOptions={lines.route} />
+      <Marker position={[props.start.lat, props.start.lng]} icon={badgeIcon('A', 'var(--brand)')} />
+      <Marker position={[props.end.lat, props.end.lng]} icon={badgeIcon('B', 'var(--primary)')} />
       {props.stops.map((stop, index) => (
         <Marker
           key={stop.id}
           position={[stop.lat, stop.lng]}
-          icon={badgeIcon(String(index + 1), '#2563eb')}
+          icon={badgeIcon(String(index + 1), 'var(--primary)')}
           title={props.stopLabel(stop)}
           alt={props.stopLabel(stop)}
         />
       ))}
       {props.draft && (
-        <Marker position={[props.draft.lat, props.draft.lng]} icon={badgeIcon('+', '#d97706')} />
+        <Marker
+          position={[props.draft.lat, props.draft.lng]}
+          icon={badgeIcon('+', 'var(--sage-500)')}
+        />
       )}
     </MapContainer>
   )

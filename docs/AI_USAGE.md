@@ -38,6 +38,13 @@ Before any code, the riskiest assumptions of the plan were checked by hand again
 - The flags of `claude -p` were read from `claude --help`, not guessed, and were tested in stage 6. The test showed that without `--safe-mode` the CLI read the developer's global `CLAUDE.md` and answered with a triage block instead of JSON.
 - In stage 7 the developer asked whether the agent had followed the global rules and to review its plan critically. The agent admitted two misses (it wrote in English instead of Polish, and gave no score) and found a contract gap it had played down: after removing a stop, the route and the arrival times are out of date, and the browser cannot recalculate them. The developer chose to keep the route and say so in the UI. Later reviews of the agent's own diff found a wrong error message, unsafe list keys and a light theme flash, all fixed before commit.
 - Manual testing by the developer (a checklist of about 45 points) found what automated tests did not: a missing map button on phones, the ignored dark system theme, and a cached favicon. The agent also proposed a merge commit prefix (`release:`) that is not a Conventional Commits type, and corrected it itself when the developer asked for the exact merge texts.
+- In stage 7b, session 2 (tokens), the agent did not see the running app; the developer's
+  screenshots showed what tests could not: the sage route was hard to read on OSM tiles and the map
+  stayed light in the dark theme (tiles are images). The agent added a route casing and a CSS filter
+  on the tiles, then a temporary in-app colour playground so the developer could try colours live;
+  the developer chose forest green actions and a turquoise route from it. Each critical review of
+  the agent's own plan or diff found real gaps (a CSS filter on SVG paths is not reliable in every
+  browser, the legend kept the old colour, outdated contrast notes).
 - In the redesign (stage 7b) the agent audited the UI from the code, proposed three directions, and
   built the colour variables, type styles, one mobile screen (light and dark) and four components in
   Figma through the Figma MCP server. It reported honestly that it had not seen the running app.

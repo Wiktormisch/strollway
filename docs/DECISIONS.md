@@ -269,3 +269,23 @@ Checked by hand on 2026-11-12.
 - **Figma:** Light and Dark are two variable collections, because the free Figma plan allows one
   mode per collection. The Figma MCP Starter plan has a monthly call limit, so `docs/DESIGN.md`,
   not Figma, is the source of truth for agents.
+- **Map colours follow the theme (stage 7b, session 2).** Leaflet draws lines as SVG with a
+  colour attribute, and an attribute cannot read `var(--brand)`. `src/lib/cssColors.ts` reads the
+  CSS variables from `<html>` and a `MutationObserver` on its `class` re-reads them when the theme
+  changes (button or system setting), so `lib/theme.ts` did not need to change. Markers are HTML,
+  so they use `var(--...)` directly and need no JavaScript. Missing variables fall back to the
+  light theme values.
+- **Success card text stays navy.** With the first sage `brand`, its text on `brand-soft` was only
+  about 4.3:1 (under 4.5:1). The success card uses `foreground` text with a `brand` icon and
+  border; with the later forest green this is kept for calm, readable text. Stars in the rating use `sage-500` (graphics only).
+- **Removed tokens:** the shadcn `sidebar-*` and `chart-*` tokens; nothing in the app used them.
+- **Readable route on OSM tiles.** Sage green is close to the parks and grey streets on the tiles.
+  Routes and stairs get a casing (a wider line in the `card` colour underneath), and the tile pane
+  gets a CSS filter: softer colours in the light theme (saturate 0.7), inverted brightness with `hue-rotate` in
+  the dark theme. The tiles stay OpenStreetMap; only the browser recolours them.
+- **More colour: forest green actions, turquoise route (2026-11-13).** The first Nordic Sage
+  version looked calm but grey. The developer chose a forest green `brand` for the main button,
+  switches and selected states, a turquoise `route` line with a white casing and a glow (a wide,
+  transparent line, because CSS filters on SVG paths are not reliable in every browser), A = green,
+  B = navy. Orange stays for stairs and warnings only, never for markers or actions, so it
+  always means "be careful".

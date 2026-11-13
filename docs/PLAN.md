@@ -1131,6 +1131,10 @@ diff, list anything unfinished, propose Conventional Commit message(s). Then sto
   3. `feat/ui-planner`: the planner as in the mock-up: floating top bar, bottom sheet with a visual
      handle, point rows without raw coordinates, result hero card, pill buttons and tabs, new map
      markers. Every current element keeps a place (`DESIGN.md` section 8).
+     Known issue from session 2: on phones the top navigation is too wide since the theme button
+     was added (it scrolls sideways). Solve it with the new top bar and its menu, not with a quick fix.
+     Also planned for session 3: coloured category icons, shadows and larger radius on the panel and
+     the top bar.
   4. `feat/ui-pages`: walks list, walk detail, profiles, dialogs and empty / error states.
 - **Out of scope:** dragging the bottom sheet, reverse geocoding (point names), new map tiles,
   new fonts.

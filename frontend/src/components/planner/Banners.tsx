@@ -9,7 +9,7 @@ export function DemoModeBanner({ source }: { source: RouteSource }) {
   const { t } = useTranslation()
   if (source === 'ors') return null
   return (
-    <div className="flex gap-2 rounded-lg border border-amber-300 bg-amber-50 p-2 text-sm text-amber-950 dark:bg-amber-950 dark:text-amber-50">
+    <div className="flex gap-2 rounded-lg border border-border bg-muted p-2 text-sm text-foreground">
       <FlaskConical aria-hidden className="mt-0.5 size-4 shrink-0" />
       <p>{t(`planner.demoMode.${source}`)}</p>
     </div>
