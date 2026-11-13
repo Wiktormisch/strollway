@@ -1116,7 +1116,7 @@ First show me a short plan and wait for my OK. At the end: run the checks, show 
 diff, list anything unfinished, propose Conventional Commit message(s). Then stop.
 ```
 
-### Stage 7b: Visual redesign "Nordic Sage"
+### Stage 7b: Visual redesign "Nordic Sage" - DONE
 
 - **Goal:** a calm, Scandinavian look with its own identity (sage green, deep navy, warm off-white),
   and the stairs result as the hero of the planner. Added after the feature freeze: no new features,

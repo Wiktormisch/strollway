@@ -60,6 +60,13 @@ Before any code, the riskiest assumptions of the plan were checked by hand again
   disappeared on the light B marker in the dark theme. New ideas from the developer (a time slider,
   centring the map on a demo, the tab order) were logged for later instead of growing the session.
   One `git add` ran in the wrong folder; the agent saw that nothing was committed and repeated it.
+- In stage 7b, session 4 (other pages), the developer asked twice for a critical check of the plan
+  before any code. It found real gaps: a link layout that would hide the card heading from screen
+  readers, a dialog that would lose its save button under the phone keyboard, and a warning colour
+  that a contrast script then showed was under 4.5:1 at the first tint. The agent proposed changes
+  outside the plan (moving "Delete walk", the shared map icons) openly before the screenshots, and
+  logged smaller ideas for later instead of doing them. Screenshots again found what tests could
+  not: an almost invisible dashed outline.
 
 ## What the AI is allowed to do inside the app
 

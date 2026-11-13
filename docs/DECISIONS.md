@@ -311,5 +311,28 @@ Checked by hand on 2026-11-12.
   disappeared. `card` is white in the light theme (as in the mock-up) and navy in the dark one.
 - **Collapsible sections use a button inside the heading**, not `<details>`: a heading inside
   `<summary>` is lost for some screen readers, because `<summary>` acts as a button.
+- **Other pages: a 960 px column (stage 7b, session 4).** Walks, walk detail and profiles use
+  `max-w-240` with cards on `background`; the top bar uses the same width, so both edges line up.
+- **One warning banner for every load error.** `WarningBanner` (`stairs-text` on an 8% `stairs`
+  tint) replaces the red `destructive` boxes on all pages and in the planner. 8%, not 10%: at 10%
+  the text is 4.42:1 on the light background (under 4.5:1); at 8% it is 4.52:1 on `background`,
+  4.87:1 on `card` and over 7:1 in the dark theme (checked with a script).
+- **Empty states have one action.** A dashed card with a `muted-foreground/40` outline (the plain
+  `border` colour was almost invisible on white, developer check). When the page header already
+  has the primary button, the empty state action is `secondary`, so there is one primary per screen.
+- **Walk cards: a stretched link.** Only the name is a link; its `::after` layer covers the card.
+  The whole card is clickable and the heading stays a heading for screen readers.
+- **Walk filters look like tabs but are toggle buttons** (`aria-pressed`). They filter one list;
+  tabs (`role="tab"`) would promise separate panels.
+- **Saved stops: number + category colour.** On the walk map a stop is its number on a `card` circle
+  with a category-coloured outline. The order matters on a saved walk, so the number stays; the
+  colour matches the icon in the stop list. Marker helpers moved from `MapView` to `lib/mapIcons.tsx`
+  so both maps share them.
+- **"Delete walk" sits at the end of the page,** under a line, as a red outline button. It is rare
+  and cannot be undone, so it is not next to the title.
+- **Dialogs scroll and keep their actions visible.** The base dialog is `card`, `rounded-2xl`,
+  `max-h-[calc(100dvh-2rem)]` with its own scroll (`dvh` shrinks with the on-screen keyboard), and
+  `DialogFooter` sticks to the bottom. Its negative margins match the dialog padding (20/24 px); change
+  both together. The overlay is `foreground/25` (light) and `background/70` (dark) instead of black.
 - **Shadows use plain black with low alpha** (`rgb(0 0 0 / 0.12)`). They are not palette colours,
   and both themes need the same dark shadow, so there is no token for them.
