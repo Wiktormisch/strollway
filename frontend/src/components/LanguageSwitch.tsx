@@ -15,7 +15,6 @@ export function LanguageSwitch() {
       {LANGUAGES.map((language) => (
         <Button
           key={language}
-          size="sm"
           variant={i18n.language === language ? 'default' : 'ghost'}
           aria-pressed={i18n.language === language}
           lang={language}

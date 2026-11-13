@@ -52,12 +52,10 @@
       "expand": "Pokaż panel"
     },
     "form": {
-      "hint": "Kliknij mapę: pierwsze kliknięcie to start, drugie to cel.",
+      "hint": "Dotknij mapy: pierwsze dotknięcie ustawia A, drugie B. Albo przesuń mapę i wybierz „Zmień”.",
       "start": "Start",
       "end": "Cel",
-      "notSet": "nie wybrano",
       "clear": "Usuń: {{point}}",
-      "useCenter": "Ustaw {{point}} na środku mapy",
       "demoTitle": "Wypróbuj trasę demo",
       "avoidStairs": "Omijaj schody",
       "plan": "Zaplanuj trasę",
@@ -69,41 +67,55 @@
       "noStepFree": "Brak trasy bez schodów"
     },
     "detour": {
-      "summary": "Trasa do przejścia: {{distance}}, {{duration}}.",
       "bigDetour": {
         "title": "Trasa bez schodów: +{{detour}}, +{{minutes}} min",
-        "detail": "Najkrótsza trasa ma <stairs>{{stairs}} schodów</stairs>. Trasa bez schodów: +{{detour}}, +{{minutes}} min."
+        "detail": "Najkrótsza trasa ma <stairs>{{stairs}} schodów</stairs>. Trasa bez schodów: +{{detour}}, +{{minutes}} min.",
+        "tag": "Objazd bez schodów"
       },
       "tinyDetour": {
         "title": "Schody możesz ominąć prawie bez nadkładania drogi.",
-        "detail": "Najkrótsza trasa ma <stairs>{{stairs}} schodów</stairs>. Trasa bez schodów to tylko +{{detour}}."
+        "detail": "Najkrótsza trasa ma <stairs>{{stairs}} schodów</stairs>. Trasa bez schodów to tylko +{{detour}}.",
+        "tag": "Bez schodów"
       },
       "noStepFree": {
         "title": "Między tymi punktami nie ma trasy bez schodów.",
-        "detail": "Trasa ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na mapie na czerwono."
+        "detail": "Trasa ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na mapie na czerwono.",
+        "tag": "Schody na trasie"
       },
       "noStairs": {
         "title": "Na tej trasie nie ma schodów.",
-        "detail": "Z wózkiem możesz iść najkrótszą drogą."
+        "detail": "Z wózkiem możesz iść najkrótszą drogą.",
+        "tag": "Bez schodów"
       },
       "notSearched": {
         "title": "Schody nie są omijane.",
-        "detail": "Trasa ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na mapie na czerwono."
+        "detail": "Trasa ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na mapie na czerwono.",
+        "tag": "Schody dozwolone"
       },
       "checkFailed": {
         "title": "Nie udało się sprawdzić trasy bez schodów.",
-        "detail": "Pokazujemy najkrótszą trasę. Ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na czerwono."
+        "detail": "Pokazujemy najkrótszą trasę. Ma <stairs>{{stairs}} schodów</stairs>, zaznaczonych na czerwono.",
+        "tag": "Nie sprawdzono"
       },
       "unknownStairs": {
         "title": "To linia prosta, a nie prawdziwa trasa.",
-        "detail": "Nie wiemy, czy są na niej schody."
-      }
+        "detail": "Nie wiemy, czy są na niej schody.",
+        "tag": "Szacunek"
+      },
+      "stats": {
+        "distance": "Dystans",
+        "time": "Czas",
+        "places": "Miejsca"
+      },
+      "statsLabel": "Trasa w liczbach"
     },
     "legend": {
       "title": "Legenda mapy",
       "route": "Trasa do przejścia",
       "baseline": "Najkrótsza trasa",
-      "stairs": "Schody"
+      "stairs": "Schody",
+      "show": "Pokaż legendę mapy",
+      "hide": "Ukryj legendę mapy"
     },
     "demoMode": {
       "fixture": "Tryb demo: nagrana trasa (brak klucza do routingu albo usługa nie odpowiedziała).",
@@ -123,7 +135,14 @@
     "save": "Zapisz spacer",
     "profile": {
       "label": "Profil rodziny (ustala tempo)"
-    }
+    },
+    "point": {
+      "onMap": "Punkt na mapie",
+      "notSet": "Nie wybrano",
+      "change": "Zmień",
+      "details": "Szczegóły"
+    },
+    "results": "Twój spacer"
   },
   "poi": {
     "title": "Miejsca po drodze",
@@ -343,10 +362,8 @@
   "trip": {
     "empty": "Ustaw start na mapie (albo wypróbuj start demo), napisz, na co masz ochotę, i kliknij „Zaproponuj wycieczkę”.",
     "form": {
-      "hint": "Kliknij mapę, aby ustawić start. Wycieczka zaczyna się i kończy w tym miejscu.",
+      "hint": "Dotknij mapy, aby ustawić start, albo przesuń mapę i wybierz „Zmień”. Wycieczka zaczyna się i kończy w tym miejscu.",
       "start": "Start",
-      "useCenter": "Ustaw start na środku mapy",
-      "clearStart": "Wyczyść start",
       "demoStart": "Wypróbuj start demo",
       "minutes": "Limit czasu",
       "minutesOption": "{{minutes}} min",
@@ -357,7 +374,8 @@
       "privacy": "Nie wpisuj danych osobowych. Ten tekst jest wysyłany do modelu AI.",
       "submit": "Zaproponuj wycieczkę",
       "planning": "Planuję wycieczkę…",
-      "planningHint": "Model AI może potrzebować 10-20 sekund. Poczekaj chwilę."
+      "planningHint": "Model AI może potrzebować 10-20 sekund. Poczekaj chwilę.",
+      "demoName": "Start demo"
     },
     "engine": {
       "ai": "Zaplanowane przez AI",
@@ -396,5 +414,9 @@
       "dark": "Włącz ciemny motyw",
       "light": "Włącz jasny motyw"
     }
+  },
+  "topBar": {
+    "menu": "Więcej opcji",
+    "theme": "Motyw"
   }
 }

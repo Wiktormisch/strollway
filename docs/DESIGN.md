@@ -40,6 +40,11 @@ Contrast was checked against WCAG 2.2: text needs 4.5:1, graphics need 3:1.
 | `stairs-text` | `#A8531F` | `#F0A574` | text about stairs | 4.9:1 (dark: 8.3:1) |
 | `border` | `#E4E2DC` | `#24394A` | lines, outlines | - |
 | `muted` | `#EFEDE7` | `#1A2F3F` | tab track, skeletons, hover | - |
+| `cat-play` | `#B83280` | `#F687B3` | playground, zoo, beach icons (graphics only) | 5.5:1 on white |
+| `cat-food` | `#6B46C1` | `#B794F4` | cafe, restaurant, shop icons (graphics only) | 6.4:1 on white |
+| `cat-care` | `#2B6CB0` | `#90CDF4` | toilets, water icons (graphics only) | 5.4:1 on white |
+
+Parks and benches use `sage-500`; museums and unknown places use `muted-foreground`.
 
 Status colours (`success`, `info`, `warning`) are built from these tokens:
 success = `brand` on `brand-soft`, info = `foreground` on `muted`, warning = `stairs-text` on a
@@ -54,7 +59,7 @@ Font: **Geist** (already installed, `@fontsource-variable/geist`). Base size is 
 | Style | Size / line height | Weight | Use |
 |---|---|---|---|
 | Display | 32 / 40 | 600 | rare, empty states |
-| Title | 24 / 32 | 600 | page titles, the result headline |
+| Title | 24 / 32 | 600 | page titles (the result headline uses Heading, 20 px: long Polish sentences) |
 | Heading | 20 / 28 | 600 | section titles |
 | Body Large | 18 / 28 | 400 | intro text |
 | Body | 16 / 24 | 400 | default text |

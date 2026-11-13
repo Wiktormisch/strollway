@@ -1,7 +1,8 @@
 # Stage 7b: Visual redesign "Nordic Sage"
 
 **Status:** in progress. Session 1 (`docs/design-system`) merged in PR #21. Session 2
-(`feat/ui-tokens`) done on 2026-11-13. Sessions 3 and 4 are next.
+(`feat/ui-tokens`) merged in PR #22. Session 3 (`feat/ui-planner`) done on 2026-11-13.
+Session 4 is next.
 **Spec:** `docs/DESIGN.md`; `docs/PLAN.md`, section E, "Stage 7b".
 
 ## Session 2: design tokens (`feat/ui-tokens`)
@@ -53,3 +54,59 @@ Decisions are also logged in `docs/DECISIONS.md` (map colours, route casing, mor
 
 Session 3, `feat/ui-planner`: top bar, bottom sheet, point rows, result hero card, markers,
 coloured category icons, shadows and radius.
+
+## Session 3: planner layout (`feat/ui-planner`)
+
+### Goal
+
+The planner as in `DESIGN.md` sections 4-8: floating top bar, bottom sheet, point rows, result
+hero, pill controls, new markers and coloured category icons. Every old element keeps a place.
+
+### How the session went
+
+The work was split into four parts, each checked by the developer on screenshots and committed
+on its own.
+
+| Part | What happened |
+|---|---|
+| Plan | The agent proposed the plan and a category palette (contrast computed with a script). A review in the code found too small touch targets (32 px buttons), the Leaflet zoom under the new top bar, and a second start row in the trip form. The developer chose the "more" menu for phones only. |
+| A: foundation | `--radius` 12 px, pill buttons and tabs, 44-48 px controls, `rounded-xl` inputs, `cat-*` tokens, `categoryColor()`. |
+| B: top bar | Floating pill bar with no sideways scrolling (fixes the known issue from session 2); phone popover with theme and language; Leaflet controls moved under the bar. |
+| C: sheet and cards | `PlannerSheet` (24 px top radius, visual handle, whole header toggles), `PointRow` with a closed "Details" line, result hero with tag and stats. Developer feedback: a clear break between the form and the result, a more inviting demo button, the weather above the trip stops, centred. |
+| D: map and icons | 36 px A/B markers with a white outline, 28 px place markers with coloured icons, coloured filter chips, stairs and round-trip icons at the switches, legend chip on the map, places and transit stops as collapsible cards. |
+| Self-review | The agent found the floating save button touching the folded sheet. The developer saw the legend covering point B and a nearly invisible outline on B in the dark theme. Fixes: `bottom-24`, a legend behind an "i" button on phones, the outline in `card`, and a disclosure button inside the section headings. |
+
+### Tests
+
+| Area | What is checked |
+|---|---|
+| `AppLayout` | active link, phone menu switches the theme, Escape closes it and returns the focus |
+| `PointRow` | no coordinates in the label, closed details, demo name, no point, actions |
+| `DetourCard` | status tag, stats row, no places stat without a count |
+| `CollapsibleSection` | closed by default, heading kept, `aria-expanded` on the button, can start open |
+| `PlannerPage` | demo name in both rows, sheet toggle `aria-expanded`, legend chip only with a result and its "i" button |
+| `lib/planner`, `poiCategories` | `demoRouteOf`, `categoryColor` (never the stairs colour) |
+
+Vitest: 119 passed (29 files). ESLint, Prettier and `vite build` are green.
+Manual (developer): screenshots of parts A-C on a 360 px phone and desktop. Part D is checked
+after this log. Not checked by the agent: it had no browser.
+
+### Problems and decisions
+
+Decisions are in `docs/DECISIONS.md` (category colours, touch sizes, phone menu, point rows,
+result title size, legend chip, shadows).
+
+- **PowerShell 5.1 wrote a UTF-8 BOM** into one file; removed before the commit. Edits are done
+  with Python or the editor, which keep LF and no BOM.
+- **A `git add` ran in the wrong folder** (paths relative to the repo root while the shell was in
+  `frontend/`). Nothing was committed; the commit was repeated with the right paths.
+
+### Ideas for later (developer, not in this redesign)
+
+- A slider with a number field for the trip time limit, instead of five buttons.
+- Centre the map on the markers after a demo route or demo start is picked.
+- "Trip idea" as the first tab (changes the default mode and the first impression).
+
+### Next session
+
+Session 4, `feat/ui-pages`: walks list, walk detail, profiles, dialogs, empty and error states.

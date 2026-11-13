@@ -289,3 +289,27 @@ Checked by hand on 2026-11-12.
   transparent line, because CSS filters on SVG paths are not reliable in every browser), A = green,
   B = navy. Orange stays for stairs and warnings only, never for markers or actions, so it
   always means "be careful".
+- **Category colours: five groups, not eleven colours (stage 7b, session 3).** New tokens
+  `cat-play` (playground, zoo, beach), `cat-food` (cafe, restaurant, shop) and `cat-care`
+  (toilets, water); parks and benches use `sage-500`, museums and unknown places
+  `muted-foreground`. Each has at least 5:1 on white and 6:1 on the dark card (graphics need 3:1).
+  No orange or yellow, because terracotta means stairs. `categoryColor()` returns `var(--...)`,
+  because Tailwind cannot see class names built at runtime; the map markers use the same value.
+- **Touch sizes in the shared components.** Buttons, inputs, selects and tabs are 44-48 px high,
+  so every page gets larger targets, not only the planner. Dense chips (`size="sm"`, demo routes,
+  time limits, place filters) are 36 px with an 8 px gap.
+- **Phone menu as a popover.** Language and theme are toggles, not commands, so the "more" button
+  opens a Radix Popover (already in `radix-ui`, no new package). From 768 px they sit in the bar.
+- **Point rows never show coordinates.** The label is "Point on the map" or the demo name; the
+  coordinates are in a closed `<details>`. The demo name is derived from the point (a point equal
+  to a demo point), so a map click removes it with no extra state.
+- **Result title is 20 px, not 24 px.** Polish result titles are long full sentences; at 24 px they
+  wrap to three or four lines on a phone.
+- **Legend chip.** Phones: an "i" button under the zoom buttons opens it, because an open chip
+  covered point B (developer check). From 768 px: always open, bottom left of the map.
+- **Marker outline is `card`, not white.** In the dark theme point B is light, so a white outline
+  disappeared. `card` is white in the light theme (as in the mock-up) and navy in the dark one.
+- **Collapsible sections use a button inside the heading**, not `<details>`: a heading inside
+  `<summary>` is lost for some screen readers, because `<summary>` acts as a button.
+- **Shadows use plain black with low alpha** (`rgb(0 0 0 / 0.12)`). They are not palette colours,
+  and both themes need the same dark shadow, so there is no token for them.

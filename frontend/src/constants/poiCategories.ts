@@ -47,6 +47,27 @@ export function categoryIcon(category: string): LucideIcon {
   return ICONS[category] ?? MapPin
 }
 
+// Five colour groups instead of eleven colours, so the map stays calm (DESIGN.md section 2).
+// Values are CSS variable names. Tailwind cannot see class names built at runtime, so
+// components use `style={{ color: categoryColor(category) }}`, and so does the map HTML.
+const COLOR_GROUPS: Record<string, string> = {
+  playground: 'cat-play',
+  zoo: 'cat-play',
+  beach: 'cat-play',
+  cafe: 'cat-food',
+  restaurant: 'cat-food',
+  shop: 'cat-food',
+  toilets: 'cat-care',
+  water: 'cat-care',
+  park: 'sage-500',
+  bench: 'sage-500',
+}
+
+/** A CSS colour for the category icon; museum and unknown categories are muted. */
+export function categoryColor(category: string): string {
+  return `var(--${COLOR_GROUPS[category] ?? 'muted-foreground'})`
+}
+
 /** Known categories first, in a fixed order; unknown ones at the end. */
 export function categoryOrder(category: string): number {
   const index = (POI_CATEGORIES as readonly string[]).indexOf(category)

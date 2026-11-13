@@ -8,6 +8,7 @@ import type {
   RoutePlanErrorCode,
   TripIdeaErrorCode,
 } from '@/api/types'
+import { DEMO_ROUTES, type DemoRoute } from '@/constants/demoRoutes'
 import { categoryOrder } from '@/constants/poiCategories'
 
 /**
@@ -100,4 +101,16 @@ export function planErrorKey(error: unknown): PlanErrorKey {
 /** All points of both routes, to fit the map view around them. */
 export function planBounds(plan: RouteComparison): LatLngTuple[] {
   return [...plan.route.geometry, ...plan.baseline.geometry]
+}
+
+/**
+ * The demo route a point comes from, or null. Derived from the point itself, so a map click
+ * or "Change" removes the demo name with no extra state.
+ */
+export function demoRouteOf(point: LatLng | null, which: 'start' | 'end'): DemoRoute['id'] | null {
+  if (!point) return null
+  const match = DEMO_ROUTES.find(
+    (route) => route[which].lat === point.lat && route[which].lng === point.lng,
+  )
+  return match?.id ?? null
 }

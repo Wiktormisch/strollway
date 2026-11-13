@@ -2,8 +2,9 @@ import { useTranslation } from 'react-i18next'
 import { RefreshCw } from 'lucide-react'
 import type { RoutePlan } from '@/api/types'
 import { Button } from '@/components/ui/button'
-import { categoryIcon } from '@/constants/poiCategories'
+import { categoryColor, categoryIcon } from '@/constants/poiCategories'
 import { countCategories, visiblePois } from '@/lib/planner'
+import { CollapsibleSection } from './CollapsibleSection'
 import { PoiFilterChips } from './PoiFilterChips'
 import { usePoiLabel } from '@/lib/poiLabel'
 
@@ -49,9 +50,13 @@ export function PlacesSection({ plan, hidden, onToggle, onReload, reloading }: P
               const Icon = categoryIcon(poi.category)
               return (
                 <li key={poi.poi_id} className="flex items-center gap-2 py-1.5">
-                  <Icon aria-hidden className="size-4 shrink-0 text-muted-foreground" />
+                  <Icon
+                    aria-hidden
+                    className="size-4 shrink-0"
+                    style={{ color: categoryColor(poi.category) }}
+                  />
                   <span className="flex-1">{label(poi)}</span>
-                  <span className="text-xs text-muted-foreground">
+                  <span className="text-sm text-muted-foreground tabular-nums">
                     {t('poi.fromStart', { minutes: poi.at_min })}
                   </span>
                 </li>
@@ -64,11 +69,9 @@ export function PlacesSection({ plan, hidden, onToggle, onReload, reloading }: P
   }
 
   return (
-    <section aria-labelledby="places-title" className="space-y-2">
-      <h2 id="places-title" className="text-sm font-semibold">
-        {t('poi.title')}
-      </h2>
+    // Open by default: places along the way are the useful part during a walk.
+    <CollapsibleSection id="places-title" title={t('poi.title')} defaultOpen>
       {body}
-    </section>
+    </CollapsibleSection>
   )
 }

@@ -18,7 +18,7 @@ export function ThemeSwitch() {
   }
 
   return (
-    <Button size="icon-sm" variant="ghost" aria-label={label} title={label} onClick={toggle}>
+    <Button size="icon" variant="ghost" aria-label={label} title={label} onClick={toggle}>
       <Icon aria-hidden />
     </Button>
   )
