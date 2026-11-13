@@ -33,7 +33,7 @@ export function WalkCard({ walk }: { walk: WalkListItem }) {
         </dl>
         {walk.status === 'done' && walk.rating !== null && (
           <p className="flex items-center gap-1 text-sm">
-            <Star aria-hidden className="size-4 fill-amber-400 text-amber-500" />
+            <Star aria-hidden className="size-4 fill-sage-500 text-sage-500" />
             {t('walks.rating.value', { value: walk.rating })}
           </p>
         )}

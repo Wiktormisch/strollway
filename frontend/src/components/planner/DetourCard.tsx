@@ -16,9 +16,11 @@ const TONE: Record<DetourCase, 'good' | 'info' | 'warn'> = {
 }
 
 const TONE_STYLE = {
-  good: 'border-emerald-300 bg-emerald-50 text-emerald-950 dark:bg-emerald-950 dark:text-emerald-50',
-  info: 'border-sky-300 bg-sky-50 text-sky-950 dark:bg-sky-950 dark:text-sky-50',
-  warn: 'border-red-300 bg-red-50 text-red-950 dark:bg-red-950 dark:text-red-50',
+  // Navy text reads best on the soft green; the icon carries the brand colour.
+  // `[&>svg]:` styles the direct svg child.
+  good: 'border-brand/30 bg-brand-soft text-foreground [&>svg]:text-brand',
+  info: 'border-border bg-muted text-foreground',
+  warn: 'border-stairs/40 bg-stairs/10 text-stairs-text',
 }
 
 const TONE_ICON = { good: CircleCheck, info: Info, warn: TriangleAlert }
@@ -42,7 +44,7 @@ export function DetourCard({ plan, avoidStairs }: DetourCardProps) {
     minutes: plan.extra_min ?? 0,
   }
   // <Trans> puts the <stairs> tag from the translation around a real <strong> element.
-  const stairsTag = { stairs: <strong className="font-semibold text-red-700 dark:text-red-300" /> }
+  const stairsTag = { stairs: <strong className="font-semibold text-stairs-text" /> }
 
   return (
     <section

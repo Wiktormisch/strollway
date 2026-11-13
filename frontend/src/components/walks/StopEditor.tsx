@@ -169,7 +169,7 @@ function StopRow(props: {
     <form noValidate onSubmit={save} className="space-y-2 rounded-lg border p-3">
       <div className="flex items-start justify-between gap-2">
         <p className="font-medium break-words">
-          <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
+          <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-primary text-xs text-primary-foreground">
             {props.number}
           </span>
           {props.label}
@@ -274,7 +274,7 @@ function NewStopForm(props: {
   }
 
   return (
-    <form noValidate onSubmit={submit} className="space-y-3 rounded-lg border border-amber-400 p-3">
+    <form noValidate onSubmit={submit} className="space-y-3 rounded-lg border border-brand p-3">
       <p className="text-sm" aria-live="polite">
         {props.draft ? t('stops.pointSet') : t('stops.addHint')}
       </p>

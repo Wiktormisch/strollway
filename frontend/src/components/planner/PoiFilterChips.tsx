@@ -29,7 +29,7 @@ export function PoiFilterChips({ categories, hidden, onToggle }: PoiFilterChipsP
               'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs outline-none',
               'focus-visible:ring-3 focus-visible:ring-ring/50',
               shown
-                ? 'border-primary bg-primary text-primary-foreground'
+                ? 'border-brand bg-brand text-brand-foreground'
                 : 'bg-background line-through opacity-70',
             )}
           >

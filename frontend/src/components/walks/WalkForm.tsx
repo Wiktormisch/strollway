@@ -86,7 +86,7 @@ export function WalkForm(props: WalkFormProps) {
           onChange={setProfileId}
         />
         {profileId !== props.defaultProfileId && (
-          <p className="text-sm text-amber-700 dark:text-amber-400">{t('walkForm.paceMismatch')}</p>
+          <p className="text-sm text-stairs-text">{t('walkForm.paceMismatch')}</p>
         )}
         <FieldError id="walk-profile-error" message={errors.profile} />
       </div>

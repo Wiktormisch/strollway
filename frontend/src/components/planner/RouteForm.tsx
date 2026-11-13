@@ -83,8 +83,10 @@ function PointRow({
       <span
         aria-hidden
         className={
-          'flex size-6 items-center justify-center rounded-full text-xs font-bold text-white ' +
-          (which === 'start' ? 'bg-emerald-600' : 'bg-violet-600')
+          'flex size-6 items-center justify-center rounded-full text-xs font-bold ' +
+          (which === 'start'
+            ? 'bg-brand text-brand-foreground'
+            : 'bg-primary text-primary-foreground')
         }
       >
         {which === 'start' ? 'A' : 'B'}

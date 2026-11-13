@@ -145,7 +145,7 @@ function WalkView({ walk }: { walk: WalkDetail }) {
       <div
         className={cn(
           'isolate h-72 overflow-hidden rounded-xl border sm:h-96',
-          adding && 'ring-2 ring-amber-400',
+          adding && 'ring-2 ring-brand',
         )}
       >
         <WalkMap
@@ -388,7 +388,7 @@ function RatingInput({
               aria-hidden
               className={cn(
                 'size-7',
-                active ? 'fill-amber-400 text-amber-500' : 'text-muted-foreground',
+                active ? 'fill-sage-500 text-sage-500' : 'text-muted-foreground',
               )}
             />
           </button>

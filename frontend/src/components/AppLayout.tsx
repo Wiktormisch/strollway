@@ -39,7 +39,7 @@ export function AppLayout() {
                 className={({ isActive }) =>
                   cn(
                     'shrink-0 rounded-md px-2 py-1.5 text-sm whitespace-nowrap hover:bg-muted sm:px-3',
-                    isActive && 'bg-muted font-medium',
+                    isActive && 'bg-brand-soft font-medium text-foreground hover:bg-brand-soft',
                   )
                 }
               >

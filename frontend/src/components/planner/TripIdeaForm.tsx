@@ -51,7 +51,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
       <p className="text-sm text-muted-foreground">{t('trip.form.hint')}</p>
 
       <div className="flex items-center gap-2 rounded-lg border p-2 text-sm">
-        <MapPin aria-hidden className="size-4 shrink-0 text-emerald-600" />
+        <MapPin aria-hidden className="size-4 shrink-0 text-sage-500" />
         <span className="font-medium">{t('trip.form.start')}:</span>
         <span className={cn('flex-1 truncate', !props.start && 'text-muted-foreground')}>
           {props.start
@@ -144,7 +144,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
           // maxLength stops typing; slice also cuts a longer pasted text.
           onChange={(event) => setWishes(event.target.value.slice(0, MAX_WISHES_LENGTH))}
         />
-        <p id={`${ids}-wishes-hint`} className="text-xs text-amber-800 dark:text-amber-300">
+        <p id={`${ids}-wishes-hint`} className="text-xs text-stairs-text">
           {t('trip.form.privacy')}
         </p>
       </div>

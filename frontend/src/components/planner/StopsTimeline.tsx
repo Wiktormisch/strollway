@@ -33,8 +33,8 @@ export function StopsTimeline({ engine, stops, totals, onRemove }: StopsTimeline
           className={cn(
             'inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium',
             llm
-              ? 'border-violet-300 bg-violet-50 text-violet-900 dark:bg-violet-950 dark:text-violet-100'
-              : 'border-slate-300 bg-slate-50 text-slate-900 dark:bg-slate-900 dark:text-slate-100',
+              ? 'border-brand/30 bg-brand-soft text-foreground'
+              : 'border-border bg-muted text-foreground',
           )}
         >
           <EngineIcon aria-hidden className="size-3.5" />
@@ -45,8 +45,7 @@ export function StopsTimeline({ engine, stops, totals, onRemove }: StopsTimeline
       <div
         className={cn(
           'rounded-lg border p-3 text-sm',
-          totals.overLimit &&
-            'border-amber-400 bg-amber-50 text-amber-950 dark:bg-amber-950 dark:text-amber-50',
+          totals.overLimit && 'border-stairs/40 bg-stairs/10 text-stairs-text',
         )}
       >
         <p className="flex items-center gap-2 font-medium">
@@ -79,7 +78,7 @@ export function StopsTimeline({ engine, stops, totals, onRemove }: StopsTimeline
             <li key={stop.poi_id} className="flex gap-3 rounded-lg border p-3">
               <span
                 aria-hidden
-                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-sky-700 text-sm font-semibold text-white"
+                className="flex size-7 shrink-0 items-center justify-center rounded-full bg-primary text-sm font-semibold text-primary-foreground"
               >
                 {index + 1}
               </span>
