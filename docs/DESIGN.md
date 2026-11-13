@@ -87,7 +87,7 @@ Titles 24 px and up use -1% letter spacing. Avoid `text-xs` for anything a user 
 | Point row | Rounded row with a 1 px border: badge (A = `brand`, B = navy), label, a "Change" text action. Shows "Point on the map" and never raw coordinates; the coordinates are in a "Details" line that is closed by default. Demo routes may show their demo name. |
 | Result hero | `brand-soft` card: small uppercase tag ("STAIR-FREE"), Title "You avoid 120 m of stairs", Body "Only +3 min longer", then a row of stats (distance, time, places). The other detour cases use the same layout with their status colour. |
 | Banner | Status colour, icon, one short sentence, optional action. |
-| Map markers | A = `brand` circle, B = navy circle, white 3 px outline, soft shadow, 36 px. Places = white circle with a sage outline and the category icon, 28 px. |
+| Map markers | A = `brand` circle, B = navy circle, white 3 px outline, soft shadow, 36 px. Places = white circle with a sage outline and the category icon, 28 px. Saved stops (walk detail) = their number on a `card` circle with an outline in the category colour, 32 px; the stop list shows the same number and the coloured icon. |
 | Map lines | Stair-free route `route` 7 px with a white casing and a soft glow; shortest route `muted-foreground` 3 px dashed; stairs `stairs` 6-7 px. |
 
 ## 6. Layout

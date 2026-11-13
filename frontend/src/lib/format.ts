@@ -6,6 +6,15 @@ export function formatDistance(metres: number, locale = 'en'): string {
   return `${km} km`
 }
 
+/** "Jan 1, 2026" in English, "1 sty 2026" in Polish, in the user's time zone. */
+export function formatDate(iso: string, locale = 'en'): string {
+  return new Intl.DateTimeFormat(locale, {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(new Date(iso))
+}
+
 /** "6 min", "1 h", "1 h 05 min". */
 export function formatDuration(minutes: number): string {
   const total = Math.max(0, Math.round(minutes))

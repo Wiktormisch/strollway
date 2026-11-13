@@ -139,7 +139,8 @@
 
 /* Map markers (Leaflet divIcon HTML, see components/planner/MapView.tsx). */
 .sw-poi-icon,
-.sw-point-icon {
+.sw-point-icon,
+.sw-stop-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -164,6 +165,15 @@
   color: var(--primary-foreground);
   font-weight: 700;
   font-size: 16px;
+}
+
+.sw-stop-icon {
+  /* A saved stop (WalkMap): the number on `card`, the outline in the category colour. */
+  background: var(--card);
+  border: 3px solid var(--muted-foreground);
+  color: var(--foreground);
+  font-weight: 700;
+  font-size: 14px;
 }
 
 /* Native controls (scrollbars, date pickers) follow the theme too. */

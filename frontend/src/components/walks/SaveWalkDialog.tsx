@@ -57,7 +57,7 @@ export function SaveWalkDialog(props: SaveWalkDialogProps) {
 
   return (
     <Dialog open={props.open} onOpenChange={changeOpen}>
-      <DialogContent className="max-h-[90svh] overflow-y-auto">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle>{t('walkForm.title')}</DialogTitle>
           <DialogDescription>{props.description ?? t('walkForm.description')}</DialogDescription>

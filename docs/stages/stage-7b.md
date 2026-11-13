@@ -1,8 +1,7 @@
 # Stage 7b: Visual redesign "Nordic Sage"
 
-**Status:** in progress. Session 1 (`docs/design-system`) merged in PR #21. Session 2
-(`feat/ui-tokens`) merged in PR #22. Session 3 (`feat/ui-planner`) done on 2026-11-13.
-Session 4 is next.
+**Status:** done. Session 1 (`docs/design-system`) merged in PR #21, session 2 (`feat/ui-tokens`)
+in PR #22, session 3 (`feat/ui-planner`) in PR #23. Session 4 (`feat/ui-pages`) done on 2026-11-14.
 **Spec:** `docs/DESIGN.md`; `docs/PLAN.md`, section E, "Stage 7b".
 
 ## Session 2: design tokens (`feat/ui-tokens`)
@@ -106,7 +105,71 @@ result title size, legend chip, shadows).
 - A slider with a number field for the trip time limit, instead of five buttons.
 - Centre the map on the markers after a demo route or demo start is picked.
 - "Trip idea" as the first tab (changes the default mode and the first impression).
+- Session 4: icons instead of text in the top bar on narrow phones (the labels are cut off, for
+  example "Plan...").
+- Session 4: keep the dialog close button visible while a long dialog scrolls.
+- Session 4: trip idea stops in the planner use navy numbers; saved walks use the category colour.
+  Use the same stop marker in both.
+- Session 4: one shared class for title letter spacing (`tracking-[-0.01em]` is in three places).
 
 ### Next session
 
 Session 4, `feat/ui-pages`: walks list, walk detail, profiles, dialogs, empty and error states.
+
+## Session 4: other pages and shared states (`feat/ui-pages`)
+
+### Goal
+
+The walks list, walk detail, profiles and dialogs in the same card language as the planner, and
+one look for loading, empty and error states on every page (`DESIGN.md` sections 6 and 7).
+
+### How the session went
+
+The agent checked its plan against the code twice before starting (the developer asked for a
+critical review). That found a missing date helper, a link layout that would hide the card heading,
+a possible contrast problem in the warning banner, the not-found page, the dialog close button over
+long Polish titles, and the save button lost under the on-screen keyboard. The work was split into
+five parts; the developer checked each one on screenshots before the commit.
+
+| Part | What happened |
+|---|---|
+| A: layout and states | 960 px column, cards with `rounded-2xl` and a 1 px border, `EmptyState`, `WarningBanner` (also in the planner), `ListSkeleton`, not-found page. A script showed that a 10% tint fails AA, so the banner uses 8%. Developer feedback: the dashed outline was almost invisible; it now uses `muted-foreground/40`. The unused `Placeholder` page was removed. |
+| B: walks list | Filters as a pill track (toggle buttons), walk cards with a stretched link, the saved date (`formatDate`), a stats grid and a status chip. |
+| C: walk detail | Marker helpers moved to `lib/mapIcons.tsx`; A/B markers as in the planner; stops with a number and the category colour on the map and in the list; stats card like the result hero; 44 px stars and buttons; "Delete walk" moved to the end. Two lint errors (React Compiler: a component created during render; fast refresh: mixed exports) were fixed. |
+| D: profiles and dialogs | Base dialog in `card` with its own scroll and a sticky footer, translated close button, overlay from tokens; form actions in the footer; an action in the empty profiles state; age chips. |
+| Self-review | A full review of the session diff found no bugs; risks and ideas went to the table below and to "Ideas for later". |
+
+### Tests
+
+| Area | What is checked |
+|---|---|
+| `States` | empty state with one action, warning banner with a working retry, skeleton announces loading |
+| `lib/format` | `formatDate` in English and Polish |
+| `WalksPage` | saved date on the card, `aria-pressed` on the active filter |
+| `lib/mapIcons` | stop number and category colour, muted colour (never stairs) for unknown places, icon cache |
+| `WalkDetailPage` | stats row with its label, status chip, no coordinate-like numbers on the page |
+| `ConfirmDialog` | translated close button, red confirm, Cancel only closes |
+| `ProfilesPage` | the empty state action opens the form |
+
+Vitest: 130 passed (33 files). ESLint, Prettier and `vite build` are green. The raw colour grep
+finds nothing in components (only the documented fallbacks in `lib/cssColors.ts`).
+Manual (developer): every part on screenshots, light and dark, phone and desktop.
+Not checked by the agent: it had no browser.
+
+### Problems and risks
+
+- **Sticky dialog footer** depends on negative margins that match the dialog padding. jsdom does
+  not compute layout, so no test covers it; it is noted in `DECISIONS.md`.
+- **The shell changed folders** between commands, so a few Prettier and grep runs looked at the
+  wrong path. They were repeated with full paths before any result was reported.
+- **English dates** follow `Intl` ("Jan 1, 2026"); the first test expected "1 Jan 2026" and was
+  fixed, not the code.
+
+## Stage summary
+
+Stage 7b is done in four sessions and four PRs: the design system and Figma reference, colour
+tokens for light and dark, the planner layout, and the other pages. The app now has one visual
+language: tokens only (no raw colours in components), pill controls with 44-48 px targets, cards
+with a 1 px border, one warning, empty and loading style everywhere, and the stairs result as the
+hero of the planner. Every part was checked by the developer on screenshots before its commit.
+Open ideas are listed in "Ideas for later"; none of them blocks stage 8 or 9.

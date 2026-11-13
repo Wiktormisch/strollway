@@ -3,11 +3,11 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import type { WalkStatus } from '@/api/types'
 import { useLoadDemoData, useWalks } from '@/api/walks'
-import { EmptyState, LoadError } from '@/components/common/States'
+import { EmptyState, ListSkeleton, LoadError } from '@/components/common/States'
 import { WalkCard } from '@/components/walks/WalkCard'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage } from '@/lib/fieldErrors'
+import { cn } from '@/lib/utils'
 import { usePageTitle } from '@/lib/usePageTitle'
 
 type Filter = 'all' | WalkStatus
@@ -29,34 +29,33 @@ export function WalksPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <h1 className="text-2xl font-semibold">{t('pages.walks.title')}</h1>
+    <div className="space-y-5">
+      <h1 className="text-2xl font-semibold tracking-[-0.01em]">{t('pages.walks.title')}</h1>
 
-      <div role="group" aria-label={t('walks.filter.label')} className="flex flex-wrap gap-1.5">
+      {/* Looks like the planner tabs (a pill track in `muted`), but it filters one list, so it
+          is a group of toggle buttons (aria-pressed), not tabs with their own panels. */}
+      <div
+        role="group"
+        aria-label={t('walks.filter.label')}
+        className="inline-flex max-w-full gap-1 rounded-full bg-muted p-1"
+      >
         {FILTERS.map((value) => (
-          <Button
+          <button
             key={value}
-            size="sm"
-            variant={filter === value ? 'default' : 'outline'}
+            type="button"
             aria-pressed={filter === value}
             onClick={() => setFilter(value)}
+            className={cn(
+              'h-10 min-w-0 truncate rounded-full px-4 text-sm font-medium text-muted-foreground transition-colors outline-none hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50',
+              filter === value && 'bg-card text-foreground shadow-sm',
+            )}
           >
             {t(`walks.filter.${value}`)}
-          </Button>
+          </button>
         ))}
       </div>
 
-      {walks.isPending && (
-        <div
-          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-          role="status"
-          aria-label={t('common.loading')}
-        >
-          <Skeleton className="h-36" />
-          <Skeleton className="h-36" />
-          <Skeleton className="h-36" />
-        </div>
-      )}
+      {walks.isPending && <ListSkeleton className="sm:grid-cols-2 lg:grid-cols-3" />}
       {walks.isError && <LoadError error={walks.error} onRetry={() => walks.refetch()} />}
       {walks.data?.length === 0 &&
         (filter === 'all' ? (

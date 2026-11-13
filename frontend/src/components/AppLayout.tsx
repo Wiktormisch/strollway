@@ -32,7 +32,7 @@ export function AppLayout() {
           fullScreen ? 'absolute inset-x-0 top-0 md:left-100' : 'sticky top-0',
         )}
       >
-        <div className="mx-auto flex max-w-5xl items-center gap-1 rounded-full border bg-card p-1.5 shadow-lg">
+        <div className="mx-auto flex max-w-240 items-center gap-1 rounded-full border bg-card p-1.5 shadow-lg">
           <NavLink
             to="/"
             aria-label={t('app.name')}
@@ -72,7 +72,9 @@ export function AppLayout() {
       </header>
       <main
         className={cn(
-          fullScreen ? 'relative min-h-0 flex-1' : 'mx-auto w-full max-w-5xl px-4 py-6',
+          fullScreen
+            ? 'relative min-h-0 flex-1'
+            : 'mx-auto w-full max-w-240 px-4 pt-6 pb-10 md:pt-8',
         )}
       >
         <Outlet />
