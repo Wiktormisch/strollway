@@ -53,7 +53,8 @@ export interface TransitStop {
   distance_m: number
 }
 
-export interface RoutePlan {
+/** The part shared by route-plans and trip-ideas: two routes and the stairs comparison. */
+export interface RouteComparison {
   source: RouteSource
   /** false = no step-free route; null = not searched or the check failed. */
   step_free_available: boolean | null
@@ -61,12 +62,75 @@ export interface RoutePlan {
   baseline: RouteGeometry
   detour_m: number | null
   extra_min: number | null
+}
+
+export interface RoutePlan extends RouteComparison {
   pois_status: 'ok' | 'unavailable'
   pois: Poi[]
   transit_stops: TransitStop[]
 }
 
 export type RoutePlanErrorCode = 'no_route' | 'no_routable_point'
+
+// ----- Trip ideas (TripIdea*Serializer in backend/planning/serializers.py) -----
+
+export type Language = 'pl' | 'en'
+
+export interface TripIdeaRequest {
+  start: LatLng
+  profile_id?: number | null
+  /** 15-180. */
+  max_minutes: number
+  round_trip: boolean
+  language: Language
+  /** At most 200 characters, may be empty. Sent to the LLM. */
+  wishes: string
+}
+
+/** Who built the plan. Only "rules" is not an LLM. */
+export type TripEngine = 'rules' | 'claude_cli' | 'anthropic' | 'nvidia'
+
+export interface TripStop {
+  poi_id: string
+  name: string | null
+  category: string
+  lat: number
+  lng: number
+  distance_m: number
+  opening_hours: string | null
+  open_now: boolean | null
+  /** Minutes from the start of the trip. */
+  arrive_min: number
+  planned_minutes: number
+  reason: string
+}
+
+export interface Weather {
+  temp_c: number | null
+  precip_probability: number | null
+  wind_kmh: number | null
+}
+
+export interface TripIdea extends RouteComparison {
+  engine: TripEngine
+  summary: string
+  tips: string[]
+  unmet_wishes: string[]
+  stops: TripStop[]
+  /** Removed by the backend to fit the time limit. */
+  dropped_stops: { poi_id: string; name: string | null }[]
+  walking_min: number
+  stops_min: number
+  total_min: number
+  max_minutes: number
+  /** true = more than 10% over max_minutes. */
+  over_limit: boolean
+  weather: Weather | null
+  transit_stops: TransitStop[]
+}
+
+export type TripIdeaErrorCode =
+  'no_places_nearby' | 'places_unavailable' | 'no_route' | 'no_routable_point'
 
 // ----- Saved data (backend/walks/serializers.py) -----
 
@@ -164,6 +228,6 @@ export interface WalkDetail extends WalkCommon {
 export type WalkCreate = Omit<
   WalkDetail,
   'id' | 'status' | 'rating' | 'notes' | 'ai_summary' | 'stops' | 'created_at' | 'updated_at'
-> & { stops: NestedStopInput[] }
+> & { stops: NestedStopInput[]; ai_summary?: string }
 
 export type WalkUpdate = Partial<Pick<WalkDetail, 'name' | 'notes' | 'status' | 'rating'>>

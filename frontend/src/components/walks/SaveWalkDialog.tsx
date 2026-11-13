@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useNavigate } from 'react-router-dom'
 import { toast } from 'sonner'
-import type { FamilyProfile, LatLng, RoutePlan } from '@/api/types'
+import type { FamilyProfile, Poi, WalkCreate } from '@/api/types'
 import { useCreateWalk } from '@/api/walks'
 import {
   Dialog,
@@ -13,18 +13,18 @@ import {
 } from '@/components/ui/dialog'
 import { errorMessage, NO_ERRORS, parseFieldErrors, type FormErrors } from '@/lib/fieldErrors'
 import { WALK_FORM_FIELDS } from '@/lib/formRules'
-import { buildWalkPayload } from '@/lib/walkPayload'
 import { WalkForm, type WalkFormValues } from './WalkForm'
 
 interface SaveWalkDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
-  plan: RoutePlan
-  start: LatLng
-  end: LatLng
-  avoidStairs: boolean
+  /** Places to pick stops from; null when the plan already has its stops (a trip idea). */
+  pois: Poi[] | null
   profiles: FamilyProfile[]
   profileId: number | null
+  /** Each planner mode turns the form values into its own POST /api/walks/ body. */
+  buildPayload: (values: WalkFormValues) => WalkCreate
+  description?: string
 }
 
 export function SaveWalkDialog(props: SaveWalkDialogProps) {
@@ -41,16 +41,7 @@ export function SaveWalkDialog(props: SaveWalkDialogProps) {
 
   function save(values: WalkFormValues) {
     setErrors(NO_ERRORS)
-    const payload = buildWalkPayload({
-      plan: props.plan,
-      start: props.start,
-      end: props.end,
-      avoidStairs: props.avoidStairs,
-      name: values.name,
-      profileId: values.profileId,
-      pois: props.plan.pois.filter((poi) => values.poiIds.includes(poi.poi_id)),
-    })
-    create.mutate(payload, {
+    create.mutate(props.buildPayload(values), {
       onSuccess: (walk) => {
         toast.success(t('walkForm.saved'))
         changeOpen(false)
@@ -69,11 +60,11 @@ export function SaveWalkDialog(props: SaveWalkDialogProps) {
       <DialogContent className="max-h-[90svh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>{t('walkForm.title')}</DialogTitle>
-          <DialogDescription>{t('walkForm.description')}</DialogDescription>
+          <DialogDescription>{props.description ?? t('walkForm.description')}</DialogDescription>
         </DialogHeader>
         {props.open && (
           <WalkForm
-            pois={props.plan.pois}
+            pois={props.pois}
             profiles={props.profiles}
             defaultProfileId={props.profileId}
             submitting={create.isPending}

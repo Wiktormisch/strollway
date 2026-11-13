@@ -16,9 +16,17 @@ export function DemoModeBanner({ source }: { source: RouteSource }) {
   )
 }
 
-export function ErrorBanner({ error, onRetry }: { error: unknown; onRetry: () => void }) {
+interface ErrorBannerProps {
+  error: unknown
+  onRetry: () => void
+  /** A 400 means different things: bad points on a route, a bad form on a trip. */
+  mode?: 'route' | 'trip'
+}
+
+export function ErrorBanner({ error, onRetry, mode = 'route' }: ErrorBannerProps) {
   const { t } = useTranslation()
-  const key = planErrorKey(error)
+  const planKey = planErrorKey(error)
+  const key = mode === 'trip' && planKey === 'invalid' ? 'invalidTrip' : planKey
   return (
     <div
       role="alert"

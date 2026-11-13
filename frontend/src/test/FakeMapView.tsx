@@ -15,7 +15,9 @@ export function FakeMapView(props: ComponentProps<typeof MapView>) {
         fake map click B
       </button>
       <p>map route: {props.plan ? 'drawn' : 'none'}</p>
+      <p>map start: {props.startIsFinish ? 'start and finish' : 'start'}</p>
       <p>map places: {props.pois.length}</p>
+      <p>map stops: {props.stops?.map((stop) => stop.title).join(', ') ?? 'none'}</p>
     </div>
   )
 }
