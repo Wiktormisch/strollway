@@ -15,6 +15,9 @@
   --color-sage-500: var(--sage-500);
   --color-stairs: var(--stairs);
   --color-stairs-text: var(--stairs-text);
+  --color-cat-play: var(--cat-play);
+  --color-cat-food: var(--cat-food);
+  --color-cat-care: var(--cat-care);
   --color-ring: var(--ring);
   --color-input: var(--input);
   --color-border: var(--border);
@@ -69,7 +72,12 @@
   --route: #0096c7;
   --stairs: #c2662d;
   --stairs-text: #a8531f;
-  --radius: 0.625rem;
+  /* Place categories, graphics only (DESIGN.md section 2). */
+  --cat-play: #b83280;
+  --cat-food: #6b46c1;
+  --cat-care: #2b6cb0;
+  /* 12 px: rounded-lg = inputs and rows, rounded-2xl = cards, rounded-3xl = sheet top. */
+  --radius: 0.75rem;
 }
 
 .dark {
@@ -98,6 +106,9 @@
   --route: #48cae4;
   --stairs: #e08a52;
   --stairs-text: #f0a574;
+  --cat-play: #f687b3;
+  --cat-food: #b794f4;
+  --cat-care: #90cdf4;
 }
 
 @layer base {
