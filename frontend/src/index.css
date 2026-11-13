@@ -132,6 +132,11 @@
   }
 }
 
+/* The planner top bar floats over the map, so the Leaflet controls start below it. */
+.sw-under-topbar .leaflet-top {
+  top: 4.25rem;
+}
+
 /* Map markers (Leaflet divIcon HTML, see components/planner/MapView.tsx). */
 .sw-poi-icon,
 .sw-point-icon {
