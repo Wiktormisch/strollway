@@ -116,5 +116,25 @@ def test_trip_ideas_has_its_own_throttle_scope():
     assert TripIdeaView.throttle_scope == "trip_ideas"
 
 
-def test_throttle_rate_is_20_per_hour(settings):
-    assert settings.REST_FRAMEWORK["DEFAULT_THROTTLE_RATES"]["trip_ideas"] == "20/hour"
+def test_throttle_rate_default_is_20_per_hour(settings):
+    # The default, not the current value: a developer may raise the rate in .env for testing.
+    assert settings.TRIP_IDEAS_DEFAULT_RATE == "20/hour"
+
+
+def test_throttle_ignores_a_forged_forwarded_for_header():
+    """Regression: X-Forwarded-For must not give a client a new identity for the limits.
+
+    Uses the real settings (DRF_NUM_PROXIES is not set for tests), so it fails if the
+    NUM_PROXIES line is removed from settings.py.
+    """
+    from rest_framework.test import APIRequestFactory
+    from rest_framework.throttling import ScopedRateThrottle
+
+    factory = APIRequestFactory()
+    idents = {
+        ScopedRateThrottle().get_ident(
+            factory.post("/", REMOTE_ADDR="203.0.113.7", HTTP_X_FORWARDED_FOR=forged)
+        )
+        for forged in ["1.1.1.1", "2.2.2.2"]
+    }
+    assert idents == {"203.0.113.7"}
