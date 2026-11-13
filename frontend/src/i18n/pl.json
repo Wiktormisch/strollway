@@ -191,6 +191,7 @@
     "save": "Zapisz",
     "saving": "Zapisywanie…",
     "cancel": "Anuluj",
+    "close": "Zamknij",
     "delete": "Usuń",
     "retry": "Spróbuj ponownie",
     "loading": "Ładowanie…",
@@ -322,7 +323,8 @@
     "ageChip": "{{age}} l.",
     "empty": {
       "title": "Nie masz jeszcze profili.",
-      "text": "Dodaj profil, aby planować spacery w tempie Twojej rodziny."
+      "text": "Dodaj profil, aby planować spacery w tempie Twojej rodziny.",
+      "action": "Dodaj profil"
     },
     "wheels": {
       "none": "Pieszo",

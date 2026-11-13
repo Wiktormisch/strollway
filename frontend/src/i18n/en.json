@@ -191,6 +191,7 @@
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
+    "close": "Close",
     "delete": "Delete",
     "retry": "Try again",
     "loading": "Loading…",
@@ -322,7 +323,8 @@
     "ageChip": "{{age}} y.",
     "empty": {
       "title": "No profiles yet.",
-      "text": "Add a profile to plan walks at your family's pace."
+      "text": "Add a profile to plan walks at your family's pace.",
+      "action": "Add a profile"
     },
     "wheels": {
       "none": "On foot",
