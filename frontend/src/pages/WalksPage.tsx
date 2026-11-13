@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next'
 import { toast } from 'sonner'
 import type { WalkStatus } from '@/api/types'
 import { useLoadDemoData, useWalks } from '@/api/walks'
-import { EmptyState, LoadError } from '@/components/common/States'
+import { EmptyState, ListSkeleton, LoadError } from '@/components/common/States'
 import { WalkCard } from '@/components/walks/WalkCard'
 import { Button } from '@/components/ui/button'
-import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage } from '@/lib/fieldErrors'
 import { usePageTitle } from '@/lib/usePageTitle'
 
@@ -46,17 +45,7 @@ export function WalksPage() {
         ))}
       </div>
 
-      {walks.isPending && (
-        <div
-          className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3"
-          role="status"
-          aria-label={t('common.loading')}
-        >
-          <Skeleton className="h-36" />
-          <Skeleton className="h-36" />
-          <Skeleton className="h-36" />
-        </div>
-      )}
+      {walks.isPending && <ListSkeleton className="sm:grid-cols-2 lg:grid-cols-3" />}
       {walks.isError && <LoadError error={walks.error} onRetry={() => walks.refetch()} />}
       {walks.data?.length === 0 &&
         (filter === 'all' ? (

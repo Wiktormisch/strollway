@@ -57,8 +57,8 @@ function WalkDetailContent({ id }: { id: number }) {
     return (
       <div className="space-y-4" role="status" aria-label={t('common.loading')}>
         <Skeleton className="h-8 w-2/3" />
-        <Skeleton className="h-72" />
-        <Skeleton className="h-24" />
+        <Skeleton className="h-24 rounded-2xl" />
+        <Skeleton className="h-72 rounded-2xl sm:h-96" />
       </div>
     )
   }

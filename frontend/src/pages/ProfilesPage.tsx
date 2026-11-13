@@ -5,12 +5,11 @@ import { toast } from 'sonner'
 import { useCreateProfile, useDeleteProfile, useProfiles, useUpdateProfile } from '@/api/profiles'
 import type { FamilyProfile, ProfileInput } from '@/api/types'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-import { EmptyState, LoadError } from '@/components/common/States'
+import { EmptyState, ListSkeleton, LoadError } from '@/components/common/States'
 import { ProfileForm } from '@/components/profiles/ProfileForm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage, NO_ERRORS, parseFieldErrors, type FormErrors } from '@/lib/fieldErrors'
 import { PROFILE_FIELDS } from '@/lib/formRules'
 import { usePageTitle } from '@/lib/usePageTitle'
@@ -79,10 +78,7 @@ export function ProfilesPage() {
       <p className="text-sm text-muted-foreground">{t('profiles.intro')}</p>
 
       {profiles.isPending && (
-        <div className="grid gap-3 sm:grid-cols-2" role="status" aria-label={t('common.loading')}>
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-        </div>
+        <ListSkeleton count={2} itemClassName="h-28" className="sm:grid-cols-2" />
       )}
       {profiles.isError && <LoadError error={profiles.error} onRetry={() => profiles.refetch()} />}
       {profiles.data?.length === 0 && (
