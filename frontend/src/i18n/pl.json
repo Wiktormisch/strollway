@@ -45,7 +45,7 @@
     "retry": "Spróbuj ponownie",
     "tabs": {
       "route": "Trasa A → B",
-      "trip": "Pomysł na wycieczkę (wkrótce)"
+      "trip": "Pomysł na wycieczkę"
     },
     "sheet": {
       "collapse": "Ukryj panel",
@@ -115,7 +115,10 @@
       "invalid": "Nie można użyć tych punktów. Ustaw cel bliżej startu.",
       "tooManyRequests": "Za dużo zapytań. Poczekaj chwilę i spróbuj ponownie.",
       "network": "Brak połączenia z serwerem.",
-      "unknown": "Coś poszło nie tak podczas planowania trasy."
+      "unknown": "Coś poszło nie tak podczas planowania trasy.",
+      "noPlacesNearby": "Nie znaleźliśmy placów zabaw, kawiarni ani restauracji w pobliżu tego startu. Wybierz inny start albo dłuższy limit czasu.",
+      "placesUnavailable": "Usługa z miejscami nie odpowiedziała. Poczekaj chwilę i spróbuj ponownie.",
+      "invalidTrip": "Formularz ma nieprawidłową wartość. Sprawdź start i profil, potem spróbuj ponownie."
     },
     "save": "Zapisz spacer",
     "profile": {
@@ -335,6 +338,63 @@
       "saveFailed": "Nie udało się zapisać profilu. {{reason}}",
       "deleted": "Profil usunięty.",
       "deleteFailed": "Nie udało się usunąć profilu. {{reason}}"
+    }
+  },
+  "trip": {
+    "empty": "Ustaw start na mapie (albo wypróbuj start demo), napisz, na co masz ochotę, i kliknij „Zaproponuj wycieczkę”.",
+    "form": {
+      "hint": "Kliknij mapę, aby ustawić start. Wycieczka zaczyna się i kończy w tym miejscu.",
+      "start": "Start",
+      "useCenter": "Ustaw start na środku mapy",
+      "clearStart": "Wyczyść start",
+      "demoStart": "Wypróbuj start demo",
+      "minutes": "Limit czasu",
+      "minutesOption": "{{minutes}} min",
+      "roundTrip": "Wróć do startu",
+      "wishes": "Wasze życzenia (opcjonalnie)",
+      "wishesCount": "{{count}} / {{max}}",
+      "wishesPlaceholder": "np. plac zabaw, potem kawa, na koniec pizza; nie chcemy dużo chodzić",
+      "privacy": "Nie wpisuj danych osobowych. Ten tekst jest wysyłany do modelu AI.",
+      "submit": "Zaproponuj wycieczkę",
+      "planning": "Planuję wycieczkę…",
+      "planningHint": "Model AI może potrzebować 10-20 sekund. Poczekaj chwilę."
+    },
+    "engine": {
+      "ai": "Zaplanowane przez AI",
+      "rules": "Zaplanowane regułami (tryb demo)"
+    },
+    "timeline": {
+      "title": "Twoja wycieczka",
+      "arrive": "dotarcie po {{minutes}} min",
+      "stay": "{{minutes}} min na miejscu",
+      "remove": "Usuń przystanek {{name}}"
+    },
+    "totals": {
+      "total": "Razem: {{total}} z {{max}}",
+      "split": "Marsz {{walking}} + przystanki {{stops}}",
+      "overLimit": "Ta wycieczka jest dłuższa niż limit czasu. Usuń przystanek albo wybierz dłuższy limit.",
+      "edited": "Usunięto przystanek. Trasa i czasy dotarcia są nadal te zaplanowane."
+    },
+    "summary": {
+      "unmet": "Czego nie znaleźliśmy",
+      "tips": "Wskazówki",
+      "dropped": "{{name}} (usunięte, aby zmieścić się w limicie)"
+    },
+    "weather": {
+      "label": "Pogoda",
+      "temp": "{{value}}°C",
+      "rain": "deszcz {{value}}%",
+      "wind": "wiatr {{value}} km/h"
+    },
+    "saveDescription": "Nadaj wycieczce nazwę. Przystanki do zapisania: {{count}}.",
+    "map": {
+      "startFinish": "Start i meta"
+    }
+  },
+  "theme": {
+    "switchTo": {
+      "dark": "Włącz ciemny motyw",
+      "light": "Włącz jasny motyw"
     }
   }
 }

@@ -1,4 +1,13 @@
-import type { LatLng, NestedStopInput, Poi, RoutePlan, StopCategory, WalkCreate } from '@/api/types'
+import type {
+  LatLng,
+  NestedStopInput,
+  Poi,
+  RoutePlan,
+  StopCategory,
+  TripIdea,
+  TripStop,
+  WalkCreate,
+} from '@/api/types'
 
 const STOP_CATEGORIES: readonly StopCategory[] = [
   'playground',
@@ -77,6 +86,59 @@ export function buildWalkPayload(input: WalkPayloadInput): WalkCreate {
     detour_m: Math.round(plan.detour_m ?? 0),
     geometry: plan.route.geometry,
     stops: pois.map((poi, index) => poiToStop(poi, index + 1)),
+  }
+}
+
+interface TripPayloadInput {
+  trip: TripIdea
+  /** The stops the user kept, in the order of the trip. */
+  stops: TripStop[]
+  start: LatLng
+  roundTrip: boolean
+  name: string
+  profileId: number | null
+}
+
+/**
+ * Builds the POST /api/walks/ body from a trip idea.
+ * A round trip ends at the start; a one-way trip ends at the last kept stop.
+ * The geometry is the planned route: removing a stop does not recalculate it (DECISIONS.md).
+ */
+export function buildTripWalkPayload(input: TripPayloadInput): WalkCreate {
+  const { trip } = input
+  const last = input.stops[input.stops.length - 1]
+  const end = input.roundTrip || !last ? input.start : { lat: last.lat, lng: last.lng }
+  const source = trip.engine === 'rules' ? 'rules' : 'ai'
+  const routeStairs = trip.route.stairs_m ?? 0
+  const baselineStairs = trip.baseline.stairs_m ?? 0
+  return {
+    profile: input.profileId,
+    name: input.name.trim(),
+    start_lat: input.start.lat,
+    start_lng: input.start.lng,
+    end_lat: end.lat,
+    end_lng: end.lng,
+    start_label: '',
+    end_label: '',
+    avoid_stairs: true,
+    distance_m: Math.round(trip.route.distance_m),
+    duration_min: Math.round(trip.route.duration_min),
+    stairs_m: Math.round(routeStairs),
+    stairs_avoided_m: Math.max(0, Math.round(baselineStairs - routeStairs)),
+    detour_m: Math.round(trip.detour_m ?? 0),
+    geometry: trip.route.geometry,
+    ai_summary: trip.summary,
+    stops: input.stops.map((stop, index) => ({
+      order: index + 1,
+      name: stop.name ?? '',
+      category: toStopCategory(stop.category),
+      lat: stop.lat,
+      lng: stop.lng,
+      osm_id: stop.poi_id.slice(0, MAX_OSM_ID_LENGTH),
+      planned_minutes: stop.planned_minutes,
+      reason: stop.reason,
+      source,
+    })),
   }
 }
 

@@ -1,5 +1,11 @@
 import { makePlan, makePoi } from '@/test/routePlan'
-import { buildWalkPayload, nextStopOrder, toStopCategory } from './walkPayload'
+import { makeTrip } from '@/test/tripIdea'
+import {
+  buildTripWalkPayload,
+  buildWalkPayload,
+  nextStopOrder,
+  toStopCategory,
+} from './walkPayload'
 
 const START = { lat: 54.3478, lng: 18.6181 }
 const END = { lat: 54.3487, lng: 18.6185 }
@@ -63,4 +69,65 @@ it('maps unknown categories to "other"', () => {
 it('gives a new stop the next order', () => {
   expect(nextStopOrder([])).toBe(1)
   expect(nextStopOrder([{ order: 1 }, { order: 4 }])).toBe(5)
+})
+
+describe('buildTripWalkPayload', () => {
+  const trip = makeTrip({ engine: 'claude_cli' })
+  const TRIP_START = { lat: 54.3385, lng: 18.62 }
+
+  it('keeps the remaining stops in order with source, reason and the summary', () => {
+    // The user removed the cafe (the middle stop).
+    const stops = trip.stops.filter((stop) => stop.poi_id !== 'node/2')
+    const payload = buildTripWalkPayload({
+      trip,
+      stops,
+      start: TRIP_START,
+      roundTrip: true,
+      name: ' Sunday loop ',
+      profileId: 3,
+    })
+    expect(payload).toMatchObject({
+      name: 'Sunday loop',
+      profile: 3,
+      start_lat: 54.3385,
+      end_lat: 54.3385,
+      avoid_stairs: true,
+      stairs_m: 0,
+      stairs_avoided_m: 8,
+      ai_summary: 'A short loop: playground, coffee and pizza.',
+    })
+    expect(payload.stops).toEqual([
+      expect.objectContaining({
+        order: 1,
+        name: 'Fake Playground',
+        osm_id: 'node/1',
+        planned_minutes: 20,
+        reason: 'Close to the start, good for a 4-year-old.',
+        source: 'ai',
+      }),
+      expect.objectContaining({
+        order: 2,
+        name: '',
+        category: 'restaurant',
+        osm_id: 'node/3',
+        reason: 'Pizza at the end.',
+        source: 'ai',
+      }),
+    ])
+  })
+
+  it('marks rule-based stops as "rules" and ends a one-way trip at the last stop', () => {
+    const rules = makeTrip({ engine: 'rules' })
+    const stops = rules.stops.slice(0, 2)
+    const payload = buildTripWalkPayload({
+      trip: rules,
+      stops,
+      start: TRIP_START,
+      roundTrip: false,
+      name: 'One way',
+      profileId: null,
+    })
+    expect(payload.stops.map((stop) => stop.source)).toEqual(['rules', 'rules'])
+    expect([payload.end_lat, payload.end_lng]).toEqual([stops[1].lat, stops[1].lng])
+  })
 })

@@ -1,6 +1,21 @@
-import { useQuery, type QueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery, type QueryClient } from '@tanstack/react-query'
 import { apiFetch } from './client'
-import type { RoutePlan, RoutePlanRequest } from './types'
+import type { RoutePlan, RoutePlanRequest, TripIdea, TripIdeaRequest } from './types'
+
+export function postTripIdea(request: TripIdeaRequest): Promise<TripIdea> {
+  return apiFetch<TripIdea>('/api/trip-ideas/', {
+    method: 'POST',
+    body: JSON.stringify(request),
+  })
+}
+
+/**
+ * A mutation, not a query: every click on "Suggest" is a new LLM call, so nothing is cached.
+ * No timeout on purpose: the backend ends the LLM call after 60 s and answers with rules.
+ */
+export function useTripIdea() {
+  return useMutation({ mutationFn: postTripIdea, retry: false })
+}
 
 /** How long a computed route is reused without asking the server again. */
 export const ROUTE_PLAN_CACHE_MS = 10 * 60 * 1000

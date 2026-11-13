@@ -15,6 +15,12 @@ vi.mock('@/components/walks/WalkMap', () => ({
 Element.prototype.hasPointerCapture ??= () => false
 Element.prototype.releasePointerCapture ??= () => {}
 Element.prototype.scrollIntoView ??= () => {}
+// Radix Switch inside a <form> measures its hidden input with ResizeObserver.
+globalThis.ResizeObserver ??= class {
+  observe() {}
+  unobserve() {}
+  disconnect() {}
+}
 
 beforeEach(async () => {
   localStorage.clear()

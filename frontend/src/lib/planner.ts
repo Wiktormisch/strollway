@@ -1,6 +1,13 @@
 // Plain planner logic, kept out of components so it can be tested without Leaflet.
 import { ApiError } from '@/api/client'
-import type { LatLng, LatLngTuple, Poi, RoutePlan, RoutePlanErrorCode } from '@/api/types'
+import type {
+  LatLng,
+  LatLngTuple,
+  Poi,
+  RouteComparison,
+  RoutePlanErrorCode,
+  TripIdeaErrorCode,
+} from '@/api/types'
 import { categoryOrder } from '@/constants/poiCategories'
 
 /**
@@ -19,7 +26,7 @@ export type DetourCase =
   | 'checkFailed' // we asked for a stair-free route, but that request failed
   | 'unknownStairs' // a straight mock line: stairs are unknown
 
-export function detourCase(plan: RoutePlan, avoidStairs: boolean): DetourCase {
+export function detourCase(plan: RouteComparison, avoidStairs: boolean): DetourCase {
   const stairs = plan.baseline.stairs_m
   if (stairs === null) return 'unknownStairs'
   if (stairs === 0) return 'noStairs'
@@ -60,23 +67,37 @@ export function countCategories(pois: Poi[]): CategoryCount[] {
 }
 
 export type PlanErrorKey =
-  'noRoute' | 'noRoutablePoint' | 'invalid' | 'tooManyRequests' | 'network' | 'unknown'
+  | 'noRoute'
+  | 'noRoutablePoint'
+  | 'noPlacesNearby'
+  | 'placesUnavailable'
+  | 'invalid'
+  | 'tooManyRequests'
+  | 'network'
+  | 'unknown'
 
-/** Maps a failed request to an i18n key under `planner.errors`. */
+const ERROR_CODE_KEYS: Record<RoutePlanErrorCode | TripIdeaErrorCode, PlanErrorKey> = {
+  no_route: 'noRoute',
+  no_routable_point: 'noRoutablePoint',
+  no_places_nearby: 'noPlacesNearby',
+  places_unavailable: 'placesUnavailable',
+}
+
+/** Maps a failed route-plans or trip-ideas request to an i18n key under `planner.errors`. */
 export function planErrorKey(error: unknown): PlanErrorKey {
   if (!(error instanceof ApiError)) return 'unknown'
   if (error.status === 0) return 'network'
   if (error.status === 429) return 'tooManyRequests'
   if (error.status === 400) return 'invalid'
   if (error.status === 422) {
-    const code = (error.body as { code?: RoutePlanErrorCode } | null)?.code
-    if (code === 'no_route') return 'noRoute'
-    if (code === 'no_routable_point') return 'noRoutablePoint'
+    const code = (error.body as { code?: string } | null)?.code
+    if (code && code in ERROR_CODE_KEYS)
+      return ERROR_CODE_KEYS[code as keyof typeof ERROR_CODE_KEYS]
   }
   return 'unknown'
 }
 
 /** All points of both routes, to fit the map view around them. */
-export function planBounds(plan: RoutePlan): LatLngTuple[] {
+export function planBounds(plan: RouteComparison): LatLngTuple[] {
   return [...plan.route.geometry, ...plan.baseline.geometry]
 }
