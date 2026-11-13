@@ -13,12 +13,14 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage, NO_ERRORS, parseFieldErrors, type FormErrors } from '@/lib/fieldErrors'
 import { PROFILE_FIELDS } from '@/lib/formRules'
+import { usePageTitle } from '@/lib/usePageTitle'
 
 /** null = the form is closed, "new" = creating, a profile = editing it. */
 type Editing = null | 'new' | FamilyProfile
 
 export function ProfilesPage() {
   const { t } = useTranslation()
+  usePageTitle(t('pages.profiles.title'))
   const profiles = useProfiles()
   const create = useCreateProfile()
   const update = useUpdateProfile()

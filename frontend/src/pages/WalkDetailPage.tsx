@@ -20,6 +20,7 @@ import { errorMessage, parseFieldErrors } from '@/lib/fieldErrors'
 import { formatDistance, formatDuration } from '@/lib/format'
 import { categoryLabel } from '@/lib/poiLabel'
 import { cn } from '@/lib/utils'
+import { usePageTitle } from '@/lib/usePageTitle'
 
 const MAX_NAME_LENGTH = 80
 const MAX_NOTES_LENGTH = 1000
@@ -70,6 +71,7 @@ function WalkDetailContent({ id }: { id: number }) {
 
 function WalkView({ walk }: { walk: WalkDetail }) {
   const { t, i18n } = useTranslation()
+  usePageTitle(walk.name)
   const navigate = useNavigate()
   const remove = useDeleteWalk(walk.id)
   const [confirmOpen, setConfirmOpen] = useState(false)

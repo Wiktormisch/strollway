@@ -3,6 +3,7 @@ import { NavLink, Outlet, useMatch } from 'react-router-dom'
 import { Baby } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LanguageSwitch } from './LanguageSwitch'
+import { ThemeSwitch } from './ThemeSwitch'
 
 const NAV_ITEMS = [
   { to: '/', key: 'nav.planner', end: true },
@@ -46,6 +47,7 @@ export function AppLayout() {
               </NavLink>
             ))}
           </nav>
+          <ThemeSwitch />
           <LanguageSwitch />
         </div>
       </header>
