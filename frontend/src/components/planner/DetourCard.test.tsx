@@ -12,7 +12,20 @@ describe('DetourCard', () => {
     expect(card()).toHaveTextContent(
       'The shortest route has 16 m of stairs. Stair-free route: +288 m, +4 min.',
     )
-    expect(card()).toHaveTextContent('Route to follow: 420 m, 6 min.')
+  })
+
+  it('shows a status tag and the route in numbers', () => {
+    render(<DetourCard plan={makePlan()} avoidStairs places={3} />)
+    expect(card()).toHaveTextContent('Stair-free detour')
+    const stats = screen.getByLabelText('Route in numbers')
+    expect(stats).toHaveTextContent('Distance420 m')
+    expect(stats).toHaveTextContent('Time6 min')
+    expect(stats).toHaveTextContent('Places3')
+  })
+
+  it('hides the places stat when there is no count', () => {
+    render(<DetourCard plan={makePlan()} avoidStairs />)
+    expect(card()).not.toHaveTextContent('Places')
   })
 
   it('tiny detour: says the stairs cost almost nothing', () => {

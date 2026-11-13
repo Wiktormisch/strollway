@@ -1,6 +1,14 @@
 import { ApiError } from '@/api/client'
 import { makePlan, makePoi } from '@/test/routePlan'
-import { countCategories, detourCase, nextPoints, planErrorKey, visiblePois } from './planner'
+import { DEMO_ROUTES } from '@/constants/demoRoutes'
+import {
+  countCategories,
+  demoRouteOf,
+  detourCase,
+  nextPoints,
+  planErrorKey,
+  visiblePois,
+} from './planner'
 
 const A = { lat: 54.1, lng: 18.1 }
 const B = { lat: 54.2, lng: 18.2 }
@@ -91,5 +99,20 @@ describe('planErrorKey', () => {
     expect(planErrorKey(new ApiError(0, 'x'))).toBe('network')
     expect(planErrorKey(new ApiError(500, 'x'))).toBe('unknown')
     expect(planErrorKey(new Error('x'))).toBe('unknown')
+  })
+})
+
+describe('demoRouteOf', () => {
+  const demo = DEMO_ROUTES[0]
+
+  it('finds the demo route of a demo point', () => {
+    expect(demoRouteOf(demo.start, 'start')).toBe(demo.id)
+    expect(demoRouteOf(demo.end, 'end')).toBe(demo.id)
+  })
+
+  it('returns null for other points, the wrong side or no point', () => {
+    expect(demoRouteOf({ lat: 54.1, lng: 18.1 }, 'start')).toBeNull()
+    expect(demoRouteOf(demo.start, 'end')).toBeNull()
+    expect(demoRouteOf(null, 'start')).toBeNull()
   })
 })

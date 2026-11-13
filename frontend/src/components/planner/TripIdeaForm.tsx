@@ -1,13 +1,20 @@
 import { useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Crosshair, Loader2, MapPin, Sparkles, X } from 'lucide-react'
+import { Loader2, Play, Sparkles } from 'lucide-react'
 import type { FamilyProfile, LatLng, TripIdeaRequest } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { ProfileSelect } from '@/components/walks/ProfileSelect'
-import { apiLanguage, DEFAULT_TRIP_MINUTES, MAX_WISHES_LENGTH, TRIP_MINUTES } from '@/lib/trip'
+import { PointRow } from './PointRow'
+import {
+  apiLanguage,
+  DEFAULT_TRIP_MINUTES,
+  DEMO_TRIP_START,
+  MAX_WISHES_LENGTH,
+  TRIP_MINUTES,
+} from '@/lib/trip'
 import { cn } from '@/lib/utils'
 
 /** Lets the button on the map (phone, folded panel) submit this form. */
@@ -50,38 +57,16 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
     <form id={TRIP_FORM_ID} noValidate onSubmit={submit} className="space-y-4">
       <p className="text-sm text-muted-foreground">{t('trip.form.hint')}</p>
 
-      <div className="flex items-center gap-2 rounded-lg border p-2 text-sm">
-        <MapPin aria-hidden className="size-4 shrink-0 text-sage-500" />
-        <span className="font-medium">{t('trip.form.start')}:</span>
-        <span className={cn('flex-1 truncate', !props.start && 'text-muted-foreground')}>
-          {props.start
-            ? `${props.start.lat.toFixed(4)}, ${props.start.lng.toFixed(4)}`
-            : t('planner.form.notSet')}
-        </span>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label={t('trip.form.useCenter')}
-          title={t('trip.form.useCenter')}
-          onClick={props.onUseMapCenter}
-        >
-          <Crosshair aria-hidden />
-        </Button>
-        {props.start && (
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label={t('trip.form.clearStart')}
-            title={t('trip.form.clearStart')}
-            onClick={props.onClearStart}
-          >
-            <X aria-hidden />
-          </Button>
-        )}
-      </div>
-      <Button type="button" variant="outline" size="sm" onClick={props.onDemoStart}>
+      <PointRow
+        badge="A"
+        name={t('trip.form.start')}
+        point={props.start}
+        demoName={sameDemoStart(props.start) ? t('trip.form.demoName') : null}
+        onChange={props.onUseMapCenter}
+        onClear={props.onClearStart}
+      />
+      <Button type="button" variant="demo" size="sm" onClick={props.onDemoStart}>
+        <Play aria-hidden />
         {t('trip.form.demoStart')}
       </Button>
 
@@ -169,4 +154,8 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
       )}
     </form>
   )
+}
+
+function sameDemoStart(point: LatLng | null): boolean {
+  return point?.lat === DEMO_TRIP_START.lat && point.lng === DEMO_TRIP_START.lng
 }

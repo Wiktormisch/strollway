@@ -18,9 +18,16 @@ const TONE: Record<DetourCase, 'good' | 'info' | 'warn'> = {
 const TONE_STYLE = {
   // Navy text reads best on the soft green; the icon carries the brand colour.
   // `[&>svg]:` styles the direct svg child.
-  good: 'border-brand/30 bg-brand-soft text-foreground [&>svg]:text-brand',
+  good: 'border-brand/30 bg-brand-soft text-foreground',
   info: 'border-border bg-muted text-foreground',
-  warn: 'border-stairs/40 bg-stairs/10 text-stairs-text',
+  warn: 'border-stairs/40 bg-stairs/10 text-foreground',
+}
+
+// The small tag carries the status colour; the long text stays navy for easy reading.
+const TAG_STYLE = {
+  good: 'text-brand',
+  info: 'text-muted-foreground',
+  warn: 'text-stairs-text',
 }
 
 const TONE_ICON = { good: CircleCheck, info: Info, warn: TriangleAlert }
@@ -29,10 +36,12 @@ interface DetourCardProps {
   plan: RouteComparison
   /** What the user asked for; tells "not searched" from "the check failed". */
   avoidStairs: boolean
+  /** Places along the route or stops of the trip; the stat is hidden without it. */
+  places?: number
 }
 
 /** The twist of the app: how many metres of stairs we avoid and what it costs. */
-export function DetourCard({ plan, avoidStairs }: DetourCardProps) {
+export function DetourCard({ plan, avoidStairs, places }: DetourCardProps) {
   const { t, i18n } = useTranslation()
   const variant = detourCase(plan, avoidStairs)
   const tone = TONE[variant]
@@ -46,31 +55,49 @@ export function DetourCard({ plan, avoidStairs }: DetourCardProps) {
   // <Trans> puts the <stairs> tag from the translation around a real <strong> element.
   const stairsTag = { stairs: <strong className="font-semibold text-stairs-text" /> }
 
+  const stats = [
+    { key: 'distance', value: formatDistance(plan.route.distance_m, i18n.language) },
+    { key: 'time', value: formatDuration(plan.route.duration_min) },
+    ...(places === undefined ? [] : [{ key: 'places', value: String(places) }]),
+  ]
+
+  // The result hero (DESIGN.md section 5): tag, title, body, then a row of stats.
   return (
     <section
       aria-labelledby="detour-title"
-      className={cn('flex gap-3 rounded-lg border p-3', TONE_STYLE[tone])}
+      className={cn('space-y-3 rounded-2xl border p-5', TONE_STYLE[tone])}
       data-variant={variant}
     >
-      <Icon aria-hidden className="mt-0.5 size-5 shrink-0" />
-      <div className="space-y-1 text-sm">
-        <h2 id="detour-title" className="font-semibold">
-          {t(`planner.detour.${variant}.title`, values)}
-        </h2>
-        <p>
-          <Trans
-            i18nKey={`planner.detour.${variant}.detail`}
-            values={values}
-            components={stairsTag}
-          />
-        </p>
-        <p className="text-xs opacity-80">
-          {t('planner.detour.summary', {
-            distance: formatDistance(plan.route.distance_m, i18n.language),
-            duration: formatDuration(plan.route.duration_min),
-          })}
-        </p>
-      </div>
+      <p
+        className={cn(
+          'flex items-center gap-1.5 text-[13px] leading-4 font-medium tracking-wide uppercase',
+          TAG_STYLE[tone],
+        )}
+      >
+        <Icon aria-hidden className="size-4" />
+        {t(`planner.detour.${variant}.tag`)}
+      </p>
+      <h2 id="detour-title" className="text-xl font-semibold tracking-tight">
+        {t(`planner.detour.${variant}.title`, values)}
+      </h2>
+      <p>
+        <Trans
+          i18nKey={`planner.detour.${variant}.detail`}
+          values={values}
+          components={stairsTag}
+        />
+      </p>
+      {/* A description list: each stat has a name (dt) and a value (dd). */}
+      <dl aria-label={t('planner.detour.statsLabel')} className="flex gap-6 pt-1">
+        {stats.map((stat) => (
+          <div key={stat.key}>
+            <dt className="text-sm text-muted-foreground">
+              {t(`planner.detour.stats.${stat.key}`)}
+            </dt>
+            <dd className="text-lg font-semibold tabular-nums">{stat.value}</dd>
+          </div>
+        ))}
+      </dl>
     </section>
   )
 }
@@ -78,11 +105,15 @@ export function DetourCard({ plan, avoidStairs }: DetourCardProps) {
 export function DetourCardSkeleton() {
   const { t } = useTranslation()
   return (
-    <div role="status" className="animate-pulse space-y-2 rounded-lg border p-3">
+    <div role="status" className="animate-pulse space-y-3 rounded-2xl border p-5">
       <span className="sr-only">{t('planner.loading')}</span>
-      <div className="h-4 w-2/3 rounded bg-muted" />
-      <div className="h-3 w-full rounded bg-muted" />
-      <div className="h-3 w-1/2 rounded bg-muted" />
+      <div className="h-3 w-1/4 rounded-full bg-muted" />
+      <div className="h-6 w-3/4 rounded-lg bg-muted" />
+      <div className="h-4 w-full rounded-lg bg-muted" />
+      <div className="flex gap-6 pt-1">
+        <div className="h-10 w-16 rounded-lg bg-muted" />
+        <div className="h-10 w-16 rounded-lg bg-muted" />
+      </div>
     </div>
   )
 }

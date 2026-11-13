@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import { CloudSun, Lightbulb, SearchX } from 'lucide-react'
 import type { TripIdea, Weather } from '@/api/types'
 
-/** The texts around the timeline: summary, weather, wishes we could not meet and tips. */
+/** The texts under the timeline: summary, wishes we could not meet and tips. */
 export function TripSummary({ trip }: { trip: TripIdea }) {
   const { t } = useTranslation()
   const unmet = [
@@ -14,10 +14,7 @@ export function TripSummary({ trip }: { trip: TripIdea }) {
 
   return (
     <div className="space-y-3 text-sm">
-      <div className="flex flex-wrap items-start gap-2">
-        <p className="flex-1">{trip.summary}</p>
-        <WeatherChip weather={trip.weather} />
-      </div>
+      <p>{trip.summary}</p>
 
       {unmet.length > 0 && (
         <section aria-labelledby="unmet-title" className="rounded-lg border border-dashed p-3">
@@ -50,7 +47,8 @@ export function TripSummary({ trip }: { trip: TripIdea }) {
   )
 }
 
-function WeatherChip({ weather }: { weather: Weather | null }) {
+/** A full-width line above the stops: the weather matters before the plan is read. */
+export function WeatherChip({ weather }: { weather: Weather | null }) {
   const { t } = useTranslation()
   if (!weather) return null
   const parts: string[] = []
@@ -65,10 +63,16 @@ function WeatherChip({ weather }: { weather: Weather | null }) {
   }
   if (parts.length === 0) return null
   return (
-    <span className="inline-flex items-center gap-1 rounded-full bg-muted px-2 py-0.5 text-xs">
-      <CloudSun aria-hidden className="size-3.5" />
+    // Centred; each value is its own item, so `gap-x-3` spaces them and they wrap on narrow screens.
+    <p className="flex w-full flex-wrap items-center justify-center gap-x-3 gap-y-1 rounded-xl bg-muted px-3 py-2 text-sm">
+      <CloudSun aria-hidden className="size-4 shrink-0 text-sage-500" />
       <span className="sr-only">{t('trip.weather.label')}: </span>
-      {parts.join(' · ')}
-    </span>
+      {parts.map((part, index) => (
+        <span key={part} className="flex items-center gap-3">
+          {index > 0 && <span aria-hidden>·</span>}
+          {part}
+        </span>
+      ))}
+    </p>
   )
 }

@@ -57,7 +57,10 @@ describe('PlannerPage, trip idea', () => {
       screen.getByText('map stops: Fake Playground, Fake Cafe, Restaurant'),
     ).toBeInTheDocument()
     expect(screen.getByText('ice cream')).toBeInTheDocument()
-    expect(screen.getByText(/8°C · rain 60% · wind 20 km\/h/)).toBeInTheDocument()
+    // The values are separate items, so the check reads the text of the whole weather line.
+    expect(screen.getByText('8°C').closest('p')).toHaveTextContent(
+      'Weather: 8°C·rain 60%·wind 20 km/h',
+    )
 
     await user.click(screen.getByRole('button', { name: 'Remove stop Fake Cafe' }))
     expect(screen.getByText('map stops: Fake Playground, Restaurant')).toBeInTheDocument()

@@ -46,6 +46,9 @@ describe('PlannerPage', () => {
       },
     ])
     expect(screen.getByText(/Demo mode: a recorded route/)).toBeInTheDocument()
+    // Both point rows show the demo name, never raw coordinates.
+    expect(screen.getAllByText('Big detour')).toHaveLength(3) // the demo button + rows A and B
+    expect(screen.queryByText('Point on the map')).not.toBeInTheDocument()
     expect(screen.getByText('map route: drawn')).toBeInTheDocument()
     expect(screen.getByText('Fake Cafe')).toBeInTheDocument()
     expect(screen.getByText('Fake Stop')).toBeInTheDocument()
@@ -151,7 +154,13 @@ describe('PlannerPage', () => {
     const user = userEvent.setup()
     renderWithProviders(<PlannerPage />)
 
-    await user.click(screen.getByRole('button', { name: 'Hide the panel' }))
+    const toggle = screen.getByRole('button', { name: 'Hide the panel' })
+    expect(toggle).toHaveAttribute('aria-expanded', 'true')
+    await user.click(toggle)
+    expect(screen.getByRole('button', { name: 'Show the panel' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    )
     await user.click(screen.getByRole('button', { name: 'fake map click A' }))
     await user.click(screen.getByRole('button', { name: 'fake map click B' }))
 

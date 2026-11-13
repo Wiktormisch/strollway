@@ -1,13 +1,12 @@
 import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { ChevronDown, ChevronUp } from 'lucide-react'
 import { useQueryClient } from '@tanstack/react-query'
 import { fetchRoutePlan, useRoutePlan, useTripIdea } from '@/api/planning'
 import { useProfiles } from '@/api/profiles'
 import type { LatLng, RoutePlanRequest, TripIdeaRequest } from '@/api/types'
 import { StopsTimeline } from '@/components/planner/StopsTimeline'
 import { TRIP_FORM_ID, TripIdeaForm } from '@/components/planner/TripIdeaForm'
-import { TripSummary } from '@/components/planner/TripSummary'
+import { TripSummary, WeatherChip } from '@/components/planner/TripSummary'
 import { DEMO_TRIP_START, remainingStops, tripTotals } from '@/lib/trip'
 import { buildTripWalkPayload, buildWalkPayload } from '@/lib/walkPayload'
 import { HealthStatus } from '@/components/HealthStatus'
@@ -15,6 +14,7 @@ import { DemoModeBanner, ErrorBanner } from '@/components/planner/Banners'
 import { DetourCard, DetourCardSkeleton } from '@/components/planner/DetourCard'
 import { MapView } from '@/components/planner/MapView'
 import { PlacesSection } from '@/components/planner/PlacesSection'
+import { PlannerSheet } from '@/components/planner/PlannerSheet'
 import { RouteForm } from '@/components/planner/RouteForm'
 import { RouteLegend } from '@/components/planner/RouteLegend'
 import { TransitStops } from '@/components/planner/TransitStops'
@@ -26,7 +26,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DEFAULT_MAP_CENTER, type DemoRoute } from '@/constants/demoRoutes'
 import { usePoiLabel } from '@/lib/poiLabel'
 import { nextPoints, visiblePois, type PlannerPoints } from '@/lib/planner'
-import { cn } from '@/lib/utils'
 import { usePageTitle } from '@/lib/usePageTitle'
 
 export function PlannerPage() {
@@ -124,151 +123,130 @@ export function PlannerPage() {
 
   return (
     <div className="relative h-full md:flex">
-      <section
-        aria-labelledby="planner-title"
-        className={cn(
-          'absolute inset-x-0 bottom-0 z-10 flex max-h-[65%] flex-col rounded-t-2xl border-t bg-background shadow-2xl',
-          'md:static md:z-auto md:h-full md:max-h-none md:w-100 md:shrink-0 md:rounded-none md:border-t-0 md:border-r md:shadow-none',
-        )}
-      >
-        <div className="flex items-center justify-between gap-2 px-4 pt-3 pb-2">
-          <h1 id="planner-title" className="text-lg font-semibold">
-            {t('pages.planner.title')}
-          </h1>
-          <button
-            type="button"
-            className="rounded-md p-1 hover:bg-muted md:hidden"
-            aria-expanded={sheetOpen}
-            aria-controls="planner-panel-body"
-            aria-label={t(sheetOpen ? 'planner.sheet.collapse' : 'planner.sheet.expand')}
-            onClick={() => setSheetOpen((open) => !open)}
-          >
-            {sheetOpen ? <ChevronDown aria-hidden /> : <ChevronUp aria-hidden />}
-          </button>
-        </div>
+      <PlannerSheet open={sheetOpen} onToggle={() => setSheetOpen((open) => !open)}>
+        {/* Controlled tabs: the map outside the panel must know the mode too. */}
+        <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
+          <TabsList className="mb-3 w-full">
+            <TabsTrigger value="route">{t('planner.tabs.route')}</TabsTrigger>
+            <TabsTrigger value="trip">{t('planner.tabs.trip')}</TabsTrigger>
+          </TabsList>
 
-        <div
-          id="planner-panel-body"
-          className={cn(
-            'min-h-0 flex-1 overflow-y-auto px-4 pb-4',
-            !sheetOpen && 'hidden md:block',
-          )}
-        >
-          {/* Controlled tabs: the map outside the panel must know the mode too. */}
-          <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
-            <TabsList className="mb-3 w-full">
-              <TabsTrigger value="route">{t('planner.tabs.route')}</TabsTrigger>
-              <TabsTrigger value="trip">{t('planner.tabs.trip')}</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="trip" className="space-y-4">
-              <TripIdeaForm
-                start={tripStart}
-                profiles={profiles.data ?? []}
-                profileId={profileId}
-                planning={tripIdea.isPending}
-                onProfileChange={setProfileId}
-                onClearStart={() => changeTripStart(null)}
-                onUseMapCenter={() => changeTripStart(mapCenter.current)}
-                onDemoStart={() => changeTripStart(DEMO_TRIP_START)}
-                onSubmit={suggestTrip}
-              />
-              <div aria-live="polite" className="space-y-4">
-                {tripIdea.isPending && <DetourCardSkeleton />}
-                {tripIdea.isError && (
-                  <ErrorBanner
-                    mode="trip"
-                    error={tripIdea.error}
-                    onRetry={() => sent && suggestTrip(sent)}
-                  />
-                )}
-                {tripIdea.isIdle && (
-                  <p className="text-sm text-muted-foreground">{t('trip.empty')}</p>
-                )}
-              </div>
-              {trip && (
-                <>
-                  <DemoModeBanner source={trip.source} />
-                  <StopsTimeline
-                    engine={trip.engine}
-                    stops={tripStops}
-                    totals={tripTotals(trip, tripStops)}
-                    onRemove={removeStop}
-                  />
-                  <TripSummary trip={trip} />
-                  <DetourCard plan={trip} avoidStairs />
-                  <Button className="w-full" onClick={() => setSaveOpen(true)}>
-                    {t('planner.save')}
-                  </Button>
-                  <RouteLegend />
-                  <TransitStops stops={trip.transit_stops} />
-                </>
-              )}
-            </TabsContent>
-
-            <TabsContent value="route" className="space-y-4">
-              <div className="space-y-1.5">
-                <Label htmlFor="planner-profile">{t('planner.profile.label')}</Label>
-                <ProfileSelect
-                  id="planner-profile"
-                  profiles={profiles.data ?? []}
-                  value={profileId}
-                  disabled={!profiles.data}
-                  onChange={changeProfile}
+          <TabsContent value="trip" className="space-y-4">
+            <TripIdeaForm
+              start={tripStart}
+              profiles={profiles.data ?? []}
+              profileId={profileId}
+              planning={tripIdea.isPending}
+              onProfileChange={setProfileId}
+              onClearStart={() => changeTripStart(null)}
+              onUseMapCenter={() => changeTripStart(mapCenter.current)}
+              onDemoStart={() => changeTripStart(DEMO_TRIP_START)}
+              onSubmit={suggestTrip}
+            />
+            <ResultsDivider />
+            <div aria-live="polite" className="space-y-4">
+              {tripIdea.isPending && <DetourCardSkeleton />}
+              {tripIdea.isError && (
+                <ErrorBanner
+                  mode="trip"
+                  error={tripIdea.error}
+                  onRetry={() => sent && suggestTrip(sent)}
                 />
-              </div>
-              <RouteForm
-                start={points.start}
-                end={points.end}
-                avoidStairs={avoidStairs}
-                planning={fetching}
-                onAvoidStairsChange={setAvoidStairs}
-                onClear={(which) => setPoints({ ...points, [which]: null })}
-                onUseMapCenter={(which) => setPoints({ ...points, [which]: mapCenter.current })}
-                onDemo={pickDemo}
-                onPlan={plan}
-              />
+              )}
+              {tripIdea.isIdle && (
+                <p className="text-sm text-muted-foreground">{t('trip.empty')}</p>
+              )}
+            </div>
+            {trip && (
+              <>
+                <DemoModeBanner source={trip.source} />
+                <WeatherChip weather={trip.weather} />
+                <StopsTimeline
+                  engine={trip.engine}
+                  stops={tripStops}
+                  totals={tripTotals(trip, tripStops)}
+                  onRemove={removeStop}
+                />
+                <TripSummary trip={trip} />
+                <DetourCard plan={trip} avoidStairs places={tripStops.length} />
+                <Button className="w-full" onClick={() => setSaveOpen(true)}>
+                  {t('planner.save')}
+                </Button>
+                <RouteLegend />
+                <TransitStops stops={trip.transit_stops} />
+              </>
+            )}
+          </TabsContent>
 
-              {/* Only the short status is a live region, so screen readers skip the lists. */}
-              <div aria-live="polite" className="space-y-4">
-                {fetching && !result && <DetourCardSkeleton />}
-                {query.isError && !fetching && (
-                  <ErrorBanner error={query.error} onRetry={refetchPlan} />
-                )}
-                {!fetching && !result && !query.isError && (
-                  <p className="text-sm text-muted-foreground">{t('planner.empty')}</p>
-                )}
-                {result && request && (
-                  <>
-                    <DemoModeBanner source={result.source} />
-                    <DetourCard plan={result} avoidStairs={request.avoid_stairs} />
-                  </>
-                )}
-              </div>
-              {result && (
-                <>
-                  <Button className="w-full" onClick={() => setSaveOpen(true)}>
-                    {t('planner.save')}
-                  </Button>
-                  <RouteLegend />
-                  <PlacesSection
-                    plan={result}
-                    hidden={hidden}
-                    onToggle={toggleCategory}
-                    onReload={refetchPlan}
-                    reloading={fetching}
+          <TabsContent value="route" className="space-y-4">
+            <RouteForm
+              start={points.start}
+              end={points.end}
+              avoidStairs={avoidStairs}
+              planning={fetching}
+              profileField={
+                <div className="space-y-1.5">
+                  <Label htmlFor="planner-profile">{t('planner.profile.label')}</Label>
+                  <ProfileSelect
+                    id="planner-profile"
+                    profiles={profiles.data ?? []}
+                    value={profileId}
+                    disabled={!profiles.data}
+                    onChange={changeProfile}
                   />
-                  <TransitStops stops={result.transit_stops} />
+                </div>
+              }
+              onAvoidStairsChange={setAvoidStairs}
+              onClear={(which) => setPoints({ ...points, [which]: null })}
+              onUseMapCenter={(which) => setPoints({ ...points, [which]: mapCenter.current })}
+              onDemo={pickDemo}
+              onPlan={plan}
+            />
+
+            <ResultsDivider />
+            {/* Only the short status is a live region, so screen readers skip the lists. */}
+            <div aria-live="polite" className="space-y-4">
+              {fetching && !result && <DetourCardSkeleton />}
+              {query.isError && !fetching && (
+                <ErrorBanner error={query.error} onRetry={refetchPlan} />
+              )}
+              {!fetching && !result && !query.isError && (
+                <p className="text-sm text-muted-foreground">{t('planner.empty')}</p>
+              )}
+              {result && request && (
+                <>
+                  <DemoModeBanner source={result.source} />
+                  <DetourCard
+                    plan={result}
+                    avoidStairs={request.avoid_stairs}
+                    places={visiblePois(result.pois, hidden).length}
+                  />
                 </>
               )}
-            </TabsContent>
-          </Tabs>
+            </div>
+            {result && (
+              <>
+                <Button className="w-full" onClick={() => setSaveOpen(true)}>
+                  {t('planner.save')}
+                </Button>
+                <RouteLegend />
+                <PlacesSection
+                  plan={result}
+                  hidden={hidden}
+                  onToggle={toggleCategory}
+                  onReload={refetchPlan}
+                  reloading={fetching}
+                />
+                <TransitStops stops={result.transit_stops} />
+              </>
+            )}
+          </TabsContent>
+        </Tabs>
 
-          <div className="mt-6">
-            <HealthStatus />
-          </div>
+        <div className="mt-6">
+          <HealthStatus />
         </div>
-      </section>
+      </PlannerSheet>
 
       {mode === 'route' && result && request && routeStart && routeEnd && (
         <SaveWalkDialog
@@ -345,7 +323,7 @@ export function PlannerPage() {
       )}
 
       {/* `isolate` keeps the Leaflet z-indexes inside the map, under the bottom sheet. */}
-      <div className="isolate h-full md:flex-1">
+      <div className="sw-under-topbar isolate h-full md:flex-1">
         {/* One map for both modes: it shows and edits the points of the open tab. */}
         <MapView
           start={mode === 'route' ? points.start : tripStart}
@@ -376,6 +354,20 @@ export function PlannerPage() {
 }
 
 type Mode = 'route' | 'trip'
+
+/** A clear break between the form and the result (developer feedback, session 3). */
+function ResultsDivider() {
+  const { t } = useTranslation()
+  return (
+    <div className="flex items-center gap-3 pt-2" aria-hidden>
+      <span className="h-px flex-1 bg-border" />
+      <span className="text-[13px] leading-4 font-medium tracking-wide text-muted-foreground uppercase">
+        {t('planner.results')}
+      </span>
+      <span className="h-px flex-1 bg-border" />
+    </div>
+  )
+}
 
 /** profile_id is sent only when a profile is chosen. */
 function withProfile(request: RoutePlanRequest, profileId: number | null): RoutePlanRequest {
