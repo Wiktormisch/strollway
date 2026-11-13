@@ -211,7 +211,8 @@
       "distance": "Distance",
       "duration": "Walking time",
       "stairsAvoided": "Stairs avoided",
-      "stops": "Stops"
+      "stops": "Stops",
+      "saved": "Saved {{date}}"
     },
     "rating": {
       "value": "{{value}} of 5"

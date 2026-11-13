@@ -1,4 +1,4 @@
-import { formatDistance, formatDuration } from './format'
+import { formatDate, formatDistance, formatDuration } from './format'
 
 describe('formatDistance', () => {
   it('shows metres below 1 km, rounded', () => {
@@ -29,5 +29,13 @@ describe('formatDuration', () => {
 
   it('never shows negative time', () => {
     expect(formatDuration(-3)).toBe('0 min')
+  })
+})
+
+describe('formatDate', () => {
+  // Midday UTC keeps the same day in every time zone the tests may run in.
+  it('uses a short month in the given language', () => {
+    expect(formatDate('2026-03-05T12:00:00Z', 'en')).toBe('Mar 5, 2026')
+    expect(formatDate('2026-03-05T12:00:00Z', 'pl')).toBe('5 mar 2026')
   })
 })

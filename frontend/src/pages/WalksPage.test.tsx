@@ -66,8 +66,11 @@ describe('WalksPage', () => {
     expect(screen.getByText('25 min')).toBeInTheDocument()
     expect(screen.getByText('16 m')).toBeInTheDocument()
     expect(within(screen.getByRole('listitem')).getByText('Planned')).toBeInTheDocument()
+    expect(screen.getByText('Saved Jan 1, 2026')).toBeInTheDocument()
+    expect(screen.getByRole('button', { name: 'All' })).toHaveAttribute('aria-pressed', 'true')
 
     await user.click(screen.getByRole('button', { name: 'Done' }))
+    expect(screen.getByRole('button', { name: 'Done' })).toHaveAttribute('aria-pressed', 'true')
     expect(await screen.findByText('Fake done walk')).toBeInTheDocument()
     expect(screen.getByText('4 of 5')).toBeInTheDocument()
     expect(calls.at(-1)?.search).toBe('?status=done')

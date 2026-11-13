@@ -211,7 +211,8 @@
       "distance": "Dystans",
       "duration": "Czas marszu",
       "stairsAvoided": "Ominięte schody",
-      "stops": "Przystanki"
+      "stops": "Przystanki",
+      "saved": "Zapisano {{date}}"
     },
     "rating": {
       "value": "{{value}} z 5"
