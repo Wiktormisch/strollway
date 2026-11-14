@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { ProfileSelect } from '@/components/walks/ProfileSelect'
+import { LocateButton } from './LocateButton'
 import { PointRow } from './PointRow'
 import {
   apiLanguage,
@@ -29,6 +30,7 @@ interface TripIdeaFormProps {
   onClearStart: () => void
   onUseMapCenter: () => void
   onDemoStart: () => void
+  onLocate: (point: LatLng) => void
   onSubmit: (request: TripIdeaRequest) => void
 }
 
@@ -65,6 +67,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
         onChange={props.onUseMapCenter}
         onClear={props.onClearStart}
       />
+      <LocateButton onLocate={props.onLocate} />
       <Button type="button" variant="demo" size="sm" onClick={props.onDemoStart}>
         <Play aria-hidden />
         {t('trip.form.demoStart')}

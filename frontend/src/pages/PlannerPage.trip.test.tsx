@@ -67,6 +67,10 @@ describe('PlannerPage, trip idea', () => {
     await user.click(screen.getByRole('button', { name: 'Remove stop Fake Cafe' }))
     expect(screen.getByText('map stops: Fake Playground, Restaurant')).toBeInTheDocument()
     expect(screen.getByText(/You removed a stop/)).toBeInTheDocument()
+    // The Google Maps link has the remaining stops only (audit idea 9).
+    const mapsLink = screen.getByRole('link', { name: /Open in Google Maps/ })
+    const waypoints = new URL(mapsLink.getAttribute('href')!).searchParams.get('waypoints')
+    expect(waypoints?.split('|')).toHaveLength(2)
 
     await user.click(screen.getByRole('button', { name: 'Save walk' }))
     const dialog = await screen.findByRole('dialog')
@@ -84,6 +88,33 @@ describe('PlannerPage, trip idea', () => {
       [1, 'node/1', 'rules'],
       [2, 'node/3', 'rules'],
     ])
+  })
+
+  it('uses the browser position once as the trip start (audit idea 8)', async () => {
+    vi.stubGlobal('isSecureContext', true)
+    const getCurrentPosition = vi.fn((ok: PositionCallback) =>
+      ok({ coords: { latitude: 54.4, longitude: 18.6 } } as GeolocationPosition),
+    )
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: { getCurrentPosition },
+    })
+    const calls = mockApi({ ...BASE, 'POST /api/trip-ideas/': makeTrip() })
+    const user = userEvent.setup()
+    renderPlanner()
+
+    await user.click(screen.getByRole('tab', { name: 'Trip idea' }))
+    await user.click(screen.getByRole('button', { name: 'Use my location' }))
+    expect(screen.getByText(/^map focus: 1 \[\[54.4,18.6\]\]/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    await screen.findByText('Planned by rules (demo mode)')
+    expect(calls.find((call) => call.path === '/api/trip-ideas/')?.body).toMatchObject({
+      start: { lat: 54.4, lng: 18.6 },
+    })
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+
+    vi.unstubAllGlobals()
+    delete (navigator as { geolocation?: unknown }).geolocation
   })
 
   it('shows a friendly message for 422 no_places_nearby', async () => {

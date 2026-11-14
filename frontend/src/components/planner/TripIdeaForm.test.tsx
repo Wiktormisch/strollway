@@ -18,6 +18,7 @@ function renderForm(overrides: Partial<Parameters<typeof TripIdeaForm>[0]> = {})
       onClearStart={vi.fn()}
       onUseMapCenter={vi.fn()}
       onDemoStart={vi.fn()}
+      onLocate={vi.fn()}
       onSubmit={onSubmit}
       {...overrides}
     />,
