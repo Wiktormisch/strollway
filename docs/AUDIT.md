@@ -28,7 +28,7 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 | 3a | Backend: `config/`, `walks/`, security, deploy readiness | Done |
 | 3b | Backend: `planning/` and `planning/llm/` | Done |
 | 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | Done |
-| 4b | Frontend: UI/UX, accessibility, i18n, mobile | To do |
+| 4b | Frontend: UI/UX, accessibility, i18n, mobile | Done |
 | 5 | Cross-cutting checks and the prioritized backlog | To do |
 
 ## Part 0: Baseline
@@ -417,6 +417,124 @@ Checked and not a problem: the `cn` package is the official one from the `shadcn
   two `eslint-disable` lines, both with a reason.
 - 130 tests. Page tests use a fake map (`src/test/FakeMapView.tsx`) instead of Leaflet, which keeps
   them fast and stable.
+
+## Part 4b: Frontend UI/UX, accessibility, i18n and mobile
+
+Run on 2026-11-14 on `dev` at `9656488`, first as a static review (code, tokens, translations),
+then on the running app with the new `npm run visual-check` (Playwright with the installed Edge
+and axe-core, branch `chore/visual-checks`).
+
+Live run: 6 screens (planner empty, planner with the "Big detour" demo route, planner with the
+demo trip, walks list, walk detail, profiles) x phone 390 x 844 and desktop 1280 x 800 x light
+and dark x `pl` and `en` = 48 screenshots, each with an axe scan; plus the accessibility tree and
+the Tab order (first 30 stops) per page. The backend ran with every external service in mock
+mode (`ROUTING_PROVIDER`, `POI_PROVIDER`, `WEATHER_PROVIDER`, `LLM_BACKEND`), and the browser
+blocked every other host, so map tiles are grey and nothing left the machine. Demo data was
+created for one random test client in the local database.
+
+Static checks: a script that compares the `pl` and `en` key sets; a search for hard-coded texts
+and labels in JSX; WCAG contrast ratios computed from the colour tokens in `src/index.css`; a
+search for `aria-*`, live regions, reduced motion, touch sizes and HTML built from strings.
+
+### axe results
+
+In the first full run, 28 of 48 screens had no violations and two rules failed on the other 20.
+In that run the route and trip screens were caught while still loading (the script now waits for
+the API answer); a second run of those screens with the result shown found only the inactive tab
+label. All problems were checked by hand:
+
+| Problem | Where | Ratio | Needed |
+|---|---|---|---|
+| Inactive tab label (`text-foreground/60` on `muted`) | planner tabs, light theme | 3.65:1 | 4.5:1 |
+| "Delete walk" text (`destructive` on the page background) | walk detail, light theme | 4.41:1 | 4.5:1 |
+| OpenStreetMap link in the attribution (Leaflet default style) | every map | 2.55:1 to the text around it | 3:1 |
+
+axe also flagged the "Plan route" / "Planning…" button (white on a faded green, 2.38:1) in the
+loading state, but the button is `disabled` then, and WCAG does not ask for contrast on disabled
+controls. Not a finding.
+
+### Findings
+
+- **U1 [P2/S] input borders: 1.30:1** - inputs, selects and text areas have a transparent
+  background, so their border is the only thing that shows where the field is. The border uses
+  `--input` = `#E4E2DC`: 1.30:1 on a card and 1.20:1 on the page background (dark theme: 1.24:1).
+  WCAG 2.2 (1.4.11) asks for 3:1 for the edge of a control. On a phone in the sun this matters
+  even more. The contrast table in `docs/DESIGN.md` shows "-" for `border`, so it was not checked.
+  axe does not test this rule (it checks text contrast only), so this stays a computed result.
+  Fix: a darker `--input` token only for form controls (keep `--border` for lines), at least 3:1
+  on `card` and `background`, and add it to the table in `DESIGN.md`.
+- **U2 [P2/S] on a phone the result hides under the panel** - seen in the screenshots: after a
+  demo route or a demo trip, the map fits the route to the whole screen (`FitBounds`,
+  `padding: [40, 40]`, `MapView.tsx:129-138`), but the bottom panel covers about 65 % of it. Only
+  one place marker (route) or stop 1 (trip) is visible above the panel; the route line and the
+  other markers are under it. Fix: on small screens, pass the panel height as bottom padding to
+  `fitBounds` (`paddingBottomRight`), or fold the panel to its peek height when a result arrives.
+  This is close to feature idea 6 (demo click centres the map).
+- **U3 [P2/M] choosing points needs a mouse or touch** - points A and B and the trip start can be
+  set only by clicking the map or with a demo button (`RouteForm.tsx:53-58`). The Tab order
+  confirms it: the map is one focus stop, and there is no other way to set a point. A keyboard or
+  screen reader user can only try the demos. Fix: feature ideas 8 (use my location) and 10/15
+  (place search) both add a way that works with the keyboard. Until then, say it in the README.
+- **U4 [P3/S] text contrast misses (axe)** - the inactive tab label (3.65:1,
+  `src/components/ui/tabs.tsx`, `text-foreground/60`) and the "Delete walk" text (4.41:1,
+  `WalkDetailPage.tsx:184`). Fix: `text-muted-foreground` for the inactive tab (4.67:1 on
+  `muted`) and a slightly darker `destructive` for text in the light theme. The Leaflet
+  attribution link (2.55:1) is a library default; an underline in `index.css` fixes it.
+- **U5 [P3/S] map markers have names like "A", "B", "1"** - in the accessibility tree the
+  markers on the planner and on the walk detail page are buttons named only by their letter or
+  number. The `title` given to stop markers (`WalkMap.tsx:52-53`) is not used, because the text
+  inside the marker wins. A screen reader says "button 1" instead of "Stop 1: playground". Fix: an
+  `aria-label` in the marker HTML (`lib/mapIcons.tsx`), or `keyboard: false` for markers that only
+  repeat the list next to the map.
+- **U6 [P3/S] touch targets under 44 px** - `docs/DESIGN.md:79` says at least 44 x 44 px, but
+  `size="sm"` and `size="icon-sm"` are 36 px (`button.tsx:29`, `:33`). They are used for the demo
+  buttons (`RouteForm.tsx:56`, `TripIdeaForm.tsx:68`, `:81`), "Load places again"
+  (`PlacesSection.tsx:28`) and "remove stop" (`StopsTimeline.tsx:100`). They pass the WCAG minimum
+  (24 px) but not our own rule. Fix: 44 px on touch screens (for example a `pointer: coarse`
+  variant).
+- **U7 [P3/S] no reduced motion** - there is no `prefers-reduced-motion` rule. The spinner, the
+  skeleton pulse, the dialog zoom and the map `fitBounds` animation always run. Fix: Tailwind
+  `motion-safe:` variants or one global rule, and `fitBounds(..., { animate: false })` when the
+  user asks for less motion.
+- **U8 [P3/S] the wait hint promises 10-20 s** - while a trip is planned, the form shows "Model AI
+  może potrzebować 10-20 sekund. Poczekaj chwilę." (seen in a screenshot; the static review missed
+  it). The real wait can be up to about 60 s (L1), and there is no way to cancel. Fix: "up to a
+  minute" in both languages, and optionally a cancel button that aborts the request.
+- **U9 [P3/S] no "skip to content" link** - on every page the first 7 Tab stops are the top bar
+  (logo, 3 links, theme, 2 languages) before the content. Fix: a visually hidden "Skip to
+  content" link as the first element.
+
+### Checked and good
+
+- i18n: 276 keys in both `pl.json` and `en.json`, the same key set, and no hard-coded user-facing
+  text in components (only the standard OpenStreetMap attribution). Texts with numbers avoid
+  Polish plural forms ("Przystanki do zapisania: {{count}}"). `<html lang>` follows the chosen
+  language (`src/i18n/index.ts:43-45`). The screenshots looked at show no cut or overflowing `pl`
+  labels.
+- Every icon-only button has an `aria-label` that names the object (for example "remove stop:
+  {{name}}"). Form controls have names in the accessibility tree (for example
+  `switch "Avoid stairs"`), and axe found no missing names, labels or roles.
+- Landmarks: `navigation`, `main`, a `region` per panel with an `h1`. The Tab order follows the
+  screen: top bar, tabs, points, demos, profile, switch, map.
+- Results use `aria-live="polite"`, errors use `role="alert"`, skeletons use `role="status"`.
+- The privacy hint under the wishes field is there (`AGENTS.md` rule 5).
+- Other text contrast passes AA: `muted-foreground` 5.06:1 on the background, 4.67:1 on `muted`,
+  5.47:1 on a card; white on `brand` 6.39:1; the dark theme passes everywhere except the
+  attribution link. `sage-500` (3.83:1) is used only for icons, as `DESIGN.md` says.
+- Mobile: inputs use 16 px text on phones (`text-base md:text-sm`), so iOS does not zoom in;
+  inputs and main buttons are 44 px high; full-height layouts and dialogs use `svh` / `dvh`.
+- No XSS path: HTML strings for Leaflet markers hold only internal values (colours from a constant
+  map, letters, numbers). LLM and OSM texts are rendered as React text.
+
+### Still not checked
+
+- A real phone (touch, sun, slow network) and the map with real tiles.
+- Most of the 48 screenshots were not looked at one by one (axe and the text outputs cover them);
+  four phone screenshots of the planner were reviewed by eye.
+- Focus after a dialog closes and after a new result (the Tab script starts from the top of the
+  page only).
+- A screen reader run (NVDA on Windows) through the planner and the walk detail page.
+- A comparison with the Figma frames, if the developer wants to spend MCP calls on it.
 
 ## Feature ideas (input for part 5)
 
