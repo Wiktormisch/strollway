@@ -181,18 +181,35 @@ def test_overpass_failure_still_returns_route(api, ors, overpass):
 
 
 @pytest.mark.django_db
-def test_fixture_places_used_when_overpass_fails(api, overpass, monkeypatch):
+def _with_recorded_cafe(monkeypatch):
     fixture = fixtures.load_fixture(fixtures.DEMO_PAIRS[2])
     cafe = {"type": "node", "id": 7, "lat": 54.41, "lon": 18.57, "tags": {"amenity": "cafe"}}
     fixture["overpass"] = {"elements": [cafe]}
     monkeypatch.setattr(fixtures, "load_fixture", lambda pair: fixture)
-    overpass.add(status=429, body={})
+
+
+@pytest.mark.django_db
+def test_demo_pair_uses_recorded_places_without_overpass(api, overpass, monkeypatch):
+    _with_recorded_cafe(monkeypatch)
 
     body = post(api, payload()).json()
 
     assert body["source"] == "fixture"
     assert body["pois_status"] == "ok"
     assert [p["poi_id"] for p in body["pois"]] == ["node/7"]
+    assert overpass.requests == []  # the demo answers at once
+
+
+@pytest.mark.django_db
+def test_demo_pair_with_a_live_route_still_uses_recorded_places(api, ors, overpass, monkeypatch):
+    _with_recorded_cafe(monkeypatch)
+    ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_avoid.json"))
+
+    body = post(api, payload()).json()
+
+    assert body["source"] == "ors"
+    assert [p["poi_id"] for p in body["pois"]] == ["node/7"]
+    assert overpass.requests == []
 
 
 @pytest.mark.django_db

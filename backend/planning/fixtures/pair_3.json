@@ -148,5 +148,1051 @@
    }
   }
  },
- "overpass": null
+ "overpass": {
+  "elements": [
+   {
+    "type": "node",
+    "id": 270359423,
+    "lat": 54.4099191,
+    "lon": 18.5659212,
+    "tags": {
+     "bench": "yes",
+     "name": "Oliwa 02",
+     "name:de": "Oliva",
+     "name:pl": "Oliwa 02",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2046",
+     "shelter": "yes",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 270359426,
+    "lat": 54.4100682,
+    "lon": 18.5655736,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "check_date:shelter": "2023-02-04",
+     "highway": "bus_stop",
+     "name": "Oliwa 08",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1534",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 270359429,
+    "lat": 54.4083748,
+    "lon": 18.5629806,
+    "tags": {
+     "name": "Obrońców Westerplatte 01",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2043",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 270359435,
+    "lat": 54.4100121,
+    "lon": 18.5671004,
+    "tags": {
+     "name": "Oliwa 01",
+     "name:de": "Oliva",
+     "name:pl": "Oliwa 01",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2045",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 270359439,
+    "lat": 54.409299,
+    "lon": 18.5670206,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Oliwa 07",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "120",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 270359443,
+    "lat": 54.4093671,
+    "lon": 18.5674509,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Oliwa 06",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1533",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1726936494,
+    "lat": 54.4094603,
+    "lon": 18.5790338,
+    "tags": {
+     "bench": "no",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Beniowskiego 01",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1740",
+     "ref:ztm": "1740",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1726936499,
+    "lat": 54.4093871,
+    "lon": 18.5769186,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Beniowskiego 02",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1741",
+     "ref:ztm": "1741",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1842118353,
+    "lat": 54.411094,
+    "lon": 18.572231,
+    "tags": {
+     "bench": "no",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Oliwa PKP 04",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "117",
+     "ref:ztm": "117",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1919753902,
+    "lat": 54.4114628,
+    "lon": 18.5670147,
+    "tags": {
+     "access": "customers",
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "527",
+     "addr:postcode": "80-320",
+     "addr:street": "Aleja Grunwaldzka",
+     "internet_access:fee": "no",
+     "leisure": "playground",
+     "name": "Gym&Fun",
+     "opening_hours": "Mo-Su 07:00-24:00",
+     "operator": "McDonald's",
+     "phone": "+48 694 495 914",
+     "smoking": "no",
+     "wheelchair": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1923999922,
+    "lat": 54.4082787,
+    "lon": 18.5629497,
+    "tags": {
+     "name": "Obrońców Westerplatte 02",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2044",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2441110237,
+    "lat": 54.4096362,
+    "lon": 18.5671505,
+    "tags": {
+     "bench": "yes",
+     "name": "Oliwa 03",
+     "name:de": "Oliva",
+     "name:pl": "Oliwa 03",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "202",
+     "shelter": "yes",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2944484947,
+    "lat": 54.4116613,
+    "lon": 18.5740771,
+    "tags": {
+     "bench": "yes",
+     "bin": "no",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Oliwa PKP 03",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "119",
+     "ref:ztm": "119",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3079682215,
+    "lat": 54.410901,
+    "lon": 18.5727923,
+    "tags": {
+     "amenity": "fast_food",
+     "cuisine": "burger",
+     "name": "U Szwagra"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3107939831,
+    "lat": 54.4090845,
+    "lon": 18.5670452,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "19D",
+     "addr:postcode": "80-316",
+     "addr:street": "Kaprów",
+     "alt_name": "Mandu Gdańsk Oliwa",
+     "amenity": "restaurant",
+     "branch": "Gdańsk Oliwa",
+     "brand": "Mandu",
+     "check_date": "2026-07-19",
+     "check_date:opening_hours": "2022-02-25",
+     "cuisine": "dumplings",
+     "diet:vegetarian": "yes",
+     "email": "kontakt@pierogarnia-mandu.pl",
+     "level": "0",
+     "name": "Mandu",
+     "opening_hours": "Su-Th 11:00-21:00; Fr-Sa 11:00-22:00",
+     "outdoor_seating": "yes",
+     "phone": "+48 58 340 55 44",
+     "takeaway": "yes",
+     "website": "https://pierogarnia-mandu.pl"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3697243849,
+    "lat": 54.4082685,
+    "lon": 18.5627972,
+    "tags": {
+     "bench": "yes",
+     "bin": "no",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Obrońców Westerplatte 04",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1619",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3697243850,
+    "lat": 54.4083553,
+    "lon": 18.5631254,
+    "tags": {
+     "bench": "no",
+     "bin": "no",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Obrońców Westerplatte 03",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1622",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3697243851,
+    "lat": 54.4090953,
+    "lon": 18.5681207,
+    "tags": {
+     "bench": "no",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "no",
+     "name": "Oliwa 04",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1779",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3698771129,
+    "lat": 54.4087399,
+    "lon": 18.5636237,
+    "tags": {
+     "bench": "no",
+     "bin": "no",
+     "check_date:shelter": "2022-08-26",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Obrońców Westerplatte 05",
+     "operator": "ZTM Gdańsk",
+     "ref:ztm": "1833",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3698771130,
+    "lat": 54.4091269,
+    "lon": 18.5686428,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Oliwa 05",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1778",
+     "shelter": "yes",
+     "tactile_paving": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3700282278,
+    "lat": 54.4110399,
+    "lon": 18.5726205,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "check_date:shelter": "2021-03-01",
+     "highway": "bus_stop",
+     "name": "Oliwa PKP 02",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "118",
+     "ref:ztm": "118",
+     "shelter": "yes",
+     "tactile_paving": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3701031138,
+    "lat": 54.4123436,
+    "lon": 18.5733561,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Droszyńskiego",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1532",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3701031139,
+    "lat": 54.4125599,
+    "lon": 18.5736222,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Droszyńskiego",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1533",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3701031140,
+    "lat": 54.4111646,
+    "lon": 18.573021,
+    "tags": {
+     "bench": "no",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Oliwa PKP 01",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref": "1716",
+     "ref:ztm": "1716",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6316731875,
+    "lat": 54.4098676,
+    "lon": 18.5648399,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "8",
+     "addr:postcode": "80-320",
+     "addr:street": "Opata Jacka Rybińskiego",
+     "amenity": "cafe",
+     "check_date": "2026-08-31",
+     "name": "Lab"
+    }
+   },
+   {
+    "type": "node",
+    "id": 8792306880,
+    "lat": 54.4105816,
+    "lon": 18.5641104,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 8792307074,
+    "lat": 54.4105717,
+    "lon": 18.5638312,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 8792307075,
+    "lat": 54.410759,
+    "lon": 18.5642716,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 8792307078,
+    "lat": 54.4109019,
+    "lon": 18.5655744,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 8792307080,
+    "lat": 54.4109038,
+    "lon": 18.5655379,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9044030588,
+    "lat": 54.4111639,
+    "lon": 18.5653695,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9281446193,
+    "lat": 54.4116469,
+    "lon": 18.5731605,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Oliwa PKP 05",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "public_transport": "platform",
+     "ref:ztm": "1718",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9382414990,
+    "lat": 54.4091322,
+    "lon": 18.5674695,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9769516793,
+    "lat": 54.4096842,
+    "lon": 18.5636538,
+    "tags": {
+     "amenity": "cafe",
+     "check_date": "2026-08-31",
+     "name": "Coffee Perk",
+     "opening_hours": "Fr-Su 12:00-19:00"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9882113994,
+    "lat": 54.4090524,
+    "lon": 18.5674851,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10038232587,
+    "lat": 54.4106322,
+    "lon": 18.5642484,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10580248980,
+    "lat": 54.411267,
+    "lon": 18.5688699,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10584562278,
+    "lat": 54.4106985,
+    "lon": 18.5642847,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10584562279,
+    "lat": 54.4105858,
+    "lon": 18.5639793,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10671553834,
+    "lat": 54.4113185,
+    "lon": 18.5733944,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "49C",
+     "addr:postcode": "80-360",
+     "addr:street": "Bolesława Krzywoustego",
+     "amenity": "restaurant",
+     "check_date": "2026-03-13",
+     "contact:facebook": "https://www.facebook.com/DELHI-HOUSE-275441294314863/",
+     "contact:instagram": "https://instagram.com/delhihousegdansk",
+     "cuisine": "indian",
+     "delivery": "yes",
+     "diet:non-vegetarian": "yes",
+     "diet:vegetarian": "yes",
+     "mobile": "+48 690 060 640",
+     "name": "Delhi House",
+     "opening_hours": "Mo-Su 12:00-22:00",
+     "operator": "Delhi House Sp. z o.o.",
+     "outdoor_seating": "no",
+     "takeaway": "only",
+     "website": "https://delhi-house.skubacz.pl/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10782787982,
+    "lat": 54.4095845,
+    "lon": 18.5675483,
+    "tags": {
+     "bench": "no",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Oliwa 09",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "320",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10881641155,
+    "lat": 54.4097296,
+    "lon": 18.568135,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10883984569,
+    "lat": 54.4100398,
+    "lon": 18.5678918,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10883984570,
+    "lat": 54.4099767,
+    "lon": 18.5679413,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10883984571,
+    "lat": 54.4099178,
+    "lon": 18.5679874,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10883984572,
+    "lat": 54.4098629,
+    "lon": 18.5680305,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10883984573,
+    "lat": 54.4098438,
+    "lon": 18.5680454,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10883984574,
+    "lat": 54.4097729,
+    "lon": 18.568101,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10890103603,
+    "lat": 54.409773,
+    "lon": 18.5704244,
+    "tags": {
+     "amenity": "bench",
+     "armrest": "no",
+     "backrest": "yes",
+     "material": "wood",
+     "operator": "Rada Dzielnicy Oliwa"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10922344160,
+    "lat": 54.4093346,
+    "lon": 18.5671561,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10922344162,
+    "lat": 54.409118,
+    "lon": 18.5670062,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10922344163,
+    "lat": 54.4091219,
+    "lon": 18.5670345,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10995011646,
+    "lat": 54.4099782,
+    "lon": 18.5659057,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11015009147,
+    "lat": 54.4094954,
+    "lon": 18.5617523,
+    "tags": {
+     "bench": "no",
+     "bin": "no",
+     "bus": "yes",
+     "check_date:shelter": "2026-06-06",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Park Oliwski 01",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1532",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11775683626,
+    "lat": 54.4095647,
+    "lon": 18.5674477,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11775683629,
+    "lat": 54.4092888,
+    "lon": 18.566933,
+    "tags": {
+     "amenity": "bench",
+     "armrest": "yes",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12639086244,
+    "lat": 54.4097124,
+    "lon": 18.5632794,
+    "tags": {
+     "amenity": "bench",
+     "armrest": "no",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12639086289,
+    "lat": 54.4092736,
+    "lon": 18.568858,
+    "tags": {
+     "amenity": "restaurant",
+     "check_date": "2026-04-25",
+     "name": "Bistro Oliwa"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12639086298,
+    "lat": 54.4097901,
+    "lon": 18.5638117,
+    "tags": {
+     "amenity": "bench",
+     "armrest": "no",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12639440915,
+    "lat": 54.4094514,
+    "lon": 18.5669817,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2026-07-19",
+     "cuisine": "burger",
+     "drive_through": "no",
+     "name": "Zapiekarnia"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12697209632,
+    "lat": 54.4087668,
+    "lon": 18.5672244,
+    "tags": {
+     "amenity": "restaurant",
+     "check_date": "2025-08-21",
+     "check_date:opening_hours": "2025-08-21",
+     "name": "Poparzeni",
+     "opening_hours": "Mo-Th 09:00-19:00; Fr,Sa 09:00-20:00; Su 09:00-19:00"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12772010129,
+    "lat": 54.41089,
+    "lon": 18.5725563,
+    "tags": {
+     "amenity": "fast_food",
+     "check_date": "2026-07-02"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13757098541,
+    "lat": 54.4104352,
+    "lon": 18.5709208,
+    "tags": {
+     "amenity": "toilets",
+     "check_date": "2026-08-24",
+     "fee": "no",
+     "portable": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 14020365608,
+    "lat": 54.410005,
+    "lon": 18.5716763,
+    "tags": {
+     "amenity": "cafe",
+     "check_date": "2026-09-26",
+     "name": "Bistro Peron 1"
+    }
+   },
+   {
+    "type": "node",
+    "id": 14027507826,
+    "lat": 54.4093003,
+    "lon": 18.5669568,
+    "tags": {
+     "amenity": "bench",
+     "armrest": "yes",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "way",
+    "id": 100234665,
+    "center": {
+     "lat": 54.4114475,
+     "lon": 18.5670475
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "527",
+     "addr:postcode": "80-320",
+     "addr:street": "Aleja Grunwaldzka",
+     "amenity": "fast_food",
+     "brand": "McDonald's",
+     "brand:wikidata": "Q38076",
+     "brand:wikipedia": "en:McDonald's",
+     "building": "retail",
+     "building:levels": "2",
+     "check_date": "2026-03-05",
+     "cuisine": "burger",
+     "diet:vegetarian": "no",
+     "drive_through": "yes",
+     "fixme": "Na paragonie widnieje: \"Twinstar Sp. z o.o. Restauracja McDonald's Gdańsk 06 Staw (203)\". Być może \"Gdańsk 06 Staw\" to nazwa oddziału (tag branch)? 203 to pewnie nr referencyjny (tag \"ref\") bo 6 wydaje się za krótkie jak na nr referencyjny.",
+     "internet_access": "wlan",
+     "internet_access:fee": "no",
+     "name": "McDonald's",
+     "opening_hours": "Mo-Su 07:00-24:00",
+     "operator": "Twinstar Sp. z o.o.",
+     "outdoor_seating": "yes",
+     "phone": "+48 694 495 914",
+     "roof:shape": "pyramidal",
+     "smoking": "no",
+     "source:building": "BDOT",
+     "source:geometry": "EGiB",
+     "takeaway": "yes",
+     "website": "https://mcdonalds.pl/restauracje/pomorskie/gdansk/gdansk-al-grunwaldzka-527",
+     "wheelchair": "yes"
+    }
+   },
+   {
+    "type": "way",
+    "id": 168928581,
+    "center": {
+     "lat": 54.4111302,
+     "lon": 18.5624328
+    },
+    "tags": {
+     "fee": "no",
+     "leisure": "park",
+     "name": "Park Oliwski im. Adama Mickiewicza",
+     "name:etymology:wikidata": "Q1447540",
+     "opening_hours": "May-Sep 05:00-23:00; Oct-Apr 05:00-20:00",
+     "operator": "Gdański Zarząd Dróg i Zieleni",
+     "website": "https://parkoliwski.gdansk.pl/",
+     "wheelchair": "yes",
+     "wikidata": "Q10971573",
+     "wikipedia": "pl:Park Oliwski"
+    }
+   },
+   {
+    "type": "way",
+    "id": 301944975,
+    "center": {
+     "lat": 54.4105139,
+     "lon": 18.5696737
+    },
+    "tags": {
+     "addr:street": "Hołdu Pruskiego",
+     "amenity": "fast_food",
+     "building": "yes",
+     "building:levels": "1",
+     "check_date": "2026-04-22",
+     "cuisine": "sandwich;burger",
+     "name": "Lisia Chatka",
+     "opening_hours": "Mo-Fr 10:00-18:00; Sa-Su 13:00-18:00",
+     "website": "https://www.lisiachatka.pl/"
+    }
+   },
+   {
+    "type": "way",
+    "id": 904800949,
+    "center": {
+     "lat": 54.4090122,
+     "lon": 18.5674626
+    },
+    "tags": {
+     "leisure": "park",
+     "name": "Skwer gen. Marka Bezruczki",
+     "start_date": "2021-05-09"
+    }
+   }
+  ]
+ }
 }

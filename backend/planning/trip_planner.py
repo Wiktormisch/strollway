@@ -89,14 +89,13 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
 
 
 def _candidates(start, radius_m, fixture):
-    """Live places first; the recorded demo places when live data cannot be used."""
-    result = pois.PoiResult([], [], pois.STATUS_UNAVAILABLE)
-    if pois.is_enabled():
-        result = pois.find_candidates(start, radius_m)
+    """Recorded places at the demo start (no Overpass call), live places anywhere else."""
     recorded = fixture.get("overpass") if fixture else None
-    if result.status != pois.STATUS_OK and recorded is not None:
-        result = pois.parse_candidates(recorded, start, radius_m)
-    return result
+    if recorded is not None:
+        return pois.parse_candidates(recorded, start, radius_m)
+    if pois.is_enabled():
+        return pois.find_candidates(start, radius_m)
+    return pois.PoiResult([], [], pois.STATUS_UNAVAILABLE)
 
 
 def _plan_answer(candidates, context):
