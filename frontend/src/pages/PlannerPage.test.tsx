@@ -233,6 +233,75 @@ describe('PlannerPage', () => {
     expect(screen.getByRole('dialog', { name: 'Save walk' })).toBeInTheDocument()
   })
 
+  it('recomputes the time in the save dialog for another profile (audit idea 22)', async () => {
+    const slower = makePlan({ route: { ...makePlan().route, duration_min: 14 } })
+    const calls = mockApi(makePlan(), slower)
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getAllByRole('button', { name: 'Save walk' })[0])
+    const dialog = screen.getByRole('dialog', { name: 'Save walk' })
+    // The planned profile: the cached plan answers, nothing is sent.
+    expect(within(dialog).getByText(/Walking time for this profile/)).toBeInTheDocument()
+    expect(calls).toHaveLength(1)
+
+    await user.click(within(dialog).getByRole('combobox', { name: 'Family profile' }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+
+    expect(
+      await within(dialog).findByText('Walking time for this profile: 14 min.'),
+    ).toBeInTheDocument()
+    expect(calls).toHaveLength(2)
+    expect(calls[1]).toMatchObject({ profile_id: 4, pace_kmh: 3.5 })
+  })
+
+  it('blocks "Save" while the new time loads (audit idea 22)', async () => {
+    let answer: (plan: RoutePlan) => void = () => {}
+    const pending = new Promise<RoutePlan>((resolve) => (answer = resolve))
+    mockApi(makePlan(), pending)
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getAllByRole('button', { name: 'Save walk' })[0])
+    const dialog = screen.getByRole('dialog', { name: 'Save walk' })
+    await user.click(within(dialog).getByRole('combobox', { name: 'Family profile' }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+
+    expect(await within(dialog).findByText('Recomputing the walking time…')).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: 'Save walk' })).toBeDisabled()
+
+    answer(makePlan({ route: { ...makePlan().route, duration_min: 14 } }))
+    expect(
+      await within(dialog).findByText('Walking time for this profile: 14 min.'),
+    ).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: 'Save walk' })).toBeEnabled()
+  })
+
+  it('keeps the planned time when recomputing fails (audit idea 22)', async () => {
+    mockApi(makePlan(), { status: 500, body: { detail: 'fake failure' } })
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getAllByRole('button', { name: 'Save walk' })[0])
+    const dialog = screen.getByRole('dialog', { name: 'Save walk' })
+    await user.click(within(dialog).getByRole('combobox', { name: 'Family profile' }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+
+    expect(
+      await within(dialog).findByText(
+        'Could not recompute the time. The planned time will be saved.',
+      ),
+    ).toBeInTheDocument()
+    // Saving is still possible, with the time from the plan.
+    expect(within(dialog).getByRole('button', { name: 'Save walk' })).toBeEnabled()
+  })
+
   it('sends profile_id after choosing a profile and plans again', async () => {
     const calls = mockApi(makePlan(), makePlan({ route: { ...makePlan().route, duration_min: 9 } }))
     const user = userEvent.setup()

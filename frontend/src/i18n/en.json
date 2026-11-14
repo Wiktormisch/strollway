@@ -255,7 +255,10 @@
     "errors": {
       "nameRequired": "Give the walk a name."
     },
-    "paceMismatch": "The walking time was planned with another profile. It is saved as it is; plan the route again with this profile to update it."
+    "paceMismatch": "The walking time was planned with another profile. The trip is saved with this time; plan it again with this profile to update it.",
+    "walkingTime": "Walking time for this profile: {{minutes}} min.",
+    "recomputing": "Recomputing the walking time…",
+    "recomputeFailed": "Could not recompute the time. The planned time will be saved."
   },
   "walkDetail": {
     "back": "Back to my walks",

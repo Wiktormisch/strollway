@@ -200,7 +200,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 
 - **Saving a plan as a walk:** `buildWalkPayload` (`frontend/src/lib/walkPayload.ts`) saves unknown values as 0: `stairs_m: null` (mock line) and `detour_m: null` (no stair-free route). `stairs_avoided_m = max(0, baseline.stairs_m - route.stairs_m)`. A POI category the `Stop` model does not know becomes `other`; a place without a name is saved with `name: ""`.
 - **A stop's note is the `reason` field.** The API has no separate note field.
-- **Profile and pace:** the backend computes the walking time from the profile in `/api/route-plans/`. Choosing a profile in the planner plans the route again at once. In the save dialog, a different profile only links the walk to it; a hint says that the saved time stays as planned. Recomputing there was left for later (it needs `keepPreviousData`, so the dialog does not close while loading).
+- **Profile and pace:** the backend computes the walking time from the profile in `/api/route-plans/`. Choosing a profile in the planner plans the route again at once. In the save dialog, a different profile only links the walk to it; a hint says that the saved time stays as planned. Recomputing there was left for later (it needs `keepPreviousData`, so the dialog does not close while loading). (Done in phase D for A -> B, see section 12.)
 - **Field errors:** `parseFieldErrors` puts DRF 400 messages under the fields the form shows; other messages go to a toast. Backend messages are English only.
 - **Retries:** app-wide `retry: 1`, because the default 3 retries with growing delays kept a stopped backend "loading" for about 7 s. Route plans set `retry: false` themselves: `fetchQuery` turns retries off only when no default is set, and a 422 or 429 will not change.
 - **Planner panel z-index** went from `z-1000` to `z-10`, so dialogs and selects (`z-50`) open above it. The map is in an `isolate` box, so Leaflet stays under the panel.
@@ -509,3 +509,9 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
   "come back to the start". A "Save to the profile" button appears when these differ from the
   profile; the profile form edits them too. "Avoid stairs" is not saved: it still follows the way
   of moving. Wishes and the start point are never saved (free text and coordinates, rule 5).
+- **The save dialog recomputes the time (audit idea 22).** A -> B: another profile in the dialog
+  sends `route-plans` again with that profile and its pace (the cache answers a known request).
+  `keepPreviousData` keeps the last time on screen while loading, and "Save" waits for the new
+  time, so the walk is never saved with the time of the wrong profile. If the request fails,
+  the planned time is saved and a hint says so. A trip keeps the hint only: a new trip would be
+  a paid LLM call.

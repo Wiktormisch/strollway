@@ -255,7 +255,10 @@
     "errors": {
       "nameRequired": "Podaj nazwę spaceru."
     },
-    "paceMismatch": "Czas marszu policzono dla innego profilu. Zapisze się bez zmian; zaplanuj trasę ponownie z tym profilem, aby go zaktualizować."
+    "paceMismatch": "Czas marszu policzono dla innego profilu. Wycieczka zapisze się z tym czasem; zaplanuj ją ponownie z tym profilem, aby go zaktualizować.",
+    "walkingTime": "Czas marszu dla tego profilu: {{minutes}} min.",
+    "recomputing": "Przeliczam czas marszu…",
+    "recomputeFailed": "Nie udało się przeliczyć czasu. Zapisze się czas z planu."
   },
   "walkDetail": {
     "back": "Wróć do moich spacerów",

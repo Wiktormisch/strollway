@@ -368,9 +368,18 @@ export function PlannerPage() {
           pois={result.pois}
           profiles={profiles.data ?? []}
           profileId={profileId}
-          buildPayload={(values) =>
+          routeRequestFor={(id) =>
+            id === profileId
+              ? request
+              : withProfile(
+                  { start: request.start, end: request.end, avoid_stairs: request.avoid_stairs },
+                  id,
+                  profilePace(profiles.data?.find((item) => item.id === id)),
+                )
+          }
+          buildPayload={(values, plan) =>
             buildWalkPayload({
-              plan: result,
+              plan: plan ?? result,
               start: routeStart,
               end: routeEnd,
               avoidStairs: request.avoid_stairs,
