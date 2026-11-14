@@ -401,6 +401,10 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
   UI warns that it may choose a way with stairs. This is a key feature, so it moved up the
   backlog. Considered for later: a GPX file of our exact route, and a public share link to a
   saved walk (needs an API change).
+  Update (2026-11-14, built): **at most 3 waypoints**, not 9. The Google Maps URLs docs say
+  mobile browsers accept only 3, and the app is mobile first. A trip uses its remaining stops
+  (the first 3; the UI says when stops are cut). A route uses 3 points sampled evenly from our
+  stair-free line. Points only on the parts that differ from the baseline were left for later.
 - **TypeScript types are generated from the OpenAPI schema (idea 18).** `openapi-typescript`
   (dev dependency, pinned) turns the `drf-spectacular` schema into `src/api/schema.d.ts`;
   `src/api/types.ts` becomes aliases of the generated types. The generated file is committed
