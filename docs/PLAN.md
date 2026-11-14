@@ -96,6 +96,9 @@ Versions: in stage 1 the coding session picks the current stable ones (Django LT
 
 ### D.2 Repository structure
 
+> This tree was the plan before stage 1. The code is the source of truth; some planned files
+> (for example `clientId.ts`, `config.ts`) were named or split differently.
+
 ```
 strollway/
 ├── AGENTS.md                  # rules for agents (source of truth)
@@ -451,7 +454,7 @@ class LLMClient(Protocol):
 | `mock` (default) | A clean clone, CI, tests | No LLM: `trip_rules.py` builds the plan |
 | `claude_cli` | Locally on `dev` | `claude -p` through `subprocess` (argument list, prompt through stdin, no `shell=True`), timeout 60 s, path from `shutil.which("claude")`. **Runs in an empty temporary directory**, so it does not load this repo's `CLAUDE.md` and does not use tools. Flags read from `claude --help` (list in `docs/DECISIONS.md`): `-p`, `--output-format json`, `--json-schema`, `--tools ""`, `--no-session-persistence`. Without `--bare` (it reads only `ANTHROPIC_API_KEY`, not the subscription login). **The combination is not tested yet**; it is tested in stage 6. |
 | `anthropic` | Production (`main`, deploy) | The official SDK, key `ANTHROPIC_API_KEY` from `.env`, model from `ANTHROPIC_MODEL`, a hard limit on the answer length. The coding session checks the model id and how to force JSON in the current docs (skill `claude-api`) |
-| `nvidia` | Tests and a spare | NVIDIA NIM: an OpenAI-compatible endpoint (`https://integrate.api.nvidia.com/v1/chat/completions`), `NVIDIA_API_KEY`, `NVIDIA_MODEL`. Plain `httpx`, no SDK. **[TO VERIFY: the list of free models on build.nvidia.com]** |
+| `nvidia` | Tests and a spare | NVIDIA NIM: an OpenAI-compatible endpoint (`https://integrate.api.nvidia.com/v1/chat/completions`), `NVIDIA_API_KEY`, `NVIDIA_MODEL`. Plain `httpx`, no SDK. (Closed: the model in use is set by `NVIDIA_MODEL` in `backend/.env.example`.) |
 
 `LLM_FALLBACKS=nvidia` (optional): when the main backend returns an error (for example no credit on Anthropic), the next one is tried, and at the end always the rules. `factory.py` is the only place that reads these variables.
 
@@ -597,7 +600,7 @@ Stages 1-9 take about 36.5 hours without the deploy stage; stage 8 (3 h) is opti
 
 Results are in `docs/DECISIONS.md`: avoiding stairs works, stairs are `waytype` 8, three demo pairs, ORS and Overpass limits, OSM data quality, a demo trip start, ORS with waypoints, the flags of `claude -p`.
 
-### Stage 1: Repository, rules and scaffold
+### Stage 1: Repository, rules and scaffold - DONE
 
 - **Goal:** a public repo with the plan as the first commit, protected branches, a working backend and frontend scaffold (page layout, routing, languages and an API client), green CI.
 - **Depends on:** stage 0. **Before starting:** `docs/PLAN.md` and `docs/DECISIONS.md` are in the repo folder `strollway/docs/`; open the coding session in `strollway/`.
@@ -687,7 +690,7 @@ First show me a short plan for each step and wait for my OK. At the end: run all
 results, summarize the diff, and propose Conventional Commit message(s). Then stop.
 ```
 
-### Stage 2: Data model and CRUD API
+### Stage 2: Data model and CRUD API - DONE
 
 - **Goal:** a full, tested CRUD for `FamilyProfile`, `Walk`, `Stop` with isolation by `X-Client-Id` and demo data.
 - **Depends on:** stage 1.
@@ -745,7 +748,7 @@ First show me a short plan (files, serializer design, test list) and wait for my
 the checks, show results, summarize the diff, propose Conventional Commit message(s). Then stop.
 ```
 
-### Stage 3: Routes, stairs and places
+### Stage 3: Routes, stairs and places - DONE
 
 - **Note from stage 2:** Overpass must also find `park` (`leisure=park`), `zoo` (`tourism=zoo`), `museum` (`tourism=museum`) and `beach` (`natural=beach`), and full-day trips need a larger search radius. Check how many `leisure=indoor_play` places exist in Gdansk and decide if `indoor_play` becomes a category.
 
@@ -837,7 +840,7 @@ wait for my OK. At the end: run the checks, show results, summarize the diff, pr
 Commit message(s), and tell me exactly how to run record_fixtures. Then stop.
 ```
 
-### Stage 4: Frontend, the planner with a map (the twist is visible here)
+### Stage 4: Frontend, the planner with a map (the twist is visible here) - DONE
 
 - **Goal:** the planner screen in the A -> B mode: a map, point selection, two routes, the comparison card in four variants, places with filters. The app scaffold (layout, routing, languages, API client) already exists from stage 1.
 - **Depends on:** stage 3.
@@ -910,7 +913,7 @@ the checks, show results, summarize the diff, propose Conventional Commit messag
 should click to test it by hand. Then stop.
 ```
 
-### Stage 5: Frontend, CRUD of walks, stops and profiles
+### Stage 5: Frontend, CRUD of walks, stops and profiles - DONE
 
 - **Goal:** closing the MUST scope: saving a walk from the planner, a list, details, editing, deleting, family profiles.
 - **Depends on:** stages 2 and 4.
@@ -970,7 +973,7 @@ checks, show results, summarize the diff, propose Conventional Commit message(s)
 test checklist. Then stop.
 ```
 
-### Stage 6: Trip ideas, backend (AI)
+### Stage 6: Trip ideas, backend (AI) - DONE
 
 - **Note from stage 2:** the app must work for short walks and for full-day trips. Check the time limit and the number of stops in D.6 for a full-day trip (zoo, museum, beach as main stops, with meals and breaks).
 
@@ -1059,7 +1062,7 @@ summarize the diff, list anything you cut, propose Conventional Commit message(s
 try LLM_BACKEND=claude_cli locally. Then stop.
 ```
 
-### Stage 7: Trip ideas in the UI and UX polish
+### Stage 7: Trip ideas in the UI and UX polish - DONE
 
 - **Goal:** the second planner mode ("Trip idea"), a stops timeline, a final polish of the look.
 - **Depends on:** stages 5 and 6.
@@ -1370,7 +1373,7 @@ use `--no-verify`, force-push, or rewrite history.
 }
 ```
 
-**[TO VERIFY]** the syntax of the permission rules: in the stage 1 session, ask the agent to check it in the Claude Code docs (skill `update-config`) and to test that an attempt to read `backend/.env` is denied.
+Closed: `.claude/settings.json` uses this syntax and denies `Read(./**/.env)`.
 
 ---
 
