@@ -1,4 +1,4 @@
-import { useMutation, useQuery, type QueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, type QueryClient } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import type { RoutePlan, RoutePlanRequest, TripIdea, TripIdeaRequest } from './types'
 
@@ -50,6 +50,19 @@ function routePlanOptions(request: RoutePlanRequest | null) {
  */
 export function useRoutePlan(request: RoutePlanRequest | null) {
   return useQuery({ ...routePlanOptions(request), enabled: false })
+}
+
+/**
+ * The plan for the save dialog when the user picks another profile (audit idea 22).
+ * It fetches by itself (the cache answers a known request), and `keepPreviousData` keeps
+ * the last time on screen while a new one loads, so the dialog does not jump.
+ */
+export function useRoutePlanForSave(request: RoutePlanRequest | null) {
+  return useQuery({
+    ...routePlanOptions(request),
+    enabled: request !== null,
+    placeholderData: keepPreviousData,
+  })
 }
 
 /**
