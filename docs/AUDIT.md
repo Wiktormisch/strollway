@@ -26,7 +26,7 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 | 1 | Documentation | Done |
 | 2 | Overpass and place data: diagnosis and alternatives | Done |
 | 3a | Backend: `config/`, `walks/`, security, deploy readiness | Done |
-| 3b | Backend: `planning/` and `planning/llm/` | To do |
+| 3b | Backend: `planning/` and `planning/llm/` | Done |
 | 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | To do |
 | 4b | Frontend: UI/UX, accessibility, i18n, mobile | To do |
 | 5 | Cross-cutting checks and the prioritized backlog | To do |
@@ -274,6 +274,83 @@ Docker Compose (Django on gunicorn, nginx, cloudflared).
   `NUM_PROXIES` is documented, and forged `X-Forwarded-For` is ignored (#20).
 - `/api/health/` exists, and `seed_demo` is idempotent and works offline.
 - 66 tests in `walks/` and 5 in `tests/` (CORS, health).
+
+## Part 3b: Backend planning and LLM
+
+Run on 2026-11-14 on `dev` at `9656488`. `pois.py` and the place flow in `services.py` were
+covered in part 2.
+
+Files read: `planning/llm/` (all 7 modules), `trip_planner.py`, `trip_rules.py` (outline and
+defaults), `opening_hours.py`, `routing.py` (fetch and comparison), `weather.py`, `views.py`,
+`serializers.py`, and the test names in `planning/tests/` (174 tests). `anthropic_api.py` was
+checked against the `claude-api` skill and against the installed SDK (`anthropic==2.8.0`).
+
+### Findings
+
+- **L1 [P2/S] `trip_planner.py:107-111`** - the LLM time budget (`LLM_CHAIN_BUDGET_S = 60`) is
+  checked only *before* each backend. A call that has started is not limited. Worst case from
+  the timeouts in the code: Anthropic 30 s x 2 tries (`max_retries=1`) = 60 s, `claude_cli`
+  60 s, NVIDIA 60 s. With two backends, the LLM part alone can take about 120 s. A trip also
+  waits for Overpass (12 s, not for the demo start), weather (5 s) and up to 3 route attempts with
+  2 ORS calls of 10 s each (60 s). Stage 8 plans gunicorn with a 120 s timeout, so in the worst
+  case the worker is killed and the user gets a 502 instead of the rules answer. This needs every
+  service to be slow at once, so it is rare. Fix: give each backend the time that is left as its
+  timeout, and one deadline for the whole request. There is no test for `LLM_CHAIN_BUDGET_S`
+  yet; add one.
+- **L2 [P2/S] `llm/anthropic_api.py:34-42`** - no `effort` is set. On `claude-opus-5-5` thinking
+  is always on, the default effort is `medium`, and thinking counts toward
+  `max_tokens = 4000`. If thinking uses most of it, the answer stops with `max_tokens`: we pay
+  for the call and then use the rules anyway. The `claude-api` skill says to set effort
+  explicitly on this model and not to set `max_tokens` too low. Fix: set
+  `output_config.effort` (picking 1-4 stops from a list is a simple task; try `low` and compare
+  with `medium` on a few demo requests), raise `max_tokens` (for example 8,000), and log
+  `usage.output_tokens`. Not measured here, because every call costs money.
+- **L3 [P3/S] `llm/validation.py:21-33`** - one text that is a little too long (a `reason` of 161
+  characters, a `summary` of 301) rejects the whole answer, and the trip falls back to the rules.
+  The call is still paid. Fix: cut too-long texts in code (at a word), and reject only real
+  errors (unknown, repeated or closed place, minutes out of range, wrong types).
+- **L4 [P3/S] `trip_planner.py:81-83`, `:259-261`** - when code drops stops to fit the time
+  limit, the LLM `summary` stays as it was. It can name a dropped stop, while a tip says the same
+  stop was skipped. Fix: add the dropped stops to `unmet_wishes`, or show a short note in the UI
+  that the summary is the plan before trimming.
+- **L5 [P3/S] `tests/test_llm_backends.py:223`** - the Anthropic test checks `max_tokens` and
+  the JSON format, but not `betas` and `fallbacks="default"`. A refactor could drop the refusal
+  fallback without a failing test.
+- **P1 [P3/S] `opening_hours.py`** - checked on the recorded OSM data: 6 of 51 unique values (12 %)
+  are not supported and become "unknown". Four of them could be supported with small changes:
+  `PH` inside a day list (`Mo-Sa 07:00-15:00; Su,PH off`) and a comma between rules
+  (`Mo-Sa 10:00-24:00, Su 11:00-23:00`). The other two use months (`May-Sep ...`). "Unknown" is
+  handled honestly (the place may be chosen and shows no "open" label), so the impact is small.
+  Option: a maintained parser library instead of our own (new dependency, ask first).
+- **W3 follow-up** - `trip_rules.default_wants([])` already works with no children (it picks a
+  cafe), so feature idea 5 needs only the serializer change from W3.
+
+### Checked and correct
+
+- `anthropic_api.py` matches the current API: model `claude-opus-5-5`, JSON through
+  `output_config.format` (`json_schema`), the `server-side-fallback-2026-07-01` beta with
+  `fallbacks="default"` (the scalar form needs exactly this beta), and every `stop_reason` other
+  than `end_turn` (including `refusal` and `max_tokens`) becomes `LLMError`. SDK 2.8.0 accepts
+  `betas`, `fallbacks` and `output_config` on `beta.messages.create`, and knows the beta name.
+- Privacy: the payload is a white list of fields with no coordinates, weather is only
+  temperature, rain chance and wind, and the logs never hold the prompt or the wishes. Tests check
+  both (`test_the_llm_payload_has_no_coordinates`, `test_logs_never_hold_the_wishes_or_the_prompt`).
+
+### What is good
+
+- The split from `AGENTS.md` is real: code does routes, distances, times, opening hours and
+  filtering. The LLM only picks and orders places from candidates the backend found, and its
+  answer is validated (unknown, repeated or closed places are rejected).
+- Every failure has a way out: the next backend, then the rule-based planner, which returns the
+  same shape. A crash in one backend is caught (`trip_planner.py:128`) and costs nothing more than
+  the fallback.
+- Costs are guarded twice: `LLM_DAILY_LIMIT` counts every attempt, and `trip-ideas` has a per-IP
+  limit.
+- `claude_cli` is careful: an argument list without a shell, batch files refused, `--safe-mode`,
+  an empty temporary working directory, the prompt through stdin.
+- The system prompt treats wishes and place names as data (a prompt-injection rule), and the
+  client cannot send its own candidate list (`serializers.py:116-117`).
+- Upstream failures never give 500. Domain errors are 422 with a stable `code`.
 
 ## Feature ideas (input for part 5)
 
