@@ -149,7 +149,20 @@
       "details": "Details"
     },
     "results": "Your walk",
-    "dataArea": "Place data (OpenStreetMap) covers the Tricity only. The public Overpass API is often overloaded, so we use our own import."
+    "dataArea": "Place data (OpenStreetMap) covers the Tricity only. The public Overpass API is often overloaded, so we use our own import.",
+    "bestTime": {
+      "title": "Best time for a walk",
+      "unavailable": "The forecast is not available right now. Try again later.",
+      "none": "No good hours in the next 3 days: rain, wind or a storm all the time.",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "labels": {
+        "great": "Great",
+        "good": "Good",
+        "ok": "OK"
+      },
+      "credit": "Weather data by"
+    }
   },
   "poi": {
     "title": "Places on the way",

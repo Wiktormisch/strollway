@@ -620,7 +620,7 @@ from `dev` and one PR, unless it says otherwise.
 | C. Quick frontend wins (**done**) | Planner: ideas 7, 11, 12 (**done**, #44). Idea 13 dropped; idea 22 moved to D (`DECISIONS.md` section 12) | Small (S), frontend only, each group touches the same files |
 | D. Profile as a template (**done**, `DECISIONS.md` section 12) | 1. Idea 5 (W3) and the "How do you get around?" labels (#45). 2. Profile defaults: stairs from the way of moving, places from the age, skatepark category (#46). 3. Idea 3 (W4): pace slider in km/h (#47); idea 4: saved trip settings in the profile (#48); idea 22: recompute the time in the save dialog (#49). W2 was not touched; it moves to phase G | 4 saves settings that include the pace from 3 |
 | E. Route editing | Idea 14 (L1 budget rules apply), then 16 (up/down buttons), then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
-| F. Extras (independent, by value) | Idea 1 (after 3: calories depend on the pace); 15 (after task 10); 2 (with the X1 credit) | No other work depends on them |
+| F. Extras (independent, by value) | Idea 1 (**done**, #51); 15 (**done**, #52); 2 with the Open-Meteo part of X1 (**done**, `DECISIONS.md` section 13). The ORS and OSM credits of X1 stay in phase G | No other work depends on them |
 | G. Closing | Rest of task 12; idea 19 ("How it works", X1, U3 note); task 9 (deploy, stage 8); task 11 (README, stage 9) | Deploy and README describe the final app, so they come last. The README can link the live demo |
 
 Notes:

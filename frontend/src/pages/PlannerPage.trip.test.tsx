@@ -66,6 +66,19 @@ describe('PlannerPage, trip idea', () => {
     expect(screen.getByText(/Set a start on the map/)).toBeInTheDocument()
   })
 
+  it('shows the best time for a walk once a start is set (audit idea 2)', async () => {
+    const calls = mockApi({ ...BASE, 'GET /api/best-walk-time/': { available: true, windows: [] } })
+    const user = userEvent.setup()
+    renderPlanner()
+    expect(screen.queryByRole('heading', { name: 'Best time for a walk' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
+
+    expect(await screen.findByRole('heading', { name: 'Best time for a walk' })).toBeInTheDocument()
+    expect(await screen.findByText(/No good hours/)).toBeInTheDocument()
+    expect(calls.filter((call) => call.path === '/api/best-walk-time/')).toHaveLength(1)
+  })
+
   it('suggests a trip, removes a stop, saves it and opens the walk', async () => {
     const calls = mockApi({
       ...BASE,

@@ -534,3 +534,16 @@ best time for a walk (idea 2 with the X1 credit). Each is its own branch from `d
   one per name and category. The UI waits 300 ms after the last key (debounce) and caches
   answers for an hour. Own limit `PLACE_SEARCH_RATE` (default `300/hour`).
 - **Best time for a walk (idea 2).** Its own card in the planner, for the chosen start point.
+  `GET /api/best-walk-time/?lat=&lng=` reads the Open-Meteo 3-day hourly forecast
+  (`weather.hourly_forecast`: rounded point, 5 s timeout, 1 h cache; after a failure such as
+  429 it waits 5 minutes before it asks again, with no sleep in the request). The answer is
+  always 200; no forecast gives `available: false`. `planning/best_time.py` scores the hours
+  8:00-20:00 in code, no LLM. The weights follow the developer's order: sunshine 40, calm wind
+  25, mild temperature 25 (full points at 15-24 °C), low chance of rain 10. A thunderstorm
+  (WMO 95-99), heavy rain (2 mm/h or more) or a strong wind (40 km/h or more) rule an hour
+  out. Hours next to each other with the same label (great 75+, good 55+, ok 35+) form a
+  window, so a sunny midday is not hidden in a long average; up to 3 windows, the best first.
+  The card loads by itself when a start is set, in both tabs (each tab has its own start).
+  With `WEATHER_PROVIDER=mock` it shows a fake forecast (`planning/fixtures/weather_hourly.json`,
+  moved to today), so the demo works offline. Own limit `BEST_TIME_RATE` (default `120/hour`).
+  The card and the trip weather line credit Open-Meteo with a link (X1).

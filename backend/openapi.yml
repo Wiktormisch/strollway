@@ -4,6 +4,54 @@ info:
   version: 0.1.0
   description: Stair-free walks for families with a stroller.
 paths:
+  /api/best-walk-time/:
+    get:
+      operationId: best_walk_time_retrieve
+      description: Scores the daytime hours (8:00-20:00) of the Open-Meteo 3-day forecast
+        in code and returns up to 3 windows, the best first. When the forecast cannot
+        be loaded, "available" is false; this is never an error. Limited to 120 requests
+        per hour per IP.
+      summary: Best time for a walk
+      parameters:
+      - in: query
+        name: lat
+        schema:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        required: true
+      - in: query
+        name: lng
+        schema:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        required: true
+      tags:
+      - best-walk-time
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BestTimeResponse'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BestTimeValidationError'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BestTimeThrottled'
+          description: ''
   /api/demo-data/:
     post:
       operationId: demo_data_create
@@ -1037,6 +1085,90 @@ paths:
           description: No response body
 components:
   schemas:
+    BestTimeResponse:
+      type: object
+      properties:
+        available:
+          type: boolean
+          description: False when the forecast could not be loaded.
+        windows:
+          type: array
+          items:
+            $ref: '#/components/schemas/BestTimeWindow'
+      required:
+      - available
+      - windows
+    BestTimeThrottled:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    BestTimeValidationError:
+      type: object
+      properties:
+        lat:
+          type: array
+          items: {}
+        lng:
+          type: array
+          items: {}
+      required:
+      - lat
+      - lng
+    BestTimeWindow:
+      type: object
+      properties:
+        date:
+          type: string
+          format: date
+          description: Local date at the point.
+        day_offset:
+          type: integer
+          description: 0 = today, 1 = tomorrow, 2 = in 2 days.
+        start:
+          type: string
+          description: Local time, "HH:MM".
+        end:
+          type: string
+          description: Local time, "HH:MM" (the end of the last hour).
+        hours:
+          type: integer
+        score:
+          type: integer
+          description: 0-100, the average of the hours.
+        label:
+          $ref: '#/components/schemas/LabelEnum'
+        temp_c:
+          type: number
+          format: double
+          nullable: true
+          description: Average.
+        precip_probability:
+          type: integer
+          nullable: true
+          description: Highest.
+        wind_kmh:
+          type: number
+          format: double
+          nullable: true
+          description: Highest.
+        sunshine_pct:
+          type: integer
+          nullable: true
+      required:
+      - date
+      - day_offset
+      - end
+      - hours
+      - label
+      - precip_probability
+      - score
+      - start
+      - sunshine_pct
+      - temp_c
+      - wind_kmh
     CategoryEnum:
       enum:
       - playground
@@ -1179,6 +1311,16 @@ components:
       description: |-
         * `bus` - bus
         * `tram` - tram
+    LabelEnum:
+      enum:
+      - great
+      - good
+      - ok
+      type: string
+      description: |-
+        * `great` - great
+        * `good` - good
+        * `ok` - ok
     LanguageEnum:
       enum:
       - pl

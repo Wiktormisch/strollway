@@ -6,8 +6,10 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from planning import place_search, routing, services, trip_planner
+from planning import best_time, place_search, routing, services, trip_planner, weather
 from planning.serializers import (
+    BestTimeQuerySerializer,
+    BestTimeResponseSerializer,
     PlaceSearchQuerySerializer,
     PlaceSearchResultSerializer,
     RoutePlanErrorSerializer,
@@ -293,3 +295,37 @@ class PlaceSearchView(APIView):
         query = PlaceSearchQuerySerializer(data=request.query_params)
         query.is_valid(raise_exception=True)
         return Response(place_search.search_places(query.validated_data["q"]))
+
+
+class BestTimeView(APIView):
+    """The best hours for a walk in the next 3 days near a point (audit idea 2)."""
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "best_time"
+
+    @extend_schema(
+        summary="Best time for a walk",
+        description=(
+            "Scores the daytime hours (8:00-20:00) of the Open-Meteo 3-day forecast in code "
+            "and returns up to 3 windows, the best first. When the forecast cannot be loaded, "
+            '"available" is false; this is never an error. Limited to 120 requests per hour '
+            "per IP."
+        ),
+        parameters=[BestTimeQuerySerializer],
+        responses={
+            200: BestTimeResponseSerializer,
+            400: inline_serializer(
+                "BestTimeValidationError",
+                fields={"lat": serializers.ListField(), "lng": serializers.ListField()},
+            ),
+            429: inline_serializer("BestTimeThrottled", fields={"detail": serializers.CharField()}),
+        },
+    )
+    def get(self, request: Request) -> Response:
+        query = BestTimeQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        point = (query.validated_data["lat"], query.validated_data["lng"])
+        forecast = weather.hourly_forecast(point)
+        if forecast is None:
+            return Response({"available": False, "windows": []})
+        return Response({"available": True, "windows": best_time.best_windows(forecast)})
