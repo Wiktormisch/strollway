@@ -42,6 +42,8 @@ STATUS_OUTSIDE_AREA = "outside_area"
 
 # (OSM key, OSM value) -> our category. The categories match walks.Stop.Category.
 CATEGORY_BY_TAG = {
+    # Skateparks are mostly `leisure=pitch` + `sport=skateboard`; the sport tag is the key one.
+    ("sport", "skateboard"): "skatepark",
     ("leisure", "playground"): "playground",
     ("leisure", "indoor_play"): "indoor_play",
     ("amenity", "toilets"): "toilets",
@@ -302,6 +304,7 @@ MAX_CANDIDATES = 40
 
 # No benches here: they are not a goal of a trip. Ice cream counts as a cafe ("lody").
 TRIP_CATEGORY_BY_TAG = {
+    ("sport", "skateboard"): "skatepark",
     ("leisure", "playground"): "playground",
     ("leisure", "indoor_play"): "indoor_play",
     ("amenity", "cafe"): "cafe",
