@@ -68,6 +68,16 @@ The home page shows "The server works" when the frontend can reach the API.
 Git hooks (optional): `backend\.venv\Scripts\pre-commit install` (Linux/macOS:
 `backend/.venv/bin/pre-commit install`).
 
+### Visual and accessibility check (optional)
+
+With the backend and `npm run dev` running, `npm run visual-check` (from `frontend/`) opens each
+page in a headless Microsoft Edge, on a phone and a desktop size, in both themes and both
+languages. It saves screenshots, an [axe](https://github.com/dequelabs/axe-core) accessibility
+report, the accessibility tree and the Tab order to `frontend/visual-check/` (git-ignored). It
+uses the installed Edge, so no browser is downloaded (`CHANNEL=chrome` uses Chrome), and it
+blocks every request to other hosts, so map tiles stay grey. Options are listed at the top of
+`frontend/scripts/visual-check.mjs`.
+
 ## How this project is built
 
 - `docs/PLAN.md`: the project plan (in Polish).

@@ -18,6 +18,12 @@ export default defineConfig([
     languageOptions: { ecmaVersion: 2023, globals: globals.browser },
   },
   {
+    // Node scripts (tooling, not app code).
+    files: ['scripts/**/*.mjs'],
+    extends: [js.configs.recommended],
+    languageOptions: { ecmaVersion: 2023, globals: globals.node },
+  },
+  {
     // shadcn/ui files export helpers next to components; that is fine.
     files: ['src/components/ui/**'],
     rules: { 'react-refresh/only-export-components': 'off' },
