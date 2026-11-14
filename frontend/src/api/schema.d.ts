@@ -42,6 +42,26 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/places/search/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Search places by name
+         * @description Searches only our own place table (the Tricity), not an outside geocoder. Polish letters and case do not matter. Names that start with the query come first. At most 8 results. Limited to 300 requests per hour per IP.
+         */
+        get: operations["places_search_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/profiles/": {
         parameters: {
             query?: never;
@@ -456,6 +476,23 @@ export interface components {
             ai_summary?: string;
             stops?: components["schemas"]["NestedStopRequest"][];
         };
+        PlaceSearchResult: {
+            /** @description OSM id, e.g. "way/123". */
+            poi_id: string;
+            name: string;
+            /** @description A place category, "bus_stop", "tram_stop" or "other". */
+            category: string;
+            /** Format: double */
+            lat: number;
+            /** Format: double */
+            lng: number;
+        };
+        PlaceSearchThrottled: {
+            detail: string;
+        };
+        PlaceSearchValidationError: {
+            q: unknown[];
+        };
         Poi: {
             /** @description OSM id, e.g. "node/123". */
             poi_id: string;
@@ -857,6 +894,43 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Health"];
+                };
+            };
+        };
+    };
+    places_search_list: {
+        parameters: {
+            query: {
+                q: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceSearchResult"][];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceSearchValidationError"];
+                };
+            };
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PlaceSearchThrottled"];
                 };
             };
         };

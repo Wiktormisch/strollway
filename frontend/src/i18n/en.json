@@ -169,6 +169,8 @@
     "none": "There are no tagged places near this route in OpenStreetMap.",
     "allHidden": "All categories are hidden.",
     "categories": {
+      "bus_stop": "Bus stop",
+      "tram_stop": "Tram stop",
       "playground": "Playground",
       "indoor_play": "Indoor play",
       "skatepark": "Skatepark",
@@ -450,6 +452,13 @@
   "topBar": {
     "menu": "More options",
     "theme": "Theme"
+  },
+  "placeSearch": {
+    "label": "Search for a start place",
+    "placeholder": "e.g. Park Oliwski",
+    "loading": "Searching…",
+    "empty": "Nothing found. We only have places in the Tricity.",
+    "error": "Search does not work right now. Try again later."
   },
   "location": {
     "use": "Use my location",

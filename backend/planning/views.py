@@ -6,8 +6,10 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from planning import routing, services, trip_planner
+from planning import place_search, routing, services, trip_planner
 from planning.serializers import (
+    PlaceSearchQuerySerializer,
+    PlaceSearchResultSerializer,
     RoutePlanErrorSerializer,
     RoutePlanRequestSerializer,
     RoutePlanResponseSerializer,
@@ -261,3 +263,33 @@ class TripIdeaView(APIView):
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         return Response(idea)
+
+
+class PlaceSearchView(APIView):
+    """Search the imported places by name, to pick a start point (audit idea 15)."""
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "place_search"
+
+    @extend_schema(
+        summary="Search places by name",
+        description=(
+            "Searches only our own place table (the Tricity), not an outside geocoder. "
+            "Polish letters and case do not matter. Names that start with the query come "
+            "first. At most 8 results. Limited to 300 requests per hour per IP."
+        ),
+        parameters=[PlaceSearchQuerySerializer],
+        responses={
+            200: PlaceSearchResultSerializer(many=True),
+            400: inline_serializer(
+                "PlaceSearchValidationError", fields={"q": serializers.ListField()}
+            ),
+            429: inline_serializer(
+                "PlaceSearchThrottled", fields={"detail": serializers.CharField()}
+            ),
+        },
+    )
+    def get(self, request: Request) -> Response:
+        query = PlaceSearchQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        return Response(place_search.search_places(query.validated_data["q"]))

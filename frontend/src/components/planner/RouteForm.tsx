@@ -8,6 +8,7 @@ import { DEMO_ROUTES, type DemoRoute } from '@/constants/demoRoutes'
 import { demoRouteOf } from '@/lib/planner'
 import { FormSection } from './FormSection'
 import { LocateButton } from './LocateButton'
+import { PlaceSearch } from './PlaceSearch'
 import { PointRow } from './PointRow'
 import { StairsIcon } from './StairsIcon'
 
@@ -23,6 +24,8 @@ interface RouteFormProps {
   onUseMapCenter: (which: 'start' | 'end') => void
   /** "Use my location" sets point A. */
   onLocate: (point: LatLng) => void
+  /** A place picked in the name search becomes the start (A). */
+  onSearchPick: (point: LatLng) => void
   onDemo: (route: DemoRoute) => void
   onPlan: () => void
 }
@@ -53,6 +56,7 @@ export function RouteForm(props: RouteFormProps) {
         {row('end')}
         <LocateButton onLocate={props.onLocate} />
       </div>
+      <PlaceSearch onPick={props.onSearchPick} />
 
       <FormSection>
         <p className="text-sm font-medium">{t('planner.form.demoTitle')}</p>

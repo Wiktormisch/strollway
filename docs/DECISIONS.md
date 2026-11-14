@@ -528,5 +528,9 @@ best time for a walk (idea 2 with the X1 credit). Each is its own branch from `d
   Only the walking part counts, not the time at stops. `route.kcal` is in both `route-plans`
   and `trip-ideas`; the UI shows "about N kcal", because it is a rough estimate.
 - **Place search (idea 15).** Searches our own `Place` table only, no outside geocoder. It sets
-  the start point only.
+  the start point only (in both tabs). `GET /api/places/search/?q=`: the match is done in
+  Python, because SQLite `LIKE` does not fold Polish letters ("lakowa" finds "Łąkowa"); about
+  5 000 named places scan in ~20 ms. Names that start with the query come first; max 8 results,
+  one per name and category. The UI waits 300 ms after the last key (debounce) and caches
+  answers for an hour. Own limit `PLACE_SEARCH_RATE` (default `300/hour`).
 - **Best time for a walk (idea 2).** Its own card in the planner, for the chosen start point.
