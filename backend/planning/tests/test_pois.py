@@ -30,7 +30,7 @@ def parse(*elements):
 def test_query_is_one_combined_request_with_node_and_way():
     query = pois.build_query(LINE, START, END)
 
-    assert query.startswith("[out:json][timeout:20];")
+    assert query.startswith("[out:json][timeout:10];")
     assert query.rstrip().endswith("out center tags;")
     assert 'node["amenity"~"^(bench|cafe|drinking_water|fast_food|restaurant|toilets)$"]' in query
     assert 'way["leisure"~"^(park|playground)$"](around:150,' in query
@@ -162,6 +162,25 @@ def test_transit_stops_near_start_and_end():
 # --- HTTP and failures -----------------------------------------------------------------
 
 
+def test_route_places_wait_as_short_as_trip_places(overpass, monkeypatch):
+    """Regression: route plans waited 25 s for a server that almost never answers."""
+    seen = []
+    real_client = overpass.client
+
+    def client(timeout=None):
+        seen.append(timeout)
+        return real_client()
+
+    monkeypatch.setattr(pois, "make_client", client)
+    overpass.add(body={"elements": []})
+
+    pois.find_pois(LINE, START, END, SPEED)
+
+    assert seen == [pois.TIMEOUT_S]
+    assert pois.TIMEOUT_S <= 12
+    assert pois.QUERY_TIMEOUT_S < pois.TIMEOUT_S  # the server gives up before the client
+
+
 def test_find_pois_sends_one_query_and_caches(overpass):
     overpass.add(body={"elements": [node(1, 54.3501, 18.6, amenity="cafe")]})
 
@@ -171,7 +190,7 @@ def test_find_pois_sends_one_query_and_caches(overpass):
     assert len(overpass.requests) == 1
     assert first == second
     sent = parse_qs(overpass.requests[0].content.decode())["data"][0]
-    assert "[timeout:20]" in sent
+    assert "[timeout:10]" in sent
     assert overpass.requests[0].headers["User-Agent"].startswith("StrollWay")
 
 

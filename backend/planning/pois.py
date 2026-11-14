@@ -1,7 +1,7 @@
 """Places along a route and transit stops near its ends, from OpenStreetMap (Overpass).
 
 Rules from docs/DECISIONS.md, section 3:
-- one combined query per route, [timeout:20], node and way elements, `out center tags`;
+- one combined query per route, a short [timeout], node and way elements, `out center tags`;
 - on 429, 504, 502, a timeout or any other failure: no waiting and no retry,
   the caller gets status "unavailable";
 - places are never invented.
@@ -19,9 +19,12 @@ from planning import geo, opening_hours
 
 logger = logging.getLogger(__name__)
 
-TIMEOUT_S = 25  # a bit more than the [timeout:20] inside the query
-# Trip ideas wait less: an overloaded server rarely answers later, and the LLM still follows.
-TRIP_TIMEOUT_S = 12
+# The public servers are often overloaded and rarely answer late (docs/AUDIT.md, part 2).
+# So route plans and trip ideas wait the same short time. The query's own [timeout] is a bit
+# shorter than the HTTP timeout, so the server gives up first. A small declared timeout also
+# makes it easier for the server to accept the query.
+QUERY_TIMEOUT_S = 10
+TIMEOUT_S = 12
 CACHE_TIMEOUT_S = 24 * 60 * 60
 PLACE_RADIUS_M = 150
 TRANSIT_RADIUS_M = 400
@@ -99,7 +102,13 @@ def build_query(line, start, end):
     for key, regex in _tag_filters(TRANSIT_KIND_BY_TAG).items():
         for point in (start, end):
             parts.append(f'node["{key}"~"{regex}"](around:{TRANSIT_RADIUS_M},{_coords([point])});')
-    return "[out:json][timeout:20];\n(\n" + "\n".join(parts) + "\n);\nout center tags;"
+    return _wrap_query(parts)
+
+
+def _wrap_query(parts):
+    """Put the statements into one union with the JSON output and the short timeout."""
+    body = "\n".join(parts)
+    return f"[out:json][timeout:{QUERY_TIMEOUT_S}];\n(\n{body}\n);\nout center tags;"
 
 
 # --- Requests -------------------------------------------------------------------------
@@ -313,13 +322,13 @@ def build_around_query(start, radius_m):
             parts.append(f'{element}["{key}"~"{regex}"](around:{radius_m},{center});')
     for key, regex in _tag_filters(TRANSIT_KIND_BY_TAG).items():
         parts.append(f'node["{key}"~"{regex}"](around:{TRANSIT_RADIUS_M},{center});')
-    return "[out:json][timeout:20];\n(\n" + "\n".join(parts) + "\n);\nout center tags;"
+    return _wrap_query(parts)
 
 
 def find_candidates(start, radius_m):
     """Trip candidates and transit stops around the start. Never raises for upstream failures."""
     try:
-        body = fetch_overpass(build_around_query(start, radius_m), TRIP_TIMEOUT_S)
+        body = fetch_overpass(build_around_query(start, radius_m))
     except OverpassUnavailable as exc:
         logger.warning("Overpass unavailable: %s", exc)
         return PoiResult([], [], STATUS_UNAVAILABLE)
