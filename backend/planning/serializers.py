@@ -237,3 +237,30 @@ class PlaceSearchResultSerializer(serializers.Serializer):
     )
     lat = serializers.FloatField()
     lng = serializers.FloatField()
+
+
+# --- Best time for a walk (audit idea 2) ---------------------------------------------
+
+
+class BestTimeQuerySerializer(serializers.Serializer):
+    lat = latitude_field()
+    lng = longitude_field()
+
+
+class BestTimeWindowSerializer(serializers.Serializer):
+    date = serializers.DateField(help_text="Local date at the point.")
+    day_offset = serializers.IntegerField(help_text="0 = today, 1 = tomorrow, 2 = in 2 days.")
+    start = serializers.CharField(help_text='Local time, "HH:MM".')
+    end = serializers.CharField(help_text='Local time, "HH:MM" (the end of the last hour).')
+    hours = serializers.IntegerField()
+    score = serializers.IntegerField(help_text="0-100, the average of the hours.")
+    label = serializers.ChoiceField(choices=["great", "good", "ok"])
+    temp_c = serializers.FloatField(allow_null=True, help_text="Average.")
+    precip_probability = serializers.IntegerField(allow_null=True, help_text="Highest.")
+    wind_kmh = serializers.FloatField(allow_null=True, help_text="Highest.")
+    sunshine_pct = serializers.IntegerField(allow_null=True)
+
+
+class BestTimeResponseSerializer(serializers.Serializer):
+    available = serializers.BooleanField(help_text="False when the forecast could not be loaded.")
+    windows = BestTimeWindowSerializer(many=True)

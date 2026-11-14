@@ -4,6 +4,26 @@
  */
 
 export interface paths {
+    "/api/best-walk-time/": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Best time for a walk
+         * @description Scores the daytime hours (8:00-20:00) of the Open-Meteo 3-day forecast in code and returns up to 3 windows, the best first. When the forecast cannot be loaded, "available" is false; this is never an error. Limited to 120 requests per hour per IP.
+         */
+        get: operations["best_walk_time_retrieve"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/demo-data/": {
         parameters: {
             query?: never;
@@ -310,6 +330,48 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        BestTimeResponse: {
+            /** @description False when the forecast could not be loaded. */
+            available: boolean;
+            windows: components["schemas"]["BestTimeWindow"][];
+        };
+        BestTimeThrottled: {
+            detail: string;
+        };
+        BestTimeValidationError: {
+            lat: unknown[];
+            lng: unknown[];
+        };
+        BestTimeWindow: {
+            /**
+             * Format: date
+             * @description Local date at the point.
+             */
+            date: string;
+            /** @description 0 = today, 1 = tomorrow, 2 = in 2 days. */
+            day_offset: number;
+            /** @description Local time, "HH:MM". */
+            start: string;
+            /** @description Local time, "HH:MM" (the end of the last hour). */
+            end: string;
+            hours: number;
+            /** @description 0-100, the average of the hours. */
+            score: number;
+            label: components["schemas"]["LabelEnum"];
+            /**
+             * Format: double
+             * @description Average.
+             */
+            temp_c: number | null;
+            /** @description Highest. */
+            precip_probability: number | null;
+            /**
+             * Format: double
+             * @description Highest.
+             */
+            wind_kmh: number | null;
+            sunshine_pct: number | null;
+        };
         /**
          * @description * `playground` - Playground
          *     * `indoor_play` - Indoor play
@@ -375,6 +437,13 @@ export interface components {
          * @enum {string}
          */
         KindEnum: "bus" | "tram";
+        /**
+         * @description * `great` - great
+         *     * `good` - good
+         *     * `ok` - ok
+         * @enum {string}
+         */
+        LabelEnum: "great" | "good" | "ok";
         /**
          * @description * `pl` - pl
          *     * `en` - en
@@ -851,6 +920,44 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    best_walk_time_retrieve: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BestTimeResponse"];
+                };
+            };
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BestTimeValidationError"];
+                };
+            };
+            429: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BestTimeThrottled"];
+                };
+            };
+        };
+    };
     demo_data_create: {
         parameters: {
             query?: never;
