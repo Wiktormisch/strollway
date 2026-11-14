@@ -86,6 +86,16 @@ def test_import_without_our_tags_changes_nothing():
     assert Place.objects.filter(osm_id=1).exists()
 
 
+def test_a_skatepark_is_kept_and_counted_by_its_sport_tag():
+    """DECISIONS.md section 12: `leisure=pitch` + `sport=skateboard` is a skatepark."""
+    element = node(1, 54.34, 18.60, leisure="pitch", sport="skateboard", name="Fake skatepark")
+
+    [place] = places.parse_export({"elements": [element]})
+
+    assert place.tags["sport"] == "skateboard"
+    assert places.count_by_category([place]) == {"skatepark": 1}
+
+
 def test_import_command_reads_json_and_gzip(tmp_path):
     body = {"elements": [node(1, 54.34, 18.60, leisure="indoor_play")]}
     plain = tmp_path / "places.json"

@@ -31,6 +31,7 @@ const MAX_NAME_LENGTH = 120
 const CATEGORIES: StopCategory[] = [
   'playground',
   'indoor_play',
+  'skatepark',
   'toilets',
   'cafe',
   'restaurant',

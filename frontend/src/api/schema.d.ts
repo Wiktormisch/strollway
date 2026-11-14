@@ -293,6 +293,7 @@ export interface components {
         /**
          * @description * `playground` - Playground
          *     * `indoor_play` - Indoor play
+         *     * `skatepark` - Skatepark
          *     * `toilets` - Toilets
          *     * `cafe` - Cafe
          *     * `restaurant` - Restaurant
@@ -306,7 +307,7 @@ export interface components {
          *     * `other` - Other
          * @enum {string}
          */
-        CategoryEnum: "playground" | "indoor_play" | "toilets" | "cafe" | "restaurant" | "bench" | "water" | "park" | "zoo" | "museum" | "beach" | "shop" | "other";
+        CategoryEnum: "playground" | "indoor_play" | "skatepark" | "toilets" | "cafe" | "restaurant" | "bench" | "water" | "park" | "zoo" | "museum" | "beach" | "shop" | "other";
         DroppedStop: {
             poi_id: string;
             name: string | null;

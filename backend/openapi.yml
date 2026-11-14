@@ -996,6 +996,7 @@ components:
       enum:
       - playground
       - indoor_play
+      - skatepark
       - toilets
       - cafe
       - restaurant
@@ -1011,6 +1012,7 @@ components:
       description: |-
         * `playground` - Playground
         * `indoor_play` - Indoor play
+        * `skatepark` - Skatepark
         * `toilets` - Toilets
         * `cafe` - Cafe
         * `restaurant` - Restaurant

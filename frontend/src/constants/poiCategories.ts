@@ -8,6 +8,7 @@ import {
   PawPrint,
   ShoppingBasket,
   Toilet,
+  Scooter,
   ToyBrick,
   Trees,
   Umbrella,
@@ -19,6 +20,7 @@ import {
 export const POI_CATEGORIES = [
   'playground',
   'indoor_play',
+  'skatepark',
   'toilets',
   'cafe',
   'restaurant',
@@ -34,6 +36,7 @@ export const POI_CATEGORIES = [
 const ICONS: Record<string, LucideIcon> = {
   playground: FerrisWheel,
   indoor_play: ToyBrick,
+  skatepark: Scooter,
   toilets: Toilet,
   cafe: Coffee,
   restaurant: Utensils,
@@ -56,6 +59,7 @@ export function categoryIcon(category: string): LucideIcon {
 const COLOR_GROUPS: Record<string, string> = {
   playground: 'cat-play',
   indoor_play: 'cat-play',
+  skatepark: 'cat-play',
   zoo: 'cat-play',
   beach: 'cat-play',
   cafe: 'cat-food',

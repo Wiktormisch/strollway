@@ -134,13 +134,20 @@ export function PlannerPage() {
     )
   }
 
-  /** The profile changes the pace, so a route on the map is planned again right away. */
+  /**
+   * The profile changes the pace, so a route on the map is planned again right away.
+   * It also sets "Avoid stairs": on for a stroller or a balance bike, off on foot. It is only
+   * a default; the switch stays usable (DECISIONS.md section 12).
+   */
   function changeProfile(next: number | null) {
     setProfileId(next)
+    const profile = profiles.data?.find((item) => item.id === next)
+    const nextAvoidStairs = profile ? profile.wheels !== 'none' : avoidStairs
+    setAvoidStairs(nextAvoidStairs)
     if (points.start && points.end) {
       fetchRoutePlan(
         queryClient,
-        withProfile({ start: points.start, end: points.end, avoid_stairs: avoidStairs }, next),
+        withProfile({ start: points.start, end: points.end, avoid_stairs: nextAvoidStairs }, next),
       )
     }
   }

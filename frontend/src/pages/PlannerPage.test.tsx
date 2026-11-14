@@ -15,7 +15,14 @@ function mockApi(...answers: RouteAnswer[]) {
   vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
     const url = String(input)
     if (url.includes('/api/health/')) return Promise.resolve(Response.json({ status: 'ok' }))
-    if (url.includes('/api/profiles/')) return Promise.resolve(Response.json([makeProfile()]))
+    if (url.includes('/api/profiles/')) {
+      return Promise.resolve(
+        Response.json([
+          makeProfile(),
+          makeProfile({ id: 4, name: 'Fake on foot', wheels: 'none' }),
+        ]),
+      )
+    }
     routeCalls.push(JSON.parse(String(init?.body)))
     const answer = answers.shift()
     if (!answer) return Promise.reject(new TypeError('no more answers'))
@@ -239,5 +246,23 @@ describe('PlannerPage', () => {
     expect(await screen.findByText(/9 min/)).toBeInTheDocument()
     expect(calls).toHaveLength(2)
     expect(calls[1]).toMatchObject({ avoid_stairs: true, profile_id: 3 })
+  })
+
+  it('sets "Avoid stairs" from the way of moving, and the switch stays usable', async () => {
+    mockApi()
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+    const stairs = screen.getByRole('switch', { name: 'Avoid stairs' })
+
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+    expect(stairs).not.toBeChecked()
+
+    await user.click(stairs)
+    expect(stairs).toBeChecked()
+
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+    expect(stairs).toBeChecked()
   })
 })
