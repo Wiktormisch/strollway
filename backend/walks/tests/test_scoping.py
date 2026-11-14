@@ -23,13 +23,36 @@ def test_missing_header_uses_demo_client():
     assert [p["name"] for p in response.json()] == ["Demo"]
 
 
-def test_create_without_header_saves_demo_client():
+def test_create_without_header_gives_400():
+    """Regression (audit S3): the shared demo client is read-only."""
     response = APIClient().post(
         "/api/profiles/", {"name": "X", "children_ages": [1]}, format="json"
     )
 
-    assert response.status_code == 201
-    assert FamilyProfile.objects.get().client_id == "demo"
+    assert response.status_code == 400
+    assert "read-only" in response.json()["X-Client-Id"]
+    assert not FamilyProfile.objects.exists()
+
+
+def test_demo_walk_cannot_be_changed_without_header():
+    """Regression (audit S3): POST, PUT, PATCH and DELETE without a header change nothing."""
+    walk = make_walk(client_id="demo", name="Demo walk")
+    stop = make_stop(walk)
+    client = APIClient()
+
+    assert client.patch(f"/api/walks/{walk.pk}/", {"name": "X"}, format="json").status_code == 400
+    assert client.put(f"/api/stops/{stop.pk}/", {}, format="json").status_code == 400
+    assert client.delete(f"/api/walks/{walk.pk}/").status_code == 400
+    assert client.post("/api/demo-data/").status_code == 400
+    walk.refresh_from_db()
+    assert walk.name == "Demo walk"
+    assert Walk.objects.count() == 1
+
+
+def test_demo_data_can_be_read_without_header():
+    walk = make_walk(client_id="demo")
+
+    assert APIClient().get(f"/api/walks/{walk.pk}/").status_code == 200
 
 
 @pytest.mark.parametrize("url", ["/api/profiles/", "/api/walks/", "/api/stops/"])

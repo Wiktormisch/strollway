@@ -337,3 +337,19 @@ Checked by hand on 2026-11-12.
   both together. The overlay is `foreground/25` (light) and `background/70` (dark) instead of black.
 - **Shadows use plain black with low alpha** (`rgb(0 0 0 / 0.12)`). They are not palette colours,
   and both themes need the same dark shadow, so there is no token for them.
+
+### Write limits on the walks API (audit S2, S3, W1)
+
+- **Writes are limited per IP, not per client:** `WRITES_RATE` (default `120/hour`) counts POST,
+  PUT, PATCH and DELETE on walks, stops, profiles and demo data. A new random `X-Client-Id` is free,
+  so a per-client limit is easy to skip. Reads are not counted. Known cost: people behind one
+  carrier IP (CGNAT) share the limit; raise it in `.env` if that becomes a problem.
+- **At most `MAX_WALKS_PER_CLIENT` walks per client** (default 200); a new walk over the limit
+  gives 400. Edits are allowed. Profiles have no own limit: they are small templates, and the
+  per-IP limit covers them.
+- **The shared `demo` client is read-only.** A write without `X-Client-Id` gives 400 (not 403:
+  the client can fix it by sending the header, like a bad header gives 400). The frontend always
+  sends the header, and `seed_demo` writes through the ORM, so neither is affected.
+- **`/api/stops/` checks what the nested create checks:** at most 20 stops per walk and a different
+  `order` for each stop. No database constraint yet: it needs a migration, and old databases may
+  already have duplicate orders.

@@ -1,5 +1,6 @@
 """Serializers for the walks API. All validation lives here, not in the views."""
 
+from django.conf import settings
 from django.db import transaction
 from rest_framework import serializers
 
@@ -94,6 +95,18 @@ class StopSerializer(StopFieldsMixin, serializers.ModelSerializer):
         if self.instance is not None and walk.pk != self.instance.walk_id:
             raise serializers.ValidationError("A stop cannot be moved to another walk.")
         return walk
+
+    def validate(self, attrs):
+        # The same rules as the nested create in WalkSerializer.validate_stops.
+        walk = attrs.get("walk", getattr(self.instance, "walk", None))
+        siblings = walk.stops.all()
+        if self.instance is not None:
+            siblings = siblings.exclude(pk=self.instance.pk)
+        elif siblings.count() >= MAX_NESTED_STOPS:
+            raise serializers.ValidationError({"walk": f"At most {MAX_NESTED_STOPS} stops."})
+        if "order" in attrs and siblings.filter(order=attrs["order"]).exists():
+            raise serializers.ValidationError({"order": "Each stop needs a different order."})
+        return attrs
 
 
 class WalkListSerializer(serializers.ModelSerializer):
@@ -206,6 +219,8 @@ class WalkSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        if self.instance is None:
+            self.check_walks_limit()
         # On PATCH the request may not include status, so use the saved value.
         status = attrs.get("status", getattr(self.instance, "status", Walk.Status.PLANNED))
         if status == Walk.Status.PLANNED:
@@ -216,6 +231,14 @@ class WalkSerializer(serializers.ModelSerializer):
             # Going back to "planned" clears an old rating.
             attrs["rating"] = None
         return attrs
+
+    def check_walks_limit(self):
+        # Not exact under parallel requests (it may pass by one or two); good enough here.
+        limit = settings.MAX_WALKS_PER_CLIENT
+        if Walk.objects.filter(client_id=self.context["client_id"]).count() >= limit:
+            raise serializers.ValidationError(
+                f"At most {limit} walks. Delete an old walk to save a new one."
+            )
 
     @transaction.atomic
     def create(self, validated_data):
