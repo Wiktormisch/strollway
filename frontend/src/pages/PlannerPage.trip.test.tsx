@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render } from '@testing-library/react'
@@ -210,5 +210,35 @@ describe('PlannerPage, trip idea', () => {
     // The folded form was submitted, so the chosen limit is in the request.
     expect(sent[0].body).toMatchObject({ max_minutes: 90 })
     expect(screen.getAllByRole('button', { name: 'Save walk' }).length).toBeGreaterThan(0)
+  })
+
+  it('takes the trip settings from the profile and saves changes back (audit idea 4)', async () => {
+    const profile = makeProfile({ trip_minutes: 90, round_trip: false })
+    const calls = mockApi({
+      ...BASE,
+      'GET /api/profiles/': [profile],
+      'PATCH /api/profiles/3/': { ...profile, trip_minutes: 120 },
+    })
+    const user = userEvent.setup()
+    renderPlanner()
+
+    await user.click(await screen.findByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+
+    const minutes = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    expect(minutes).toHaveValue(90)
+    expect(screen.getByRole('switch', { name: 'Come back to the start' })).not.toBeChecked()
+    // Nothing changed yet, so there is nothing to save.
+    expect(screen.queryByRole('button', { name: /Save to the profile/ })).not.toBeInTheDocument()
+
+    await user.clear(minutes)
+    await user.type(minutes, '120')
+    await user.click(screen.getByRole('button', { name: /Save to the profile/ }))
+
+    // The page has no Toaster in this test, so the check reads the request.
+    await waitFor(() => expect(calls.some((call) => call.method === 'PATCH')).toBe(true))
+    const put = calls.find((call) => call.method === 'PATCH')
+    // Only the three settings: a name or ages changed in another tab stay.
+    expect(put?.body).toEqual({ trip_minutes: 120, round_trip: false, pace_kmh: 3.5 })
   })
 })

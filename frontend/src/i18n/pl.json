@@ -354,7 +354,13 @@
         "nameRequired": "Podaj nazwę profilu.",
         "ageInvalid": "Wiek to liczba całkowita od 0 do {{maxAge}}.",
         "tooMany": "Najwyżej {{max}} dzieci."
-      }
+      },
+      "tripMinutes": "Limit czasu",
+      "sections": {
+        "moving": "Spacer",
+        "trip": "Wycieczka"
+      },
+      "minutesUnit": "min"
     },
     "delete": {
       "title": "Usunąć ten profil?",
@@ -386,7 +392,10 @@
       "submit": "Zaproponuj wycieczkę",
       "planning": "Planuję wycieczkę…",
       "planningHint": "Model AI może potrzebować do minuty. Poczekaj chwilę.",
-      "demoName": "Start demo"
+      "demoName": "Start demo",
+      "saveSettings": "Zapisz w profilu: tempo, limit czasu, powrót",
+      "settingsSaved": "Zapisano ustawienia w profilu „{{name}}”.",
+      "settingsFailed": "Nie udało się zapisać ustawień. Spróbuj ponownie."
     },
     "engine": {
       "ai": "Zaplanowane przez AI",

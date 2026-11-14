@@ -8,6 +8,8 @@ function profile(overrides: Partial<FamilyProfile>): FamilyProfile {
     children_ages: [],
     wheels: 'none',
     pace_kmh: 3.5,
+    trip_minutes: 60,
+    round_trip: true,
     created_at: '',
     updated_at: '',
     ...overrides,

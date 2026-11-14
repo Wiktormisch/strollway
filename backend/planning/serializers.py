@@ -3,7 +3,15 @@
 from rest_framework import serializers
 
 from planning import geo
-from walks.models import PACE_MAX_KMH, PACE_MIN_KMH, PACE_STEP_KMH, FamilyProfile, is_pace_step
+from walks.models import (
+    PACE_MAX_KMH,
+    PACE_MIN_KMH,
+    PACE_STEP_KMH,
+    TRIP_MAX_MINUTES,
+    TRIP_MIN_MINUTES,
+    FamilyProfile,
+    is_pace_step,
+)
 from walks.serializers import latitude_field, longitude_field
 
 # A stroller walk, not a road trip. Also protects the ORS daily limit.
@@ -140,7 +148,7 @@ class TripIdeaRequestSerializer(ProfileMixin, serializers.Serializer):
     start = PointSerializer()
     profile_id = serializers.IntegerField(required=False, allow_null=True)
     pace_kmh = pace_field()
-    max_minutes = serializers.IntegerField(min_value=15, max_value=180)
+    max_minutes = serializers.IntegerField(min_value=TRIP_MIN_MINUTES, max_value=TRIP_MAX_MINUTES)
     round_trip = serializers.BooleanField(default=True)
     language = serializers.ChoiceField(choices=["pl", "en"], default="pl")
     wishes = serializers.CharField(max_length=MAX_WISHES_LENGTH, allow_blank=True, default="")

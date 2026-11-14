@@ -38,7 +38,7 @@ export function PaceSlider({ id, value, max, onChange }: PaceSliderProps) {
         onChange={(event) => onChange(Number(event.target.value))}
         className="h-11 w-full cursor-pointer accent-primary"
       />
-      <div aria-hidden className="flex justify-between text-xs text-muted-foreground">
+      <div aria-hidden className="-mt-2 flex justify-between text-xs text-muted-foreground">
         <span>{t('pace.slow')}</span>
         <span>{t('pace.fast')}</span>
       </div>

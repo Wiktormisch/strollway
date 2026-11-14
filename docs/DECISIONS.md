@@ -503,3 +503,9 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
   4 km/h) and resets when the profile changes. A changed pace in the A -> B mode hides the old
   result until the user plans again, like the "Avoid stairs" switch. Trip ideas have no result
   cache, so a new pace never returns an old answer.
+- **Saved planner settings (audit idea 4).** The profile keeps `trip_minutes` (15-180, default 60)
+  and `round_trip` (default true) as plain fields, not JSON: they get validation and real types in
+  OpenAPI and TypeScript. Picking a profile in the planner sets the pace, the time limit and
+  "come back to the start". A "Save to the profile" button appears when these differ from the
+  profile; the profile form edits them too. "Avoid stairs" is not saved: it still follows the way
+  of moving. Wishes and the start point are never saved (free text and coordinates, rule 5).

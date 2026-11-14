@@ -1,6 +1,6 @@
 import { useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Clock, Loader2, Play, Repeat, Sparkles } from 'lucide-react'
+import { Clock, Loader2, Play, Repeat, Save, Sparkles } from 'lucide-react'
 import type { FamilyProfile, LatLng, TripIdeaRequest } from '@/api/types'
 import { PaceSlider } from '@/components/common/PaceSlider'
 import { Button } from '@/components/ui/button'
@@ -15,7 +15,6 @@ import { Input } from '@/components/ui/input'
 import {
   apiLanguage,
   clampTripMinutes,
-  DEFAULT_TRIP_MINUTES,
   DEMO_TRIP_START,
   MAX_TRIP_MINUTES,
   MAX_WISHES_LENGTH,
@@ -36,6 +35,15 @@ interface TripIdeaFormProps {
   pace: number
   maxPace: number
   onPaceChange: (kmh: number) => void
+  /** The limit and "come back to the start" live in the page, so a profile can set them. */
+  minutes: number
+  onMinutesChange: (minutes: number) => void
+  roundTrip: boolean
+  onRoundTripChange: (roundTrip: boolean) => void
+  /** Shown only with a profile whose saved settings differ from the form (audit idea 4). */
+  canSaveSettings: boolean
+  savingSettings: boolean
+  onSaveSettings: () => void
   onClearStart: () => void
   onUseMapCenter: () => void
   onDemoStart: () => void
@@ -49,9 +57,22 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
   const ids = useId()
   // One source of truth: the text in the number field. The slider and the request read the
   // clamped number, so a half-typed value never reaches the API.
-  const [minutesText, setMinutesText] = useState(String(DEFAULT_TRIP_MINUTES))
+  const [minutesText, setMinutesText] = useState(String(props.minutes))
   const maxMinutes = clampTripMinutes(minutesText === '' ? NaN : Number(minutesText))
-  const [roundTrip, setRoundTrip] = useState(true)
+  // A new value from the page (a profile was picked) replaces the text. This is React's
+  // "adjust state while rendering" pattern: no effect, so no extra render with old text.
+  const [shownMinutes, setShownMinutes] = useState(props.minutes)
+  if (props.minutes !== shownMinutes) {
+    setShownMinutes(props.minutes)
+    setMinutesText(String(props.minutes))
+  }
+
+  function changeMinutesText(text: string) {
+    setMinutesText(text)
+    const next = clampTripMinutes(text === '' ? NaN : Number(text))
+    setShownMinutes(next)
+    props.onMinutesChange(next)
+  }
   const [wishes, setWishes] = useState('')
 
   function submit(event: FormEvent) {
@@ -60,7 +81,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
     const request: TripIdeaRequest = {
       start: props.start,
       max_minutes: maxMinutes,
-      round_trip: roundTrip,
+      round_trip: props.roundTrip,
       language: apiLanguage(i18n.language),
       wishes: wishes.trim(),
       pace_kmh: props.pace,
@@ -111,7 +132,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
               value={maxMinutes}
               aria-label={t('trip.form.minutesSlider')}
               aria-valuetext={t('trip.form.minutesOption', { minutes: maxMinutes })}
-              onChange={(event) => setMinutesText(event.target.value)}
+              onChange={(event) => changeMinutesText(event.target.value)}
               className="h-11 min-w-0 flex-1 cursor-pointer accent-primary"
             />
             <Input
@@ -121,7 +142,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
               max={MAX_TRIP_MINUTES}
               value={minutesText}
               aria-label={t('trip.form.minutesField')}
-              onChange={(event) => setMinutesText(event.target.value)}
+              onChange={(event) => changeMinutesText(event.target.value)}
               // While typing, "1" on the way to "120" is allowed; leaving the field fixes the value.
               onBlur={() => setMinutesText(String(maxMinutes))}
               className="w-20 text-center"
@@ -155,8 +176,28 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
             <Repeat aria-hidden className="size-5 text-brand" />
             {t('trip.form.roundTrip')}
           </Label>
-          <Switch id={`${ids}-round`} checked={roundTrip} onCheckedChange={setRoundTrip} />
+          <Switch
+            id={`${ids}-round`}
+            checked={props.roundTrip}
+            onCheckedChange={props.onRoundTripChange}
+          />
         </div>
+        {props.canSaveSettings && (
+          <Button
+            type="button"
+            variant="outline"
+            className="h-auto min-h-11 w-full py-1.5 whitespace-normal"
+            disabled={props.savingSettings}
+            onClick={props.onSaveSettings}
+          >
+            {props.savingSettings ? (
+              <Loader2 aria-hidden className="animate-spin" />
+            ) : (
+              <Save aria-hidden />
+            )}
+            {t('trip.form.saveSettings')}
+          </Button>
+        )}
       </FormSection>
 
       <FormSection>

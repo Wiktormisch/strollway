@@ -14,6 +14,11 @@ PACE_STEP_KMH = 0.5
 PACE_DEFAULT_KMH = 3.5
 STROLLER_MAX_KMH = 4.0
 
+# Saved trip settings (audit idea 4). The same range as the trip-ideas request.
+TRIP_MIN_MINUTES = 15
+TRIP_MAX_MINUTES = 180
+TRIP_DEFAULT_MINUTES = 60
+
 
 def is_pace_step(kmh):
     """True when the pace is a multiple of PACE_STEP_KMH (2.5, 3.0, ... 5.5)."""
@@ -36,6 +41,13 @@ class FamilyProfile(models.Model):
         default=PACE_DEFAULT_KMH,
         validators=[MinValueValidator(PACE_MIN_KMH), MaxValueValidator(PACE_MAX_KMH)],
     )
+    # Saved planner settings for trip ideas (audit idea 4). No wishes and no start point:
+    # those are free text and coordinates (AGENTS.md rule 5).
+    trip_minutes = models.PositiveSmallIntegerField(
+        default=TRIP_DEFAULT_MINUTES,
+        validators=[MinValueValidator(TRIP_MIN_MINUTES), MaxValueValidator(TRIP_MAX_MINUTES)],
+    )
+    round_trip = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

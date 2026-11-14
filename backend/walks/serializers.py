@@ -57,7 +57,17 @@ class FamilyProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FamilyProfile
-        fields = ["id", "name", "children_ages", "wheels", "pace_kmh", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "name",
+            "children_ages",
+            "wheels",
+            "pace_kmh",
+            "trip_minutes",
+            "round_trip",
+            "created_at",
+            "updated_at",
+        ]
         read_only_fields = ["id", "created_at", "updated_at"]
 
     def validate_children_ages(self, value):

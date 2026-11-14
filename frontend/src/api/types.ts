@@ -76,7 +76,10 @@ export type Wheels = Schemas['WheelsEnum']
 
 export type FamilyProfile = Required<Schemas['FamilyProfile']>
 
-export type ProfileInput = Pick<FamilyProfile, 'name' | 'children_ages' | 'wheels' | 'pace_kmh'>
+export type ProfileInput = Pick<
+  FamilyProfile,
+  'name' | 'children_ages' | 'wheels' | 'pace_kmh' | 'trip_minutes' | 'round_trip'
+>
 
 export type WalkStatus = Schemas['StatusEnum']
 

@@ -113,3 +113,29 @@ def test_pace_defaults_to_relaxed_value(api):
     response = api.post(URL, {"name": "F"}, format="json")
 
     assert response.json()["pace_kmh"] == 3.5
+
+
+def test_trip_settings_have_defaults(api):
+    """Audit idea 4: an old or new profile without settings plans like before."""
+    body = api.post(URL, {"name": "F"}, format="json").json()
+
+    assert (body["trip_minutes"], body["round_trip"]) == (60, True)
+
+
+def test_trip_settings_are_saved(api):
+    profile = make_profile(name="Old")
+    payload = {"pace_kmh": 4.5, "trip_minutes": 90, "round_trip": False}
+
+    response = api.patch(f"{URL}{profile.pk}/", payload, format="json")
+
+    assert response.status_code == 200
+    profile.refresh_from_db()
+    assert (profile.pace_kmh, profile.trip_minutes, profile.round_trip) == (4.5, 90, False)
+
+
+@pytest.mark.parametrize("minutes", [10, 181])
+def test_trip_minutes_outside_range_is_rejected(api, minutes):
+    response = api.post(URL, {"name": "F", "trip_minutes": minutes}, format="json")
+
+    assert response.status_code == 400
+    assert "trip_minutes" in response.json()

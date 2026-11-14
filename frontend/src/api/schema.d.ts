@@ -327,6 +327,8 @@ export interface components {
             wheels?: components["schemas"]["WheelsEnum"];
             /** Format: double */
             pace_kmh?: number;
+            trip_minutes?: number;
+            round_trip?: boolean;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
@@ -338,6 +340,8 @@ export interface components {
             wheels?: components["schemas"]["WheelsEnum"];
             /** Format: double */
             pace_kmh?: number;
+            trip_minutes?: number;
+            round_trip?: boolean;
         };
         Health: {
             status: string;
@@ -400,6 +404,8 @@ export interface components {
             wheels?: components["schemas"]["WheelsEnum"];
             /** Format: double */
             pace_kmh?: number;
+            trip_minutes?: number;
+            round_trip?: boolean;
         };
         /** @description Fields shared by the nested stop and the standalone stop. */
         PatchedStopRequest: {
