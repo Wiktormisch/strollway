@@ -1,7 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import { NavLink, Outlet, useMatch } from 'react-router-dom'
+import { NavLink, Outlet, useLocation, useMatch } from 'react-router-dom'
 import { Baby } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { ErrorBoundary } from './ErrorBoundary'
 import { LanguageSwitch } from './LanguageSwitch'
 import { ThemeSwitch } from './ThemeSwitch'
 import { TopBarMenu } from './TopBarMenu'
@@ -16,6 +17,7 @@ export function AppLayout() {
   const { t } = useTranslation()
   // The planner is a full-screen map; other pages use a centred column.
   const fullScreen = useMatch('/') !== null
+  const { pathname } = useLocation()
 
   return (
     <div
@@ -88,7 +90,10 @@ export function AppLayout() {
             : 'mx-auto w-full max-w-240 px-4 pt-6 pb-10 md:pt-8',
         )}
       >
-        <Outlet />
+        {/* key: a new page gets a fresh boundary, so one broken page does not block the rest. */}
+        <ErrorBoundary key={pathname}>
+          <Outlet />
+        </ErrorBoundary>
       </main>
     </div>
   )

@@ -38,7 +38,9 @@
   "errors": {
     "network": "No connection to the server.",
     "http": "The server returned error {{status}}.",
-    "unknown": "Something went wrong."
+    "unknown": "Something went wrong.",
+    "crash": "This page stopped working. Reload it to try again.",
+    "reloadPage": "Reload the page"
   },
   "planner": {
     "empty": "Set a start and an end on the map, or try a demo route.",

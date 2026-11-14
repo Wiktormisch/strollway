@@ -38,7 +38,9 @@
   "errors": {
     "network": "Brak połączenia z serwerem.",
     "http": "Serwer zwrócił błąd {{status}}.",
-    "unknown": "Coś poszło nie tak."
+    "unknown": "Coś poszło nie tak.",
+    "crash": "Ta strona przestała działać. Odśwież ją, aby spróbować ponownie.",
+    "reloadPage": "Odśwież stronę"
   },
   "planner": {
     "empty": "Wybierz start i cel na mapie albo wypróbuj trasę demo.",
