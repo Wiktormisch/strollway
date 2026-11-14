@@ -14,6 +14,12 @@ class LLMError(Exception):
 class LLMClient(Protocol):
     name: str
 
-    def complete_json(self, system: str, user: str, schema: dict) -> dict:
-        """Return the parsed JSON object, or raise LLMError."""
+    def complete_json(
+        self, system: str, user: str, schema: dict, timeout_s: float | None = None
+    ) -> dict:
+        """Return the parsed JSON object, or raise LLMError.
+
+        `timeout_s` is the time left in the request. The backend never waits longer than
+        this or its own timeout, whichever is shorter (retries included).
+        """
         ...

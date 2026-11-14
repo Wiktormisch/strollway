@@ -18,8 +18,12 @@ from planning.llm.base import LLMError
 logger = logging.getLogger(__name__)
 
 ENGINE_RULES = "rules"
-# No new backend is tried after this many seconds; the rules answer at once.
-LLM_CHAIN_BUDGET_S = 60
+# The LLM chain must finish this many seconds after the request starts. Each backend gets
+# only the time that is left as its timeout. With up to 60 s of ORS calls after it, a request
+# stays under the 120 s gunicorn timeout planned in stage 8.
+LLM_CHAIN_BUDGET_S = 50
+# A backend is not started with less time than this; the rules answer instead.
+MIN_LLM_CALL_S = 5
 DAILY_COUNTER_TIMEOUT_S = 25 * 60 * 60
 LIMIT_TOLERANCE = trip_rules.LIMIT_TOLERANCE  # 10% over the limit is still fine
 MAX_REROUTES = 2
@@ -52,6 +56,7 @@ def active_engine():
 
 def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="", profile=None):
     """The full answer of the endpoint, as a dict (docs/PLAN.md D.4 + D.6)."""
+    llm_deadline = time.monotonic() + LLM_CHAIN_BUDGET_S
     speed = services.speed_m_per_min(profile)
     fixture = fixtures.load_trip_fixture(start)
     found = _candidates(start, pois.trip_radius_m(speed, max_minutes), fixture)
@@ -71,6 +76,7 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
         "speed": speed,
         "weather": weather.current_weather(start),
         "profile": profile,
+        "llm_deadline": llm_deadline,
     }
     answer, engine = _plan_answer(candidates, context)
     if not answer["stops"]:
@@ -104,24 +110,27 @@ def _plan_answer(candidates, context):
     if chain:
         payload = prompt.build_payload(candidates, context)
         user = prompt.user_message(payload)
-        started = time.monotonic()
+        deadline = context.get("llm_deadline") or time.monotonic() + LLM_CHAIN_BUDGET_S
         for client in chain:
-            if time.monotonic() - started > LLM_CHAIN_BUDGET_S:
+            left = deadline - time.monotonic()
+            if left < MIN_LLM_CALL_S:
                 logger.warning("LLM chain out of time; using the rules")
                 break
             if not _take_daily_llm_call():
                 logger.warning("Daily LLM limit reached; using the rules")
                 break
-            answer = _ask(client, user, candidates)
+            answer = _ask(client, user, candidates, left)
             if answer is not None:
                 return answer, client.name
     return _rules_answer(candidates, context), ENGINE_RULES
 
 
-def _ask(client, user, candidates):
+def _ask(client, user, candidates, timeout_s):
     """A validated answer from one backend, or None. Logs never hold the prompt or wishes."""
     try:
-        raw = client.complete_json(prompt.SYSTEM_PROMPT, user, prompt.OUTPUT_SCHEMA)
+        raw = client.complete_json(
+            prompt.SYSTEM_PROMPT, user, prompt.OUTPUT_SCHEMA, timeout_s=timeout_s
+        )
     except LLMError as exc:
         logger.warning("LLM backend %s failed: %s", client.name, exc)
         return None
