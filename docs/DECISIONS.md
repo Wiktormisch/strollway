@@ -437,14 +437,15 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
 
 ### Place table (phase B, audit task 10)
 
-- **Data:** `backend/data/places_tricity.json.gz`, an Overpass Turbo export from 2026-11-14, gzipped (21 036
-  elements, 5.4 MB raw, 0.6 MB gzipped). It is committed, so a fresh clone works after `migrate` and `import_places`.
+- **Data:** `backend/data/places_tricity.json.gz`, an Overpass Turbo export from 2026-11-14, gzipped (21 061
+  elements, 5.4 MB raw, 0.5 MB gzipped; re-exported in phase D with skateparks). It is committed, so a fresh clone works after `migrate` and `import_places`.
   The query (export as raw OSM data, JSON):
 
   ```
   [out:json][timeout:180][bbox:54.27,18.43,54.62,18.80];
   (
     nwr["leisure"~"^(playground|park|indoor_play)$"];
+    nwr["sport"="skateboard"];
     nwr["amenity"~"^(toilets|cafe|ice_cream|restaurant|fast_food|bench|drinking_water)$"];
     nwr["tourism"~"^(zoo|museum)$"];
     nwr["natural"="beach"];
@@ -482,7 +483,11 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
 - **A stroller or a balance bike turns on "Avoid stairs" by default.** It is a default, not a
   lock: the switch stays usable.
 - **Age picks the places** (rules in code, not the LLM): 0-1 park and cafe, 2-8 playground and
-  cafe, 9-12 playground or park and ice cream or cafe, 13-17 park and skatepark. A skatepark is a
-  new category (`leisure=pitch` + `sport=skateboard`) and needs a new Overpass Turbo export.
+  cafe, 9-12 playground or park and ice cream or cafe, 13-17 park and skatepark. No children:
+  park and cafe. With several children, the bands are joined, youngest first. A missing default
+  place is not reported as an unmet wish, because the user did not ask for it.
+- **Skatepark is a category:** matched by `sport=skateboard` (mostly on `leisure=pitch`). The
+  re-export found 25 in the Tricity. Wishes: "skatepark", "deskorolka", "rolki", "hulajnoga".
+- **No age filters in the A -> B mode:** the route shows all places; the user filters them.
 - **Ideas 13 and 22:** idea 13 (at least one stop on a saved trip walk) is dropped. Idea 22
   (recompute the time in the save dialog) moves to phase D, after the profile changes.
