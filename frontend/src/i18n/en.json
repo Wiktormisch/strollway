@@ -379,6 +379,9 @@
       "demoStart": "Try the demo start",
       "minutes": "Time limit",
       "minutesOption": "{{minutes}} min",
+      "minutesSlider": "Time limit, slider",
+      "minutesField": "Time limit in minutes",
+      "minutesRange": "From {{min}} to {{max}} min.",
       "roundTrip": "Come back to the start",
       "wishes": "Your wishes (optional)",
       "wishesCount": "{{count}} / {{max}}",
@@ -417,6 +420,12 @@
       "wind": "wind {{value}} km/h"
     },
     "saveDescription": "Give the trip a name. Stops to save: {{count}}.",
+    "replace": {
+      "title": "Replace the current trip?",
+      "description": "A new start needs a new trip. The current trip will be removed from the map. Save it first if you want to keep it.",
+      "confirm": "Use the new start",
+      "cancel": "Keep the current trip"
+    },
     "map": {
       "startFinish": "Start and finish"
     }

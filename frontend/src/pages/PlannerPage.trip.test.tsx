@@ -32,6 +32,40 @@ const BASE = {
 }
 
 describe('PlannerPage, trip idea', () => {
+  it('opens on the trip idea tab, which comes first (audit idea 7)', () => {
+    mockApi(BASE)
+    renderPlanner()
+    const tabs = screen.getAllByRole('tab')
+    expect(tabs.map((tab) => tab.textContent)).toEqual(['Trip idea', 'Route A → B'])
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('asks before a new start replaces the trip (audit idea 12)', async () => {
+    mockApi({ ...BASE, 'POST /api/trip-ideas/': makeTrip() })
+    const user = userEvent.setup()
+    renderPlanner()
+
+    await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    await screen.findByText('Planned by rules (demo mode)')
+
+    // "Keep" leaves the trip and its start as they were.
+    await user.click(screen.getByRole('button', { name: 'fake map click A' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Replace the current trip?' })
+    await user.click(within(dialog).getByRole('button', { name: 'Keep the current trip' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByText('Planned by rules (demo mode)')).toBeInTheDocument()
+    expect(screen.getByText(/^map start: start and finish/)).toBeInTheDocument()
+
+    // "Use the new start" removes the trip.
+    await user.click(screen.getByRole('button', { name: 'fake map click A' }))
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Use the new start' }),
+    )
+    expect(screen.queryByText('Planned by rules (demo mode)')).not.toBeInTheDocument()
+    expect(screen.getByText(/Set a start on the map/)).toBeInTheDocument()
+  })
+
   it('suggests a trip, removes a stop, saves it and opens the walk', async () => {
     const calls = mockApi({
       ...BASE,
@@ -159,7 +193,9 @@ describe('PlannerPage, trip idea', () => {
     renderPlanner()
 
     await user.click(screen.getByRole('tab', { name: 'Trip idea' }))
-    await user.click(screen.getByRole('button', { name: '90 min' }))
+    const minutes = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    await user.clear(minutes)
+    await user.type(minutes, '90')
     await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
     await user.click(screen.getByRole('button', { name: 'Hide the panel' }))
 

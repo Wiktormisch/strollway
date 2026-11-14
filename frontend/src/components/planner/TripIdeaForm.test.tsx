@@ -31,7 +31,9 @@ describe('TripIdeaForm', () => {
     const onSubmit = renderForm({ profileId: 3 })
     const user = userEvent.setup()
 
-    await user.click(screen.getByRole('button', { name: '45 min' }))
+    const minutes = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    await user.clear(minutes)
+    await user.type(minutes, '45')
     await user.click(screen.getByRole('switch', { name: 'Come back to the start' }))
     await user.type(screen.getByLabelText('Your wishes (optional)'), '  coffee, then pizza ')
     await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
@@ -51,6 +53,43 @@ describe('TripIdeaForm', () => {
     await userEvent.setup().click(screen.getByRole('button', { name: 'Suggest a trip' }))
     expect(onSubmit.mock.calls[0][0]).not.toHaveProperty('profile_id')
     expect(onSubmit.mock.calls[0][0]).toMatchObject({ max_minutes: 60, round_trip: true })
+  })
+
+  it('keeps the slider and the number field in sync (audit idea 11)', async () => {
+    renderForm()
+    const user = userEvent.setup()
+    const slider = screen.getByRole('slider', { name: 'Time limit, slider' })
+    const field = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    expect(slider).toHaveValue('60')
+
+    // jsdom cannot drag a range input, so the test sends its change event.
+    fireEvent.change(slider, { target: { value: '135' } })
+    expect(field).toHaveValue(135)
+    expect(slider).toHaveAttribute('aria-valuetext', '135 min')
+
+    await user.clear(field)
+    await user.type(field, '25')
+    expect(slider).toHaveValue('25')
+  })
+
+  it('fixes a limit outside 15-180 when the field loses focus and before sending', async () => {
+    const onSubmit = renderForm()
+    const user = userEvent.setup()
+    const field = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+
+    await user.clear(field)
+    await user.type(field, '500')
+    await user.tab()
+    expect(field).toHaveValue(180)
+
+    await user.clear(field)
+    await user.type(field, '3')
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({ max_minutes: 15 })
+
+    await user.clear(field)
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    expect(onSubmit.mock.calls[1][0]).toMatchObject({ max_minutes: 60 })
   })
 
   it('keeps wishes at 200 characters, shows the counter and the privacy hint', () => {

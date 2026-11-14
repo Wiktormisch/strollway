@@ -28,11 +28,17 @@ function mockApi(...answers: RouteAnswer[]) {
   return routeCalls
 }
 
+/** The trip idea tab opens first (audit idea 7), so these tests switch to the route tab. */
+async function renderOnRouteTab(user: ReturnType<typeof userEvent.setup>) {
+  renderWithProviders(<PlannerPage />)
+  await user.click(screen.getByRole('tab', { name: 'Route A → B' }))
+}
+
 describe('PlannerPage', () => {
   it('shows the demo points on the map at once, again on each click (audit idea 6)', async () => {
     mockApi(makePlan(), makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     expect(screen.getByText('map focus: none')).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Big detour' }))
@@ -46,7 +52,7 @@ describe('PlannerPage', () => {
   it('plans a demo route and shows the comparison, places and stops', async () => {
     const calls = mockApi(makePlan({ source: 'fixture' }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     expect(screen.getByText(/Set a start and an end/)).toBeInTheDocument()
     expect(screen.queryByRole('list', { name: 'Map legend' })).not.toBeInTheDocument()
@@ -85,7 +91,7 @@ describe('PlannerPage', () => {
   it('sets points by map clicks, sends the switch value and clears a point', async () => {
     const calls = mockApi(makePlan({ step_free_available: null, detour_m: null }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     const plan = screen.getByRole('button', { name: 'Plan route' })
     expect(plan).toBeDisabled()
@@ -106,7 +112,7 @@ describe('PlannerPage', () => {
   it('shows its own message for 422 no_route and retries', async () => {
     mockApi({ status: 422, body: { code: 'no_route', detail: 'x' } }, makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'No stair-free route' }))
     const alert = await screen.findByRole('alert')
@@ -121,7 +127,7 @@ describe('PlannerPage', () => {
   it('says the place data covers the Tricity only, without a reload button', async () => {
     mockApi(makePlan({ pois_status: 'outside_area', pois: [] }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     expect(
       screen.getByText(/Place data \(OpenStreetMap\) covers the Tricity only/),
@@ -142,7 +148,7 @@ describe('PlannerPage', () => {
     })
     const calls = mockApi(makePlan({ pois_status: 'unavailable', pois: [] }), reload)
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'Tiny detour' }))
     expect(await screen.findByText('The places service did not answer.')).toBeInTheDocument()
@@ -166,7 +172,7 @@ describe('PlannerPage', () => {
   it('reuses a computed route when the same input comes back', async () => {
     const calls = mockApi(makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'Big detour' }))
     expect(
@@ -191,7 +197,7 @@ describe('PlannerPage', () => {
   it('plans from a button on the map when the panel is folded', async () => {
     const calls = mockApi(makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     const toggle = screen.getByRole('button', { name: 'Hide the panel' })
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
@@ -221,7 +227,7 @@ describe('PlannerPage', () => {
   it('sends profile_id after choosing a profile and plans again', async () => {
     const calls = mockApi(makePlan(), makePlan({ route: { ...makePlan().route, duration_min: 9 } }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'Big detour' }))
     await screen.findByText('map route: drawn')

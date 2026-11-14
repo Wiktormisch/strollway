@@ -16,6 +16,7 @@ import { MapView, type MapFocus } from '@/components/planner/MapView'
 import { MapsExport } from '@/components/planner/MapsExport'
 import { PlacesSection } from '@/components/planner/PlacesSection'
 import { PlannerSheet } from '@/components/planner/PlannerSheet'
+import { ReplaceTripDialog } from '@/components/planner/ReplaceTripDialog'
 import { RouteForm } from '@/components/planner/RouteForm'
 import { LegendChip } from '@/components/planner/LegendChip'
 import { TransitStops } from '@/components/planner/TransitStops'
@@ -55,7 +56,8 @@ export function PlannerPage() {
   const profiles = useProfiles()
   // A ref, not state: the map centre changes often and nothing needs to re-render for it.
   const mapCenter = useRef<LatLng>(DEFAULT_MAP_CENTER)
-  const [mode, setMode] = useState<Mode>('route')
+  // The trip idea is the main feature, so it opens first (audit idea 7).
+  const [mode, setMode] = useState<Mode>('trip')
 
   // Trip idea mode. The result lives in the mutation; `sent` keeps the request it answers.
   const tripIdea = useTripIdea()
@@ -73,10 +75,19 @@ export function PlannerPage() {
     tripIdea.mutate(request)
   }
 
-  /** A new start makes the old result wrong, so it is hidden. */
-  function changeTripStart(start: LatLng | null) {
+  // A new start makes the old result wrong. With a trip on screen we ask first (audit idea 12),
+  // so the choice waits here until the user answers.
+  const [pendingStart, setPendingStart] = useState<StartChange | null>(null)
+
+  function changeTripStart(start: LatLng | null, focus = false) {
+    if (trip) setPendingStart({ start, focus })
+    else applyTripStart({ start, focus })
+  }
+
+  function applyTripStart({ start, focus }: StartChange) {
     setTripStart(start)
     tripIdea.reset()
+    if (focus && start) focusOn([start])
   }
 
   function removeStop(poiId: string) {
@@ -144,8 +155,8 @@ export function PlannerPage() {
         {/* Controlled tabs: the map outside the panel must know the mode too. */}
         <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
           <TabsList className="mb-3 w-full">
-            <TabsTrigger value="route">{t('planner.tabs.route')}</TabsTrigger>
             <TabsTrigger value="trip">{t('planner.tabs.trip')}</TabsTrigger>
+            <TabsTrigger value="route">{t('planner.tabs.route')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="trip" className="space-y-4">
@@ -157,14 +168,8 @@ export function PlannerPage() {
               onProfileChange={setProfileId}
               onClearStart={() => changeTripStart(null)}
               onUseMapCenter={() => changeTripStart(mapCenter.current)}
-              onDemoStart={() => {
-                changeTripStart(DEMO_TRIP_START)
-                focusOn([DEMO_TRIP_START])
-              }}
-              onLocate={(point) => {
-                changeTripStart(point)
-                focusOn([point])
-              }}
+              onDemoStart={() => changeTripStart(DEMO_TRIP_START, true)}
+              onLocate={(point) => changeTripStart(point, true)}
               onSubmit={suggestTrip}
             />
             <ResultsDivider />
@@ -320,6 +325,15 @@ export function PlannerPage() {
         />
       )}
 
+      <ReplaceTripDialog
+        open={pendingStart !== null}
+        onConfirm={() => {
+          if (pendingStart) applyTripStart(pendingStart)
+          setPendingStart(null)
+        }}
+        onCancel={() => setPendingStart(null)}
+      />
+
       {/* Phone only: with the panel folded, the next step is a button on the map. */}
       {!sheetOpen && mode === 'trip' && tripStart && (
         <Button
@@ -388,6 +402,12 @@ export function PlannerPage() {
 }
 
 type Mode = 'route' | 'trip'
+
+/** A trip start the user picked; `focus` also moves the map to it (demo start, my location). */
+interface StartChange {
+  start: LatLng | null
+  focus: boolean
+}
 
 /** A clear break between the form and the result (developer feedback, session 3). */
 function ResultsDivider() {
