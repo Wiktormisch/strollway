@@ -111,5 +111,1089 @@
    }
   }
  },
- "overpass": null
+ "overpass": {
+  "elements": [
+   {
+    "type": "node",
+    "id": 301671582,
+    "lat": 54.3570336,
+    "lon": 18.6430378,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Gdańsk, Dworzec PKS",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 622329077,
+    "lat": 54.3569739,
+    "lon": 18.6434334,
+    "tags": {
+     "name": "Dworzec PKS",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2135",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250188,
+    "lat": 54.3549013,
+    "lon": 18.6450556,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "realtime",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "18",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1013",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250189,
+    "lat": 54.3543988,
+    "lon": 18.6457193,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "check_date:shelter": "2022-09-13",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "15",
+     "name": "Dworzec Główny",
+     "name:pl": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250191,
+    "lat": 54.3549434,
+    "lon": 18.6458366,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "check_date:shelter": "2022-09-13",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "11",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1020",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250192,
+    "lat": 54.3553202,
+    "lon": 18.6451612,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "realtime",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "12",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1017",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250195,
+    "lat": 54.3551694,
+    "lon": 18.645539,
+    "tags": {
+     "local_ref": "01",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2001",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250196,
+    "lat": 54.3551509,
+    "lon": 18.6454712,
+    "tags": {
+     "local_ref": "02",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "operator:wikidata": "Q9386219",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2002",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250197,
+    "lat": 54.3554768,
+    "lon": 18.645975,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "05",
+     "name": "Dworzec Główny",
+     "name:pl": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1014",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250198,
+    "lat": 54.3550174,
+    "lon": 18.6450862,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "realtime",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "14",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1015",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1739250199,
+    "lat": 54.3563046,
+    "lon": 18.6454222,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "realtime",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "08",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1021",
+     "shelter": "yes",
+     "tactile_paving": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1756938415,
+    "lat": 54.3557966,
+    "lon": 18.6424924,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "2",
+     "name": "Stanowisko 2",
+     "public_transport": "platform",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1756938416,
+    "lat": 54.3558633,
+    "lon": 18.6424974,
+    "tags": {
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "3",
+     "name": "Stanowisko 3",
+     "public_transport": "platform"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1756938417,
+    "lat": 54.3559299,
+    "lon": 18.6425024,
+    "tags": {
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "4",
+     "name": "Stanowisko 4",
+     "public_transport": "platform"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1756938418,
+    "lat": 54.3559965,
+    "lon": 18.6425074,
+    "tags": {
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "5",
+     "name": "Stanowisko 6",
+     "public_transport": "platform"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1756938419,
+    "lat": 54.3560631,
+    "lon": 18.6425124,
+    "tags": {
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "6",
+     "name": "Stanowisko 7",
+     "public_transport": "platform"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1923923822,
+    "lat": 54.3566079,
+    "lon": 18.6433638,
+    "tags": {
+     "name": "Dworzec PKS",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2136",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 1961825641,
+    "lat": 54.3535147,
+    "lon": 18.6443403,
+    "tags": {
+     "bench": "yes",
+     "bin": "no",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Podwale Grodzkie",
+     "public_transport": "platform",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3675585132,
+    "lat": 54.3527306,
+    "lon": 18.64192,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "check_date:shelter": "2025-03-19",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Nowe Ogrody",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "operator": "Gryf Kartuzy",
+     "public_transport": "platform",
+     "ref:ztm": "1259",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3717074228,
+    "lat": 54.3547538,
+    "lon": 18.6457832,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "check_date:shelter": "2022-09-13",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "13",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1022",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3717074231,
+    "lat": 54.3551016,
+    "lon": 18.6458758,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "09",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1024",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3717074233,
+    "lat": 54.3552696,
+    "lon": 18.6459338,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "07",
+     "name": "Dworzec Główny",
+     "name:pl": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1016",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3731004279,
+    "lat": 54.3583974,
+    "lon": 18.6474341,
+    "tags": {
+     "bench": "no",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "no",
+     "name": "Plac Solidarności 03",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref": "1000",
+     "ref:ztm": "1000",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 4475018022,
+    "lat": 54.3554825,
+    "lon": 18.64521,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "realtime",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "local_ref": "10",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1019",
+     "shelter": "yes",
+     "tactile_paving": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6173319241,
+    "lat": 54.3558537,
+    "lon": 18.6428237,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "description": "Flixbus",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "loc_ref": "9",
+     "name": "Stanowisko 9",
+     "public_transport": "platform",
+     "route_ref": "Flixbus 1200, 1210, 1380, 1381, 1385, 1390, N1210, N1380, N1385, N1390, N1395;Polskibus P1, P12, P24;BP Tour KPB3;K322 + K1299(=PKS Gdańsk)",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9803361631,
+    "lat": 54.3554936,
+    "lon": 18.6427786,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "8",
+     "name": "Przystanek końcowy",
+     "name:en": "Arrivals",
+     "name:pl": "Przystanek końcowy",
+     "public_transport": "platform",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 9803361633,
+    "lat": 54.355734,
+    "lon": 18.642492,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "loc_ref": "1",
+     "name": "Stanowisko 1",
+     "public_transport": "platform",
+     "shelter": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10731195866,
+    "lat": 54.3561112,
+    "lon": 18.6427776,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "12",
+     "addr:postcode": "80-802",
+     "addr:street": "3 Maja",
+     "amenity": "fast_food",
+     "check_date": "2026-06-02",
+     "cuisine": "kebab",
+     "name": "Bafra Kebab",
+     "opening_hours": "09:00-21:00",
+     "website": "https://www.bafrakebab.pl/m/points"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10731229410,
+    "lat": 54.3533055,
+    "lon": 18.6442156,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "name": "Podwale Grodzkie",
+     "public_transport": "platform",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10731229411,
+    "lat": 54.3531699,
+    "lon": 18.6441315,
+    "tags": {
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "name": "Podwale Grodzkie",
+     "public_transport": "platform",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10731229412,
+    "lat": 54.3530082,
+    "lon": 18.6440286,
+    "tags": {
+     "bench": "yes",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "name": "Podwale Grodzkie",
+     "public_transport": "platform",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11084370187,
+    "lat": 54.3555732,
+    "lon": 18.6446115,
+    "tags": {
+     "amenity": "toilets",
+     "charge": "4.5 PLN",
+     "fee": "yes",
+     "layer": "-1",
+     "level": "-1",
+     "wheelchair": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11446228869,
+    "lat": 54.3566235,
+    "lon": 18.6426179,
+    "tags": {
+     "highway": "bus_stop",
+     "name": "11",
+     "shelter": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11470779816,
+    "lat": 54.3569661,
+    "lon": 18.645535,
+    "tags": {
+     "bench": "no",
+     "bin": "no",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "lit": "no",
+     "local_ref": "06",
+     "name": "Dworzec Główny",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1023",
+     "shelter": "no",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319890,
+    "lat": 54.3556263,
+    "lon": 18.64486,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319891,
+    "lat": 54.3556677,
+    "lon": 18.644864,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319892,
+    "lat": 54.3557159,
+    "lon": 18.6448736,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319893,
+    "lat": 54.3555372,
+    "lon": 18.6448603,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319894,
+    "lat": 54.3555035,
+    "lon": 18.64486,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319895,
+    "lat": 54.3554731,
+    "lon": 18.6448556,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319900,
+    "lat": 54.3551261,
+    "lon": 18.6448576,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319901,
+    "lat": 54.3551564,
+    "lon": 18.6448618,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11471319902,
+    "lat": 54.3551867,
+    "lon": 18.644866,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11506349434,
+    "lat": 54.3558459,
+    "lon": 18.6452101,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11506349435,
+    "lat": 54.3558676,
+    "lon": 18.6452135,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11506349436,
+    "lat": 54.3558731,
+    "lon": 18.6452058,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11506349438,
+    "lat": 54.3558514,
+    "lon": 18.645204,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11741642604,
+    "lat": 54.3556193,
+    "lon": 18.6428834,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "no",
+     "operator": "Flixbus"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11764339688,
+    "lat": 54.3580072,
+    "lon": 18.6431987,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11764339690,
+    "lat": 54.3575685,
+    "lon": 18.6431294,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11764339691,
+    "lat": 54.357497,
+    "lon": 18.6431181,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11764339692,
+    "lat": 54.357408,
+    "lon": 18.6430995,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12533977010,
+    "lat": 54.3552681,
+    "lon": 18.6443548,
+    "tags": {
+     "amenity": "cafe",
+     "brand": "Costa",
+     "brand:wikidata": "Q608845",
+     "brand:wikipedia": "en:Costa Coffee",
+     "check_date": "2025-01-10",
+     "cuisine": "coffee_shop",
+     "facebook": "https://www.facebook.com/CostaCoffeePoland/",
+     "indoor": "room",
+     "level": "-1",
+     "name": "Costa",
+     "opening_hours": "05:30-21:00",
+     "start_date": "2024-12-23",
+     "takeaway": "yes",
+     "website": "https://www.costacoffee.pl/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017564094,
+    "lat": 54.3557086,
+    "lon": 18.6436337,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017582734,
+    "lat": 54.3560762,
+    "lon": 18.6436884,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017587557,
+    "lat": 54.3558864,
+    "lon": 18.6439646,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017588174,
+    "lat": 54.3559075,
+    "lon": 18.6436555,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017589270,
+    "lat": 54.3560704,
+    "lon": 18.6439799,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017592745,
+    "lat": 54.3557026,
+    "lon": 18.6439348,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017593017,
+    "lat": 54.3550643,
+    "lon": 18.6438486,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13017595602,
+    "lat": 54.3550657,
+    "lon": 18.643563,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13071543768,
+    "lat": 54.3573995,
+    "lon": 18.6399173,
+    "tags": {
+     "amenity": "bench"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13823293761,
+    "lat": 54.3559383,
+    "lon": 18.6446238,
+    "tags": {
+     "air_conditioning": "yes",
+     "amenity": "cafe",
+     "check_date": "2026-05-13",
+     "check_date:opening_hours": "2026-05-13",
+     "diet:vegan": "yes",
+     "diet:vegetarian": "yes",
+     "internet_access": "wlan",
+     "internet_access:fee": "customers",
+     "level": "0",
+     "name": "Coffee To Go",
+     "opening_hours": "Mo-Su 06:00-21:00",
+     "takeaway": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13901489916,
+    "lat": 54.3558224,
+    "lon": 18.6446477,
+    "tags": {
+     "amenity": "fast_food",
+     "brand": "McDonald's",
+     "brand:wikidata": "Q38076",
+     "contact:phone": "+48 883841327",
+     "cuisine": "burger",
+     "internet_access": "wlan",
+     "internet_access:fee": "no",
+     "name": "McDonald's",
+     "opening_hours": "06:00-24:00",
+     "operator": "McDonald's",
+     "smoking": "no",
+     "takeaway": "yes",
+     "website": "https://mcdonalds.pl/",
+     "wheelchair": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13978703505,
+    "lat": 54.3574992,
+    "lon": 18.6399177,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13978703511,
+    "lat": 54.3575091,
+    "lon": 18.6399176,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13978703528,
+    "lat": 54.3575202,
+    "lon": 18.6399262,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 14109869782,
+    "lat": 54.3580399,
+    "lon": 18.6416876,
+    "tags": {
+     "leisure": "park"
+    }
+   },
+   {
+    "type": "way",
+    "id": 96233317,
+    "center": {
+     "lat": 54.3560756,
+     "lon": 18.6452097
+    },
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:country": "PL",
+     "addr:housenumber": "2C",
+     "addr:postcode": "80-895",
+     "addr:street": "Podwale Grodzkie",
+     "alt_name": "Kentucky Fried Chicken",
+     "amenity": "fast_food",
+     "brand": "KFC",
+     "brand:wikidata": "Q524757",
+     "brand:wikipedia": "en:KFC",
+     "building": "yes",
+     "building:levels": "1",
+     "building:material": "brick",
+     "contact:phone": "+48692048149",
+     "cuisine": "chicken",
+     "indoor_seating": "yes",
+     "name": "KFC",
+     "operator": "AmRest",
+     "outdoor_seating": "no",
+     "panoramax": "8732b96b-4275-42b3-9e93-71dc15d35860",
+     "source": "Bing",
+     "source:addr": "Urząd Miasta Gdańsk",
+     "takeaway": "yes"
+    }
+   },
+   {
+    "type": "way",
+    "id": 174895971,
+    "center": {
+     "lat": 54.355364,
+     "lon": 18.6385553
+    },
+    "tags": {
+     "alt_name": "Grodzisko",
+     "leisure": "park",
+     "name": "Park poforteczny „Grodzisko”",
+     "name:ko": "그로지스코 자연공원",
+     "tourism": "attraction"
+    }
+   }
+  ]
+ }
 }
