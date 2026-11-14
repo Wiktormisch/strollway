@@ -69,6 +69,8 @@ export function makeProfile(overrides: Partial<FamilyProfile> = {}): FamilyProfi
     children_ages: [2, 5],
     wheels: 'stroller',
     pace_kmh: 3.5,
+    trip_minutes: 60,
+    round_trip: true,
     created_at: '2026-01-01T10:00:00Z',
     updated_at: '2026-01-01T10:00:00Z',
     ...overrides,

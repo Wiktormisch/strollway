@@ -354,7 +354,13 @@
         "nameRequired": "Give the profile a name.",
         "ageInvalid": "An age is a whole number from 0 to {{maxAge}}.",
         "tooMany": "At most {{max}} children."
-      }
+      },
+      "tripMinutes": "Time limit",
+      "sections": {
+        "moving": "Walking",
+        "trip": "Trip"
+      },
+      "minutesUnit": "min"
     },
     "delete": {
       "title": "Delete this profile?",
@@ -386,7 +392,10 @@
       "submit": "Suggest a trip",
       "planning": "Planning the trip…",
       "planningHint": "The AI model can take up to a minute. Please wait.",
-      "demoName": "Demo start"
+      "demoName": "Demo start",
+      "saveSettings": "Save to the profile: pace, time limit, return",
+      "settingsSaved": "Settings saved in the profile \"{{name}}\".",
+      "settingsFailed": "Could not save the settings. Try again."
     },
     "engine": {
       "ai": "Planned by AI",

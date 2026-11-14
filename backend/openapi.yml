@@ -1067,6 +1067,12 @@ components:
           format: double
           maximum: 5.5
           minimum: 2.5
+        trip_minutes:
+          type: integer
+          maximum: 180
+          minimum: 15
+        round_trip:
+          type: boolean
         created_at:
           type: string
           format: date-time
@@ -1098,6 +1104,12 @@ components:
           format: double
           maximum: 5.5
           minimum: 2.5
+        trip_minutes:
+          type: integer
+          maximum: 180
+          minimum: 15
+        round_trip:
+          type: boolean
       required:
       - name
     Health:
@@ -1242,6 +1254,12 @@ components:
           format: double
           maximum: 5.5
           minimum: 2.5
+        trip_minutes:
+          type: integer
+          maximum: 180
+          minimum: 15
+        round_trip:
+          type: boolean
     PatchedStopRequest:
       type: object
       description: Fields shared by the nested stop and the standalone stop.

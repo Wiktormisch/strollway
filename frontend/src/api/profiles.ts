@@ -36,6 +36,22 @@ export function useUpdateProfile() {
   })
 }
 
+/**
+ * Changes only the given fields (PATCH). The planner uses it to save its settings, so it
+ * never overwrites a name or ages changed in another tab (audit idea 4).
+ */
+export function usePatchProfile() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: ({ id, input }: { id: number; input: Partial<ProfileInput> }) =>
+      apiFetch<FamilyProfile>(`/api/profiles/${id}/`, {
+        method: 'PATCH',
+        body: JSON.stringify(input),
+      }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: profileKeys.all }),
+  })
+}
+
 export function useDeleteProfile() {
   const queryClient = useQueryClient()
   return useMutation({

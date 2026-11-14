@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
@@ -6,10 +7,29 @@ import { TripIdeaForm } from './TripIdeaForm'
 
 const START = { lat: 54.3385, lng: 18.62 }
 
-function renderForm(overrides: Partial<Parameters<typeof TripIdeaForm>[0]> = {}) {
+type FormProps = Parameters<typeof TripIdeaForm>[0]
+
+/** The page owns the limit and "come back"; this harness plays the page in tests. */
+function Harness(
+  props: Omit<FormProps, 'minutes' | 'onMinutesChange' | 'roundTrip' | 'onRoundTripChange'>,
+) {
+  const [minutes, setMinutes] = useState(60)
+  const [roundTrip, setRoundTrip] = useState(true)
+  return (
+    <TripIdeaForm
+      {...props}
+      minutes={minutes}
+      onMinutesChange={setMinutes}
+      roundTrip={roundTrip}
+      onRoundTripChange={setRoundTrip}
+    />
+  )
+}
+
+function renderForm(overrides: Partial<FormProps> = {}) {
   const onSubmit = vi.fn()
   renderWithProviders(
-    <TripIdeaForm
+    <Harness
       start={START}
       profiles={[]}
       profileId={null}
@@ -18,6 +38,9 @@ function renderForm(overrides: Partial<Parameters<typeof TripIdeaForm>[0]> = {})
       pace={3.5}
       maxPace={5.5}
       onPaceChange={vi.fn()}
+      canSaveSettings={false}
+      savingSettings={false}
+      onSaveSettings={vi.fn()}
       onClearStart={vi.fn()}
       onUseMapCenter={vi.fn()}
       onDemoStart={vi.fn()}

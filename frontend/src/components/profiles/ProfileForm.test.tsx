@@ -41,6 +41,8 @@ describe('ProfileForm', () => {
       children_ages: [1, 7],
       wheels: 'stroller',
       pace_kmh: 3.5,
+      trip_minutes: 60,
+      round_trip: true,
     })
   })
 
@@ -76,5 +78,20 @@ describe('ProfileForm', () => {
     setup({ initial: makeProfile({ wheels: 'stroller', pace_kmh: 4 }) })
     expect(screen.getByRole('slider', { name: 'Pace' })).toHaveAttribute('max', '4')
     expect(screen.getByText('With a stroller, at most 4.0 km/h.')).toBeInTheDocument()
+  })
+
+  it('saves the trip settings with the profile (audit idea 4)', async () => {
+    const { onSubmit, user } = setup({
+      initial: makeProfile({ trip_minutes: 90, round_trip: true }),
+    })
+    const minutes = screen.getByLabelText('Time limit')
+    expect(minutes).toHaveValue(90)
+    await user.clear(minutes)
+    await user.type(minutes, '45')
+    await user.click(screen.getByRole('switch', { name: 'Come back to the start' }))
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit).toHaveBeenCalledWith(
+      expect.objectContaining({ trip_minutes: 45, round_trip: false }),
+    )
   })
 })

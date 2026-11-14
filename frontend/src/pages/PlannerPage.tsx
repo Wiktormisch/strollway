@@ -2,13 +2,14 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { fetchRoutePlan, useRoutePlan, useTripIdea } from '@/api/planning'
-import { useProfiles } from '@/api/profiles'
+import { toast } from 'sonner'
+import { usePatchProfile, useProfiles } from '@/api/profiles'
 import type { LatLng, RoutePlanRequest, TripIdeaRequest } from '@/api/types'
 import { StopsTimeline } from '@/components/planner/StopsTimeline'
 import { PaceSlider } from '@/components/common/PaceSlider'
 import { TRIP_FORM_ID, TripIdeaForm } from '@/components/planner/TripIdeaForm'
 import { TripSummary, WeatherChip } from '@/components/planner/TripSummary'
-import { DEMO_TRIP_START, remainingStops, tripTotals } from '@/lib/trip'
+import { DEFAULT_TRIP_MINUTES, DEMO_TRIP_START, remainingStops, tripTotals } from '@/lib/trip'
 import { buildTripWalkPayload, buildWalkPayload } from '@/lib/walkPayload'
 import { HealthStatus } from '@/components/HealthStatus'
 import { DemoModeBanner, ErrorBanner } from '@/components/planner/Banners'
@@ -64,7 +65,42 @@ export function PlannerPage() {
   /** Both tabs share the profile. A new profile also resets the pace slider. */
   function selectProfile(next: number | null) {
     setProfileId(next)
-    setPace(profilePace(profiles.data?.find((item) => item.id === next)))
+    const profile = profiles.data?.find((item) => item.id === next)
+    setPace(profilePace(profile))
+    // Saved trip settings (audit idea 4). No profile keeps what the user set.
+    if (profile) {
+      setTripMinutes(profile.trip_minutes)
+      setRoundTrip(profile.round_trip)
+    }
+  }
+
+  // Trip settings live here, so a profile can set them and the user can save them back.
+  const [tripMinutes, setTripMinutes] = useState(DEFAULT_TRIP_MINUTES)
+  const [roundTrip, setRoundTrip] = useState(true)
+  const updateProfile = usePatchProfile()
+  const settingsChanged =
+    selectedProfile !== undefined &&
+    (selectedProfile.pace_kmh !== pace ||
+      selectedProfile.trip_minutes !== tripMinutes ||
+      selectedProfile.round_trip !== roundTrip)
+
+  function saveSettings() {
+    if (!selectedProfile) return
+    const { name } = selectedProfile
+    updateProfile.mutate(
+      {
+        id: selectedProfile.id,
+        input: {
+          pace_kmh: pace,
+          trip_minutes: tripMinutes,
+          round_trip: roundTrip,
+        },
+      },
+      {
+        onSuccess: () => toast.success(t('trip.form.settingsSaved', { name })),
+        onError: () => toast.error(t('trip.form.settingsFailed')),
+      },
+    )
   }
   // A ref, not state: the map centre changes often and nothing needs to re-render for it.
   const mapCenter = useRef<LatLng>(DEFAULT_MAP_CENTER)
@@ -200,6 +236,13 @@ export function PlannerPage() {
               pace={pace}
               maxPace={maxPace}
               onPaceChange={setPace}
+              minutes={tripMinutes}
+              onMinutesChange={setTripMinutes}
+              roundTrip={roundTrip}
+              onRoundTripChange={setRoundTrip}
+              canSaveSettings={settingsChanged}
+              savingSettings={updateProfile.isPending}
+              onSaveSettings={saveSettings}
               onClearStart={() => changeTripStart(null)}
               onUseMapCenter={() => changeTripStart(mapCenter.current)}
               onDemoStart={() => changeTripStart(DEMO_TRIP_START, true)}
