@@ -64,11 +64,13 @@ The user picks a start and an end. The app finds a route without stairs and show
 - User accounts, login, passwords. An anonymous browser id is used instead (D.3).
 - Public transport journey planning or live timetables.
 - Our own routing engine or importing OSM data into the database.
-- Turn-by-turn navigation, GPS, offline mode, a mobile app.
+- Turn-by-turn navigation, live GPS tracking, offline mode, a mobile app. (A one-time
+  "use my location" button is allowed; see `DECISIONS.md` section 11.)
 - Place ratings shared between users, comments, photos.
 - A chat with the AI. There is one AI feature with one well-described prompt: one request, one answer.
 - AI stops on an A -> B route. There we only have place markers and manual stops.
-- Google Maps data (licence and key; reasoning in `DECISIONS.md`).
+- Google Maps data (licence and key; reasoning in `DECISIONS.md`). An outgoing directions link
+  to Google Maps uses no Google data and is allowed (`DECISIONS.md` section 11).
 - Elevation and slope of the route.
 
 ---

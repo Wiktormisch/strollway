@@ -614,12 +614,12 @@ from `dev` and one PR, unless it says otherwise.
 
 | Phase | Items | Why here |
 |---|---|---|
-| A. Decisions (one session, no code, entries in `DECISIONS.md`) | Task 10 (own place table: yes or no); D9 scope for ideas 8 and 9; idea 18 (new dependency: yes or no); idea 16 (drag library or up/down buttons) | These answers decide what the later phases build. Without them, work may be thrown away |
-| B. Foundations | Idea 18 (if accepted), then task 10 (if accepted; otherwise do O3-O6 as clean-up) | Typed API before the API changes in C-F. Ideas 14 and 15 are then built on the final place source |
+| A. Decisions (done 2026-11-14, `DECISIONS.md` section 11) | Task 10: yes, own `Place` table from an Overpass Turbo export (A1). D9: idea 8 as a one-time location, idea 9 as a Google Maps link with up to 9 waypoints. Idea 18: yes, `openapi-typescript`. Idea 16: up/down buttons, no drag library | These answers decide what the later phases build |
+| B. Foundations and the key feature (three branches) | 1. Idea 18: `openapi-typescript`, `@extend_schema` where the schema is wrong, CI check (M). 2. Task 10: `Place` model, `import_places` command, `POI_PROVIDER` (`db` default, `overpass` optional), the Tricity data note in the UI and README (L). 3. Ideas 8 and 9: "Use my location" and "Open in Google Maps" with up to 9 waypoints and a stairs warning (M) | Typed API before the API changes in C-F. Ideas 14 and 15 are then built on the final place source. Export is a key feature, so it comes right after the foundations; location is in the same branch because both are small and touch the planner |
 | C. Quick frontend wins (two branches) | Planner: ideas 7, 11, 12. Save dialog: ideas 13, 22 | Small (S), frontend only, each group touches the same files |
 | D. Profile and model (migrations together) | Ideas 5 (W3), then 3 (W4), then 4; W2 on the way | 4 saves settings that include the pace from 3 |
-| E. Route editing | Idea 14 (L1 budget rules apply), then 16, then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
-| F. Extras (independent, by value) | Idea 1 (after 3: calories depend on the pace); 15 (after task 10); 8 and 9; 2 (with the X1 credit) | No other work depends on them |
+| E. Route editing | Idea 14 (L1 budget rules apply), then 16 (up/down buttons), then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
+| F. Extras (independent, by value) | Idea 1 (after 3: calories depend on the pace); 15 (after task 10); 2 (with the X1 credit) | No other work depends on them |
 | G. Closing | Rest of task 12; idea 19 ("How it works", X1, U3 note); task 9 (deploy, stage 8); task 11 (README, stage 9) | Deploy and README describe the final app, so they come last. The README can link the live demo |
 
 Notes:

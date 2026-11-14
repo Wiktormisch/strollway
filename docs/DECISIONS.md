@@ -371,3 +371,44 @@ Checked by hand on 2026-11-12.
   ended with `end_turn`, far below 8,000 tokens.
 - **`ANTHROPIC_MODEL` takes an API model id** (`claude-opus-5-5`), not a CLI alias like `opus`:
   the API answers 404, and every trip falls back to the rules. Leave it empty for the default.
+
+## 11. Phase A decisions (2026-11-14)
+
+Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", phase A).
+
+- **Places come from our own `Place` table (audit task 10, option A1).** A one-time export from
+  Overpass Turbo (our tags, Tricity) goes through the existing parsers into SQLite with an
+  `import_places <file>` command. `pois.py` reads by bounding box and filters by distance in
+  code. Live Overpass stays as an optional provider (`POI_PROVIDER=overpass`) for points outside
+  the import. This replaces "Overpass only" in section 1: the data is still OSM, but imported.
+  Why: the public Overpass servers are overloaded (section 10, audit part 2); a local table is
+  fast, works offline and in CI, and needs no new dependency. A Geofabrik extract with `osmium`
+  (option A2) was rejected for now: a heavy dependency and a file too big for the repo.
+- **The app and the README say plainly that place data covers the Tricity only.** The note
+  explains why (the public Overpass API is often overloaded) and what we considered for a
+  production version: a self-hosted Overpass service in Docker, or regular imports of more
+  regions on the server. Why: a reviewer should see that we know the limit and how to lift it.
+- **"Use my location" is a one-time browser position (idea 8, D9).** A button calls
+  `navigator.geolocation` once, sets point A or the trip start and centres the map. Nothing is
+  stored. The position goes only to our backend, like a map click; never to the LLM or a new
+  outside service. No live tracking (`watchPosition`): that would be navigation, which
+  `docs/PLAN.md` section C still excludes. A point outside the Tricity gets a clear message.
+- **Export to Google Maps is a directions link with up to 9 waypoints (idea 9, D9).** Code builds
+  a `google.com/maps/dir/?api=1` link with `travelmode=walking`: the stops first, then points
+  picked from our own geometry (mainly on the stair-free detour), at most 9 waypoints in total,
+  so Google stays close to our route. No key, no Google API, no Google data stored, so the
+  "OSM only" rule for our data holds. Google still routes by itself between the points, so the
+  UI warns that it may choose a way with stairs. This is a key feature, so it moved up the
+  backlog. Considered for later: a GPX file of our exact route, and a public share link to a
+  saved walk (needs an API change).
+- **TypeScript types are generated from the OpenAPI schema (idea 18).** `openapi-typescript`
+  (dev dependency, pinned) turns the `drf-spectacular` schema into `src/api/schema.d.ts`;
+  `src/api/types.ts` becomes aliases of the generated types. The generated file is committed
+  and a CI check fails when it is out of date. Why: types only, no runtime code, and the API
+  layer in `src/api/` stays as it is. Rejected: client generators (`orval`, `@hey-api`), because
+  they replace our tested API layer; a schema snapshot test alone, because it does not check
+  the frontend types. Views with hand-built answers may need `@extend_schema` first.
+- **Stops are reordered with up/down buttons (idea 16).** No drag library. Why: a trip has a few
+  stops, the list lives in a bottom sheet over the map on a phone, and buttons are accessible by
+  default and easy to test. The same reason as for the bottom sheet in stage 7b. Drag and drop
+  (`@dnd-kit`, maybe from 768 px) is a possible extra later.
