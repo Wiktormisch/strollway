@@ -8,7 +8,7 @@ export const MAX_STOP_MINUTES = 120
 export const MAX_STOPS = 20
 
 /** Fields each form shows; backend errors for other fields go to a toast. */
-export const PROFILE_FIELDS = ['name', 'children_ages', 'wheels', 'pace'] as const
+export const PROFILE_FIELDS = ['name', 'children_ages', 'wheels', 'pace_kmh'] as const
 export const WALK_FORM_FIELDS = ['name', 'profile', 'stops'] as const
 export const STOP_FIELDS = ['name', 'category', 'planned_minutes', 'reason', 'lat', 'lng'] as const
 

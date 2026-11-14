@@ -173,7 +173,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 
 ## 7. Stage 3: route plans
 
-- **Pace.** The profile model has `relaxed` (3.5 km/h) and `normal` (4.5 km/h). A stroller is a limit of 4 km/h, so `normal` + stroller gives 4 km/h. No profile means 4 km/h. ORS `duration` is ignored.
+- **Pace.** The profile model has `relaxed` (3.5 km/h) and `normal` (4.5 km/h). A stroller is a limit of 4 km/h, so `normal` + stroller gives 4 km/h. No profile means 4 km/h. ORS `duration` is ignored. (Changed in phase D: the pace is now a number in km/h, see section 12.)
 - **The avoid-steps request is skipped** when the shortest route has 0 m of stairs: the answer is `step_free_available: true`, `detour_m: 0`. This saves one ORS call.
 - **Avoid-steps request fails** (timeout, 429, 5xx) after a good normal route: we return the normal route with `step_free_available: null` instead of a fixture or a straight line. A real route is better than a fake one.
 - **Cache:** one entry per ORS request (rounded coordinates + avoid flag), 24 h. Routes and the stable errors 2009 and 2010 are cached; temporary failures are not. Overpass: one entry per query, only successful answers. Django file cache in `backend/.cache/` (git-ignored).
@@ -491,3 +491,15 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
 - **No age filters in the A -> B mode:** the route shows all places; the user filters them.
 - **Ideas 13 and 22:** idea 13 (at least one stop on a saved trip walk) is dropped. Idea 22
   (recompute the time in the save dialog) moves to phase D, after the profile changes.
+- **The pace is a slider in km/h (audit idea 3, W4).** `FamilyProfile.pace_kmh` is a number from
+  2.5 to 5.5 in steps of 0.5 (default 3.5). It replaces `relaxed` / `normal`. Migration 0005 keeps
+  today's times: relaxed = 3.5, normal = 4.5, normal with a stroller = 4.0. The migration can be
+  reversed. A float, not a Decimal: DRF sends a Decimal as a string.
+- **A stroller is capped at 4 km/h in two places.** The UI slider stops at 4.0 for a stroller
+  (and a faster pace drops to 4.0 when the user picks a stroller). The backend keeps
+  `min(pace, 4)` as a safety net for other clients.
+- **The planner sends the pace.** `route-plans` and `trip-ideas` take an optional `pace_kmh`. When
+  sent, it wins over the profile pace. The planner slider starts from the profile (no profile:
+  4 km/h) and resets when the profile changes. A changed pace in the A -> B mode hides the old
+  result until the user plans again, like the "Avoid stairs" switch. Trip ideas have no result
+  cache, so a new pace never returns an old answer.

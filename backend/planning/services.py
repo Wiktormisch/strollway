@@ -7,30 +7,37 @@ NoRoute and NoRoutablePoint are real answers and reach the view (422).
 """
 
 from planning import fixtures, places, pois, routing
+from walks.models import STROLLER_MAX_KMH
 
 SOURCE_ORS = "ors"
 SOURCE_FIXTURE = "fixture"
 SOURCE_MOCK = "mock"
 
-# Family pace in km/h. A stroller limits the pace to 4 km/h.
-PACE_KMH = {"relaxed": 3.5, "normal": 4.5}
-STROLLER_KMH = 4.0
+# Without a profile and without a pace from the planner, we assume a stroller pace.
+STROLLER_KMH = STROLLER_MAX_KMH
 
 
-def speed_m_per_min(profile=None):
-    """Walking speed in metres per minute for a family profile (None = stroller pace)."""
-    if profile is None:
-        kmh = STROLLER_KMH
-    else:
-        kmh = PACE_KMH.get(profile.pace, STROLLER_KMH)
-        if profile.wheels == "stroller":
-            kmh = min(kmh, STROLLER_KMH)
-    return kmh * 1000 / 60
+def pace_kmh_for(profile=None, pace_kmh=None):
+    """The pace used for times: the planner pace, else the profile pace, else 4 km/h.
+
+    A stroller is limited to 4 km/h. The UI already caps its slider there, so this is
+    only a safety net for other clients.
+    """
+    if pace_kmh is None:
+        pace_kmh = profile.pace_kmh if profile else STROLLER_KMH
+    if profile is not None and profile.wheels == "stroller":
+        pace_kmh = min(pace_kmh, STROLLER_MAX_KMH)
+    return pace_kmh
 
 
-def build_route_plan(start, end, avoid_stairs=True, profile=None):
+def speed_m_per_min(profile=None, pace_kmh=None):
+    """Walking speed in metres per minute (see pace_kmh_for)."""
+    return pace_kmh_for(profile, pace_kmh) * 1000 / 60
+
+
+def build_route_plan(start, end, avoid_stairs=True, profile=None, pace_kmh=None):
     """The full answer of the endpoint, as a dict in the shape of docs/PLAN.md D.4."""
-    speed = speed_m_per_min(profile)
+    speed = speed_m_per_min(profile, pace_kmh)
     pair = fixtures.find_demo_pair(start, end)
     fixture = fixtures.load_fixture(pair)
 

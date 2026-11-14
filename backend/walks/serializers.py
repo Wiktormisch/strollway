@@ -5,7 +5,7 @@ from django.db import transaction
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from walks.models import FamilyProfile, Stop, Walk
+from walks.models import PACE_STEP_KMH, FamilyProfile, Stop, Walk, is_pace_step
 
 MAX_CHILDREN = 6
 MAX_CHILD_AGE = 17
@@ -57,7 +57,7 @@ class FamilyProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = FamilyProfile
-        fields = ["id", "name", "children_ages", "wheels", "pace", "created_at", "updated_at"]
+        fields = ["id", "name", "children_ages", "wheels", "pace_kmh", "created_at", "updated_at"]
         read_only_fields = ["id", "created_at", "updated_at"]
 
     def validate_children_ages(self, value):
@@ -71,6 +71,11 @@ class FamilyProfileSerializer(serializers.ModelSerializer):
                 raise serializers.ValidationError(
                     f"Each age must be a whole number from 0 to {MAX_CHILD_AGE}."
                 )
+        return value
+
+    def validate_pace_kmh(self, value):
+        if not is_pace_step(value):
+            raise serializers.ValidationError(f"Use steps of {PACE_STEP_KMH} km/h.")
         return value
 
 

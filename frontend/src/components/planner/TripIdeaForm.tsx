@@ -1,7 +1,8 @@
 import { useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Loader2, Play, Repeat, Sparkles } from 'lucide-react'
+import { Clock, Loader2, Play, Repeat, Sparkles } from 'lucide-react'
 import type { FamilyProfile, LatLng, TripIdeaRequest } from '@/api/types'
+import { PaceSlider } from '@/components/common/PaceSlider'
 import { Button } from '@/components/ui/button'
 import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
@@ -32,6 +33,9 @@ interface TripIdeaFormProps {
   profileId: number | null
   planning: boolean
   onProfileChange: (profileId: number | null) => void
+  pace: number
+  maxPace: number
+  onPaceChange: (kmh: number) => void
   onClearStart: () => void
   onUseMapCenter: () => void
   onDemoStart: () => void
@@ -59,6 +63,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
       round_trip: roundTrip,
       language: apiLanguage(i18n.language),
       wishes: wishes.trim(),
+      pace_kmh: props.pace,
     }
     props.onSubmit(props.profileId === null ? request : { ...request, profile_id: props.profileId })
   }
@@ -92,7 +97,10 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
 
       <FormSection>
         <fieldset className="space-y-1.5" aria-describedby={`${ids}-minutes-range`}>
-          <legend className="text-sm font-medium">{t('trip.form.minutes')}</legend>
+          <legend className="flex items-center gap-2 text-sm font-medium">
+            <Clock aria-hidden className="size-5 text-brand" />
+            {t('trip.form.minutes')}
+          </legend>
           {/* A native range input: no new dependency, keyboard and screen reader support for free. */}
           <div className="flex items-center gap-3">
             <input
@@ -135,6 +143,12 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
             onChange={props.onProfileChange}
           />
         </div>
+        <PaceSlider
+          id={`${ids}-pace`}
+          value={props.pace}
+          max={props.maxPace}
+          onChange={props.onPaceChange}
+        />
 
         <div className="flex min-h-11 items-center justify-between gap-2">
           <Label htmlFor={`${ids}-round`}>

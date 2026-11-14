@@ -3,7 +3,7 @@
 from rest_framework import serializers
 
 from planning import geo
-from walks.models import FamilyProfile
+from walks.models import PACE_MAX_KMH, PACE_MIN_KMH, PACE_STEP_KMH, FamilyProfile, is_pace_step
 from walks.serializers import latitude_field, longitude_field
 
 # A stroller walk, not a road trip. Also protects the ORS daily limit.
@@ -15,8 +15,25 @@ class PointSerializer(serializers.Serializer):
     lng = longitude_field()
 
 
+def pace_field():
+    """Optional pace from the planner. When sent, it wins over the profile pace."""
+    return serializers.FloatField(
+        min_value=PACE_MIN_KMH,
+        max_value=PACE_MAX_KMH,
+        required=False,
+        allow_null=True,
+        default=None,
+        help_text="Walking pace in km/h, in steps of 0.5. Empty = the profile pace.",
+    )
+
+
 class ProfileMixin:
     """`profile_id` must belong to this client; `profile` holds the object (or None)."""
+
+    def validate_pace_kmh(self, value):
+        if value is not None and not is_pace_step(value):
+            raise serializers.ValidationError(f"Use steps of {PACE_STEP_KMH} km/h.")
+        return value
 
     def validate_profile_id(self, value):
         """The profile must belong to this client. Its object is kept in `profile`."""
@@ -39,6 +56,7 @@ class RoutePlanRequestSerializer(ProfileMixin, serializers.Serializer):
     end = PointSerializer()
     avoid_stairs = serializers.BooleanField(default=True)
     profile_id = serializers.IntegerField(required=False, allow_null=True)
+    pace_kmh = pace_field()
 
     def validate(self, attrs):
         start = (attrs["start"]["lat"], attrs["start"]["lng"])
@@ -121,6 +139,7 @@ class TripIdeaRequestSerializer(ProfileMixin, serializers.Serializer):
 
     start = PointSerializer()
     profile_id = serializers.IntegerField(required=False, allow_null=True)
+    pace_kmh = pace_field()
     max_minutes = serializers.IntegerField(min_value=15, max_value=180)
     round_trip = serializers.BooleanField(default=True)
     language = serializers.ChoiceField(choices=["pl", "en"], default="pl")

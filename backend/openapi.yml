@@ -1062,8 +1062,11 @@ components:
             type: integer
         wheels:
           $ref: '#/components/schemas/WheelsEnum'
-        pace:
-          $ref: '#/components/schemas/PaceEnum'
+        pace_kmh:
+          type: number
+          format: double
+          maximum: 5.5
+          minimum: 2.5
         created_at:
           type: string
           format: date-time
@@ -1090,8 +1093,11 @@ components:
             type: integer
         wheels:
           $ref: '#/components/schemas/WheelsEnum'
-        pace:
-          $ref: '#/components/schemas/PaceEnum'
+        pace_kmh:
+          type: number
+          format: double
+          maximum: 5.5
+          minimum: 2.5
       required:
       - name
     Health:
@@ -1218,14 +1224,6 @@ components:
       - lat
       - lng
       - order
-    PaceEnum:
-      enum:
-      - relaxed
-      - normal
-      type: string
-      description: |-
-        * `relaxed` - Relaxed
-        * `normal` - Normal
     PatchedFamilyProfileRequest:
       type: object
       properties:
@@ -1239,8 +1237,11 @@ components:
             type: integer
         wheels:
           $ref: '#/components/schemas/WheelsEnum'
-        pace:
-          $ref: '#/components/schemas/PaceEnum'
+        pace_kmh:
+          type: number
+          format: double
+          maximum: 5.5
+          minimum: 2.5
     PatchedStopRequest:
       type: object
       description: Fields shared by the nested stop and the standalone stop.
@@ -1510,6 +1511,14 @@ components:
         profile_id:
           type: integer
           nullable: true
+        pace_kmh:
+          type: number
+          format: double
+          maximum: 5.5
+          minimum: 2.5
+          nullable: true
+          description: Walking pace in km/h, in steps of 0.5. Empty = the profile
+            pace.
       required:
       - end
       - start
@@ -1749,6 +1758,14 @@ components:
         profile_id:
           type: integer
           nullable: true
+        pace_kmh:
+          type: number
+          format: double
+          maximum: 5.5
+          minimum: 2.5
+          nullable: true
+          description: Walking pace in km/h, in steps of 0.5. Empty = the profile
+            pace.
         max_minutes:
           type: integer
           maximum: 180

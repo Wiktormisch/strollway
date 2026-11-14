@@ -11,6 +11,7 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { errorMessage, NO_ERRORS, parseFieldErrors, type FormErrors } from '@/lib/fieldErrors'
+import { formatKmh } from '@/lib/format'
 import { PROFILE_FIELDS } from '@/lib/formRules'
 import { usePageTitle } from '@/lib/usePageTitle'
 
@@ -149,7 +150,7 @@ function ProfileCard({
   onEdit: () => void
   onDelete: () => void
 }) {
-  const { t } = useTranslation()
+  const { t, i18n } = useTranslation()
   return (
     <Card>
       <CardContent className="space-y-3">
@@ -186,7 +187,7 @@ function ProfileCard({
           <p className="text-sm text-muted-foreground">{t('profiles.noChildren')}</p>
         )}
         <p className="text-sm text-muted-foreground">
-          {t(`profiles.wheels.${profile.wheels}`)} · {t(`profiles.pace.${profile.pace}`)}
+          {t(`profiles.wheels.${profile.wheels}`)} · {formatKmh(profile.pace_kmh, i18n.language)}
         </p>
       </CardContent>
     </Card>

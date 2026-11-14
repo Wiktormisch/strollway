@@ -88,6 +88,7 @@ describe('PlannerPage, trip idea', () => {
       round_trip: true,
       language: 'en',
       wishes: '',
+      pace_kmh: 4,
     })
     expect(
       screen.getByText('map stops: Fake Playground, Fake Cafe, Restaurant'),

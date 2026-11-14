@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import type { RoutePlan } from '@/api/types'
@@ -71,6 +71,8 @@ describe('PlannerPage', () => {
         start: { lat: 54.347791, lng: 18.618119 },
         end: { lat: 54.34874, lng: 18.618458 },
         avoid_stairs: true,
+        // No profile: the stroller pace, like the backend default.
+        pace_kmh: 4,
       },
     ])
     expect(screen.getByText(/Demo mode: a recorded route/)).toBeInTheDocument()
@@ -245,7 +247,28 @@ describe('PlannerPage', () => {
 
     expect(await screen.findByText(/9 min/)).toBeInTheDocument()
     expect(calls).toHaveLength(2)
-    expect(calls[1]).toMatchObject({ avoid_stairs: true, profile_id: 3 })
+    // The pace slider takes the profile pace.
+    expect(calls[1]).toMatchObject({ avoid_stairs: true, profile_id: 3, pace_kmh: 3.5 })
+  })
+
+  it('sends the pace from the slider and caps it for a stroller profile (audit idea 3)', async () => {
+    const calls = mockApi(makePlan(), makePlan(), makePlan())
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+    await screen.findByText('map route: drawn')
+
+    const slider = screen.getByRole('slider', { name: 'Pace' })
+    expect(slider).toHaveAttribute('max', '4') // the profile has a stroller
+    fireEvent.change(slider, { target: { value: '3' } })
+    await user.click(screen.getAllByRole('button', { name: 'Plan route' })[0])
+
+    expect(await screen.findByText('map route: drawn')).toBeInTheDocument()
+    expect(calls.at(-1)).toMatchObject({ profile_id: 3, pace_kmh: 3 })
   })
 
   it('sets "Avoid stairs" from the way of moving, and the switch stays usable', async () => {

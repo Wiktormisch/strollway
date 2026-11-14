@@ -341,10 +341,6 @@
       "stroller": "With a stroller",
       "kid_bike": "With a balance bike"
     },
-    "pace": {
-      "relaxed": "Relaxed pace",
-      "normal": "Normal pace"
-    },
     "form": {
       "name": "Profile name",
       "namePlaceholder": "e.g. Weekend with a stroller",
@@ -354,7 +350,6 @@
       "addAge": "Add age",
       "removeAge": "Remove age {{age}}",
       "wheels": "How do you get around?",
-      "pace": "Pace",
       "errors": {
         "nameRequired": "Give the profile a name.",
         "ageInvalid": "An age is a whole number from 0 to {{maxAge}}.",
@@ -456,5 +451,11 @@
     "newTab": "(opens in a new tab)",
     "warning": "Google plans the way between our points by itself, so it may choose a way with stairs. Check the route on our map.",
     "stopsCut": "The link has only the first {{count}} stops (a limit of Google Maps on phones)."
+  },
+  "pace": {
+    "label": "Pace",
+    "slow": "Slow",
+    "fast": "Fast",
+    "strollerLimit": "With a stroller, at most {{max}}."
   }
 }

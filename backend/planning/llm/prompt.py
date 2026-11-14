@@ -83,7 +83,7 @@ def build_payload(candidates, context):
         "family": {
             "children_ages": list(context["children_ages"]),
             "wheels": profile.wheels if profile else "stroller",
-            "pace": profile.pace if profile else "relaxed",
+            "pace_kmh": context["pace_kmh"],
         },
         "limits": {
             "max_minutes": context["max_minutes"],

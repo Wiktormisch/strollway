@@ -60,10 +60,13 @@ def active_engine():
     return names[0] if names else ENGINE_RULES
 
 
-def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="", profile=None):
+def build_trip_idea(
+    start, max_minutes, round_trip=True, language="pl", wishes="", profile=None, pace_kmh=None
+):
     """The full answer of the endpoint, as a dict (docs/PLAN.md D.4 + D.6)."""
     llm_deadline = time.monotonic() + LLM_CHAIN_BUDGET_S
-    speed = services.speed_m_per_min(profile)
+    pace_kmh = services.pace_kmh_for(profile, pace_kmh)
+    speed = services.speed_m_per_min(profile, pace_kmh)
     fixture = fixtures.load_trip_fixture(start)
     found = _candidates(start, pois.trip_radius_m(speed, max_minutes), fixture)
     if found.status == pois.STATUS_OUTSIDE_AREA:
@@ -82,6 +85,7 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
         "wishes": (wishes or "")[:200],
         "children_ages": list(profile.children_ages) if profile else [],
         "speed": speed,
+        "pace_kmh": pace_kmh,
         "weather": weather.current_weather(start),
         "profile": profile,
         "llm_deadline": llm_deadline,

@@ -5,6 +5,7 @@ import { fetchRoutePlan, useRoutePlan, useTripIdea } from '@/api/planning'
 import { useProfiles } from '@/api/profiles'
 import type { LatLng, RoutePlanRequest, TripIdeaRequest } from '@/api/types'
 import { StopsTimeline } from '@/components/planner/StopsTimeline'
+import { PaceSlider } from '@/components/common/PaceSlider'
 import { TRIP_FORM_ID, TripIdeaForm } from '@/components/planner/TripIdeaForm'
 import { TripSummary, WeatherChip } from '@/components/planner/TripSummary'
 import { DEMO_TRIP_START, remainingStops, tripTotals } from '@/lib/trip'
@@ -28,6 +29,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DEFAULT_MAP_CENTER, type DemoRoute } from '@/constants/demoRoutes'
 import { usePoiLabel } from '@/lib/poiLabel'
 import { nextPoints, visiblePois, type PlannerPoints } from '@/lib/planner'
+import { paceMax, profilePace } from '@/lib/pace'
 import { usePageTitle } from '@/lib/usePageTitle'
 import { useSheetInset } from '@/lib/useSheetInset'
 
@@ -52,8 +54,18 @@ export function PlannerPage() {
     }))
   }
   const [profileId, setProfileId] = useState<number | null>(null)
+  // The pace starts from the profile; the slider changes it for this plan only (audit idea 3).
+  const [pace, setPace] = useState(profilePace(undefined))
   const [saveOpen, setSaveOpen] = useState(false)
   const profiles = useProfiles()
+  const selectedProfile = profiles.data?.find((item) => item.id === profileId)
+  const maxPace = paceMax(selectedProfile?.wheels)
+
+  /** Both tabs share the profile. A new profile also resets the pace slider. */
+  function selectProfile(next: number | null) {
+    setProfileId(next)
+    setPace(profilePace(profiles.data?.find((item) => item.id === next)))
+  }
   // A ref, not state: the map centre changes often and nothing needs to re-render for it.
   const mapCenter = useRef<LatLng>(DEFAULT_MAP_CENTER)
   // The trip idea is the main feature, so it opens first (audit idea 7).
@@ -98,7 +110,11 @@ export function PlannerPage() {
   // So a changed input hides an old result, and going back shows it again with no request.
   const request: RoutePlanRequest | null =
     points.start && points.end
-      ? withProfile({ start: points.start, end: points.end, avoid_stairs: avoidStairs }, profileId)
+      ? withProfile(
+          { start: points.start, end: points.end, avoid_stairs: avoidStairs },
+          profileId,
+          pace,
+        )
       : null
   // Consts, so TypeScript keeps them non-null inside the save callback below.
   const routeStart = points.start
@@ -130,7 +146,11 @@ export function PlannerPage() {
     focusOn([route.start, route.end])
     fetchRoutePlan(
       queryClient,
-      withProfile({ start: route.start, end: route.end, avoid_stairs: avoidStairs }, profileId),
+      withProfile(
+        { start: route.start, end: route.end, avoid_stairs: avoidStairs },
+        profileId,
+        pace,
+      ),
     )
   }
 
@@ -140,14 +160,18 @@ export function PlannerPage() {
    * a default; the switch stays usable (DECISIONS.md section 12).
    */
   function changeProfile(next: number | null) {
-    setProfileId(next)
+    selectProfile(next)
     const profile = profiles.data?.find((item) => item.id === next)
     const nextAvoidStairs = profile ? profile.wheels !== 'none' : avoidStairs
     setAvoidStairs(nextAvoidStairs)
     if (points.start && points.end) {
       fetchRoutePlan(
         queryClient,
-        withProfile({ start: points.start, end: points.end, avoid_stairs: nextAvoidStairs }, next),
+        withProfile(
+          { start: points.start, end: points.end, avoid_stairs: nextAvoidStairs },
+          next,
+          profilePace(profile),
+        ),
       )
     }
   }
@@ -172,7 +196,10 @@ export function PlannerPage() {
               profiles={profiles.data ?? []}
               profileId={profileId}
               planning={tripIdea.isPending}
-              onProfileChange={setProfileId}
+              onProfileChange={selectProfile}
+              pace={pace}
+              maxPace={maxPace}
+              onPaceChange={setPace}
               onClearStart={() => changeTripStart(null)}
               onUseMapCenter={() => changeTripStart(mapCenter.current)}
               onDemoStart={() => changeTripStart(DEMO_TRIP_START, true)}
@@ -231,6 +258,7 @@ export function PlannerPage() {
                     disabled={!profiles.data}
                     onChange={changeProfile}
                   />
+                  <PaceSlider id="planner-pace" value={pace} max={maxPace} onChange={setPace} />
                 </div>
               }
               onAvoidStairsChange={setAvoidStairs}
@@ -431,6 +459,12 @@ function ResultsDivider() {
 }
 
 /** profile_id is sent only when a profile is chosen. */
-function withProfile(request: RoutePlanRequest, profileId: number | null): RoutePlanRequest {
-  return profileId === null ? request : { ...request, profile_id: profileId }
+/** Adds the profile (if any) and the pace. The pace is always sent, so it wins on the server. */
+function withProfile(
+  request: RoutePlanRequest,
+  profileId: number | null,
+  pace: number,
+): RoutePlanRequest {
+  const withPace = { ...request, pace_kmh: pace }
+  return profileId === null ? withPace : { ...withPace, profile_id: profileId }
 }
