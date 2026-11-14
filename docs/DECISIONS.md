@@ -412,3 +412,21 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
   stops, the list lives in a bottom sheet over the map on a phone, and buttons are accessible by
   default and easy to test. The same reason as for the bottom sheet in stage 7b. Drag and drop
   (`@dnd-kit`, maybe from 768 px) is a possible extra later.
+
+### Generated API types (phase B, idea 18)
+
+- **Two committed generated files:** `backend/openapi.yml` (drf-spectacular) and
+  `frontend/src/api/schema.d.ts` (`npm run gen:api`). Each language checks its own file: a
+  pytest test compares the schema with a fresh one, and a CI step in the frontend job runs
+  `gen:api` and fails on a diff. So no CI job needs both Python and Node.
+- **`COMPONENT_SPLIT_REQUEST: True`.** Without it, one `Walk` component is used for reading and
+  writing, and the generated type would require `id` and `created_at` in a POST body.
+- **npm `overrides` for TypeScript.** `openapi-typescript` 7.13.0 declares the peer
+  `typescript: ^5.x`; we pin 6.0 (section 1). The override makes it use our version. It only
+  uses TypeScript to print the output, and the generated file passes `tsc`. Remove the override
+  when a release supports TypeScript 6.
+- **`types.ts` keeps three hand-written fixes:** `[lat, lng]` tuples (OpenAPI has no tuples),
+  `Required<...>` for saved data (fields with a model default are optional in the schema but
+  always sent), and the frontend-only `Poi.accessibility`.
+- **JSON fields get a schema shape** with two schema-only subclasses in `walks/serializers.py`
+  (`IntListJSONField`, `LatLngListJSONField`); validation stays in the `validate_*` methods.

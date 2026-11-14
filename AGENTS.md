@@ -51,6 +51,11 @@ Frontend, from `frontend/`:
 - `npm run lint`
 - `npm run build`
 
+After any API change (serializers, views, schema settings), regenerate both files and commit them:
+1. From `backend/`: `python manage.py spectacular --file openapi.yml --validate --fail-on-warn`
+2. From `frontend/`: `npm run gen:api` (writes `src/api/schema.d.ts`; never edit it by hand)
+A pytest test and a CI step fail when either file is out of date.
+
 ## Tests
 - Every behavior change comes with a test in the same commit. A bug fix includes a regression test.
 - Before handing work over: run the tests and linters for the code you touched and report the

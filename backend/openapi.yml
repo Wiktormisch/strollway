@@ -1,0 +1,2213 @@
+openapi: 3.0.3
+info:
+  title: StrollWay API
+  version: 0.1.0
+  description: Stair-free walks for families with a stroller.
+paths:
+  /api/demo-data/:
+    post:
+      operationId: demo_data_create
+      description: |-
+        Reads the client id before any action, so a bad header gives 400 before a 404.
+
+        Also limits writes per IP and keeps the shared demo client read-only.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - demo-data
+      security:
+      - {}
+      responses:
+        '201':
+          description: Demo data was created.
+        '200':
+          description: Demo data already existed; nothing changed.
+  /api/health/:
+    get:
+      operationId: health_retrieve
+      description: Tell the frontend that the API is up and which engines are active.
+      tags:
+      - health
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Health'
+          description: ''
+  /api/profiles/:
+    get:
+      operationId: profiles_list
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - profiles
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/FamilyProfile'
+          description: ''
+    post:
+      operationId: profiles_create
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FamilyProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FamilyProfileRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyProfile'
+          description: ''
+  /api/profiles/{id}/:
+    get:
+      operationId: profiles_retrieve
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this family profile.
+        required: true
+      tags:
+      - profiles
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyProfile'
+          description: ''
+    put:
+      operationId: profiles_update
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this family profile.
+        required: true
+      tags:
+      - profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FamilyProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/FamilyProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/FamilyProfileRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyProfile'
+          description: ''
+    patch:
+      operationId: profiles_partial_update
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this family profile.
+        required: true
+      tags:
+      - profiles
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedFamilyProfileRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedFamilyProfileRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedFamilyProfileRequest'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FamilyProfile'
+          description: ''
+    delete:
+      operationId: profiles_destroy
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this family profile.
+        required: true
+      tags:
+      - profiles
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/route-plans/:
+    post:
+      operationId: route_plans_create
+      description: 'Compares the shortest walking route with a step-free one and lists
+        places along the route. Coordinates are [lat, lng]. Upstream failures never
+        give 500: the answer falls back to a recorded demo route (`source: fixture`)
+        or a straight line (`source: mock`). Limited to 60 requests per hour per IP.'
+      summary: Plan a step-free route from A to B
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - route-plans
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RoutePlanRequestRequest'
+            examples:
+              DemoPair1(bigDetour):
+                value:
+                  start:
+                    lat: 54.347791
+                    lng: 18.618119
+                  end:
+                    lat: 54.34874
+                    lng: 18.618458
+                  avoid_stairs: true
+                summary: Demo pair 1 (big detour)
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/RoutePlanRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/RoutePlanRequestRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutePlanResponse'
+              examples:
+                Step-freeRouteWithADetour:
+                  value:
+                    source: ors
+                    step_free_available: true
+                    route:
+                      geometry:
+                      - - 54.347791
+                        - 18.618119
+                      - - 54.34874
+                        - 18.618458
+                      distance_m: 420
+                      duration_min: 6
+                      stairs_m: 0
+                      stairs_segments: []
+                    baseline:
+                      geometry:
+                      - - 54.347791
+                        - 18.618119
+                      - - 54.34874
+                        - 18.618458
+                      distance_m: 132
+                      duration_min: 2
+                      stairs_m: 16.0
+                      stairs_segments:
+                      - - - 54.348
+                          - 18.6182
+                        - - 54.3481
+                          - 18.6183
+                    detour_m: 288
+                    extra_min: 4
+                    pois_status: ok
+                    pois:
+                    - poi_id: node/123
+                      name: null
+                      category: bench
+                      lat: 54.348
+                      lng: 18.618
+                      at_min: 3
+                      off_route_m: 12
+                      opening_hours: null
+                      open_now: null
+                    transit_stops:
+                    - name: Hucisko
+                      kind: tram
+                      near: start
+                      distance_m: 180
+                  summary: Step-free route with a detour
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationError'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RoutePlanError'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Throttled'
+          description: ''
+  /api/stops/:
+    get:
+      operationId: stops_list
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: query
+        name: walk
+        schema:
+          type: integer
+        description: Filter by walk id.
+      tags:
+      - stops
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Stop'
+          description: ''
+    post:
+      operationId: stops_create
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - stops
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+  /api/stops/{id}/:
+    get:
+      operationId: stops_retrieve
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stop.
+        required: true
+      tags:
+      - stops
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+    put:
+      operationId: stops_update
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stop.
+        required: true
+      tags:
+      - stops
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/StopRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+    patch:
+      operationId: stops_partial_update
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stop.
+        required: true
+      tags:
+      - stops
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStopRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedStopRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedStopRequest'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Stop'
+          description: ''
+    delete:
+      operationId: stops_destroy
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this stop.
+        required: true
+      tags:
+      - stops
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/trip-ideas/:
+    post:
+      operationId: trip_ideas_create
+      description: Finds places around the start (OpenStreetMap), lets an LLM or simple
+        rules pick and order 1-4 stops, then routes start -> stops (-> start) without
+        stairs and checks the time limit. `engine` tells who planned it. Only `wishes`
+        (max 200 characters) is sent to the LLM as free text; never coordinates. Limited
+        to 20 requests per hour per IP.
+      summary: Plan a short family trip from a start point
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - trip-ideas
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TripIdeaRequestRequest'
+            examples:
+              DemoTripStart(GdanskChelm):
+                value:
+                  start:
+                    lat: 54.3385
+                    lng: 18.62
+                  max_minutes: 90
+                  round_trip: true
+                  language: en
+                  wishes: playground, then ice cream, finally pizza
+                summary: Demo trip start (Gdansk Chelm)
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TripIdeaRequestRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TripIdeaRequestRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripIdeaResponse'
+              examples:
+                ARule-basedTrip:
+                  value:
+                    engine: rules
+                    source: mock
+                    step_free_available: null
+                    route:
+                      geometry:
+                      - - 54.3385
+                        - 18.62
+                      - - 54.3391
+                        - 18.6195
+                      - - 54.3385
+                        - 18.62
+                      distance_m: 180
+                      duration_min: 3
+                      stairs_m: null
+                      stairs_segments: []
+                    baseline:
+                      geometry:
+                      - - 54.3385
+                        - 18.62
+                      - - 54.3391
+                        - 18.6195
+                      - - 54.3385
+                        - 18.62
+                      distance_m: 180
+                      duration_min: 3
+                      stairs_m: null
+                      stairs_segments: []
+                    detour_m: null
+                    extra_min: null
+                    summary: 'A plan from simple rules: playground.'
+                    tips: []
+                    unmet_wishes:
+                    - 'pizza: does not fit in the time limit'
+                    stops:
+                    - poi_id: node/1
+                      name: null
+                      category: playground
+                      lat: 54.3391
+                      lng: 18.6195
+                      distance_m: 70
+                      opening_hours: null
+                      open_now: null
+                      arrive_min: 1
+                      planned_minutes: 30
+                      reason: The closest place of this kind, about 70 m from the
+                        start.
+                    dropped_stops: []
+                    walking_min: 3
+                    stops_min: 30
+                    total_min: 33
+                    max_minutes: 45
+                    over_limit: false
+                    weather: null
+                    transit_stops:
+                    - name: Sikorskiego
+                      kind: bus
+                      near: start
+                      distance_m: 40
+                  summary: A rule-based trip
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripValidationError'
+          description: ''
+        '422':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripIdeaError'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TripThrottled'
+          description: ''
+  /api/walks/:
+    get:
+      operationId: walks_list
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - done
+          - planned
+        description: Filter by status.
+      tags:
+      - walks
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WalkList'
+          description: ''
+    post:
+      operationId: walks_create
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      tags:
+      - walks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WalkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WalkRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Walk'
+          description: ''
+  /api/walks/{id}/:
+    get:
+      operationId: walks_retrieve
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this walk.
+        required: true
+      tags:
+      - walks
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Walk'
+          description: ''
+    put:
+      operationId: walks_update
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this walk.
+        required: true
+      tags:
+      - walks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WalkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WalkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WalkRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Walk'
+          description: ''
+    patch:
+      operationId: walks_partial_update
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this walk.
+        required: true
+      tags:
+      - walks
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWalkRequest'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWalkRequest'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWalkRequest'
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Walk'
+          description: ''
+    delete:
+      operationId: walks_destroy
+      description: |-
+        Filters the queryset by client and sets client_id on create.
+
+        `client_lookup` is the path to client_id, e.g. "walk__client_id" for stops.
+        A foreign object is not in the queryset, so DRF returns 404 for it.
+      parameters:
+      - in: header
+        name: X-Client-Id
+        schema:
+          type: string
+          format: uuid
+        description: A random UUID that identifies this browser. All data is filtered
+          by it. When it is missing, the shared "demo" client is used; it is read-only,
+          so POST, PUT, PATCH and DELETE without this header give 400. A value that
+          is not a UUID gives 400.
+      - in: path
+        name: id
+        schema:
+          type: integer
+        description: A unique integer value identifying this walk.
+        required: true
+      tags:
+      - walks
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+components:
+  schemas:
+    CategoryEnum:
+      enum:
+      - playground
+      - toilets
+      - cafe
+      - restaurant
+      - bench
+      - water
+      - park
+      - zoo
+      - museum
+      - beach
+      - shop
+      - other
+      type: string
+      description: |-
+        * `playground` - Playground
+        * `toilets` - Toilets
+        * `cafe` - Cafe
+        * `restaurant` - Restaurant
+        * `bench` - Bench
+        * `water` - Water
+        * `park` - Park
+        * `zoo` - Zoo
+        * `museum` - Museum
+        * `beach` - Beach
+        * `shop` - Shop
+        * `other` - Other
+    DroppedStop:
+      type: object
+      properties:
+        poi_id:
+          type: string
+        name:
+          type: string
+          nullable: true
+      required:
+      - name
+      - poi_id
+    EngineEnum:
+      enum:
+      - rules
+      - claude_cli
+      - anthropic
+      - nvidia
+      type: string
+      description: |-
+        * `rules` - rules
+        * `claude_cli` - claude_cli
+        * `anthropic` - anthropic
+        * `nvidia` - nvidia
+    FamilyProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          maxLength: 60
+        children_ages:
+          type: array
+          items:
+            type: integer
+        wheels:
+          $ref: '#/components/schemas/WheelsEnum'
+        pace:
+          $ref: '#/components/schemas/PaceEnum'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - id
+      - name
+      - updated_at
+    FamilyProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        children_ages:
+          type: array
+          items:
+            type: integer
+        wheels:
+          $ref: '#/components/schemas/WheelsEnum'
+        pace:
+          $ref: '#/components/schemas/PaceEnum'
+      required:
+      - name
+    Health:
+      type: object
+      properties:
+        status:
+          type: string
+        routing:
+          $ref: '#/components/schemas/RoutingEnum'
+        llm:
+          type: string
+          description: The first LLM backend, or "rules".
+      required:
+      - llm
+      - routing
+      - status
+    KindEnum:
+      enum:
+      - bus
+      - tram
+      type: string
+      description: |-
+        * `bus` - bus
+        * `tram` - tram
+    LanguageEnum:
+      enum:
+      - pl
+      - en
+      type: string
+      description: |-
+        * `pl` - pl
+        * `en` - en
+    NearEnum:
+      enum:
+      - start
+      - end
+      type: string
+      description: |-
+        * `start` - start
+        * `end` - end
+    NestedStop:
+      type: object
+      description: A stop inside a walk payload. The walk is set by the parent serializer.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        osm_id:
+          type: string
+          maxLength: 40
+        planned_minutes:
+          type: integer
+          maximum: 120
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 200
+        source:
+          $ref: '#/components/schemas/StopSourceEnum'
+      required:
+      - category
+      - id
+      - lat
+      - lng
+      - order
+    NestedStopRequest:
+      type: object
+      description: A stop inside a walk payload. The walk is set by the parent serializer.
+      properties:
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        osm_id:
+          type: string
+          maxLength: 40
+        planned_minutes:
+          type: integer
+          maximum: 120
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 200
+        source:
+          $ref: '#/components/schemas/StopSourceEnum'
+      required:
+      - category
+      - lat
+      - lng
+      - order
+    PaceEnum:
+      enum:
+      - relaxed
+      - normal
+      type: string
+      description: |-
+        * `relaxed` - Relaxed
+        * `normal` - Normal
+    PatchedFamilyProfileRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        children_ages:
+          type: array
+          items:
+            type: integer
+        wheels:
+          $ref: '#/components/schemas/WheelsEnum'
+        pace:
+          $ref: '#/components/schemas/PaceEnum'
+    PatchedStopRequest:
+      type: object
+      description: Fields shared by the nested stop and the standalone stop.
+      properties:
+        walk:
+          type: integer
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        osm_id:
+          type: string
+          maxLength: 40
+        planned_minutes:
+          type: integer
+          maximum: 120
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 200
+        source:
+          $ref: '#/components/schemas/StopSourceEnum'
+    PatchedWalkRequest:
+      type: object
+      description: Detail and write serializer. Accepts an optional "stops" list on
+        create only.
+      properties:
+        profile:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        start_lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        start_lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        end_lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        end_lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        start_label:
+          type: string
+          maxLength: 120
+        end_label:
+          type: string
+          maxLength: 120
+        avoid_stairs:
+          type: boolean
+        distance_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        duration_min:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stairs_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stairs_avoided_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        detour_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        geometry:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            minItems: 2
+            maxItems: 2
+          description: '[[lat, lng], ...]'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+        notes:
+          type: string
+          maxLength: 1000
+        ai_summary:
+          type: string
+          maxLength: 2000
+        stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/NestedStopRequest'
+    Poi:
+      type: object
+      properties:
+        poi_id:
+          type: string
+          description: OSM id, e.g. "node/123".
+        name:
+          type: string
+          nullable: true
+        category:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        at_min:
+          type: integer
+          description: Minutes from the start to the nearest point.
+        off_route_m:
+          type: integer
+        opening_hours:
+          type: string
+          nullable: true
+          description: Raw OSM text.
+        open_now:
+          type: boolean
+          nullable: true
+          description: null = unknown.
+      required:
+      - at_min
+      - category
+      - lat
+      - lng
+      - name
+      - off_route_m
+      - open_now
+      - opening_hours
+      - poi_id
+    PointRequest:
+      type: object
+      properties:
+        lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+      required:
+      - lat
+      - lng
+    PoisStatusEnum:
+      enum:
+      - ok
+      - unavailable
+      type: string
+      description: |-
+        * `ok` - ok
+        * `unavailable` - unavailable
+    Route:
+      type: object
+      properties:
+        geometry:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+              format: double
+            maxItems: 2
+            minItems: 2
+          description: '[[lat, lng], ...]'
+        distance_m:
+          type: integer
+        duration_min:
+          type: integer
+          description: At the family pace, computed in code.
+        stairs_m:
+          type: number
+          format: double
+          nullable: true
+          description: null = unknown (mock route).
+        stairs_segments:
+          type: array
+          items:
+            type: array
+            items:
+              type: array
+              items:
+                type: number
+                format: double
+              maxItems: 2
+              minItems: 2
+          description: Line parts with stairs, to draw.
+      required:
+      - distance_m
+      - duration_min
+      - geometry
+      - stairs_m
+      - stairs_segments
+    RoutePlanError:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/RoutePlanErrorCodeEnum'
+        detail:
+          type: string
+      required:
+      - code
+      - detail
+    RoutePlanErrorCodeEnum:
+      enum:
+      - no_route
+      - no_routable_point
+      type: string
+      description: |-
+        * `no_route` - no_route
+        * `no_routable_point` - no_routable_point
+    RoutePlanRequestRequest:
+      type: object
+      description: '`profile_id` must belong to this client; `profile` holds the object
+        (or None).'
+      properties:
+        start:
+          $ref: '#/components/schemas/PointRequest'
+        end:
+          $ref: '#/components/schemas/PointRequest'
+        avoid_stairs:
+          type: boolean
+          default: true
+        profile_id:
+          type: integer
+          nullable: true
+      required:
+      - end
+      - start
+    RoutePlanResponse:
+      type: object
+      properties:
+        source:
+          $ref: '#/components/schemas/RoutePlanSourceEnum'
+        step_free_available:
+          type: boolean
+          nullable: true
+          description: false = no step-free route; null = not searched or unknown.
+        route:
+          allOf:
+          - $ref: '#/components/schemas/Route'
+          description: The route to walk.
+        baseline:
+          allOf:
+          - $ref: '#/components/schemas/Route'
+          description: The shortest route, for comparison.
+        detour_m:
+          type: integer
+          nullable: true
+        extra_min:
+          type: integer
+          nullable: true
+        pois_status:
+          $ref: '#/components/schemas/PoisStatusEnum'
+        pois:
+          type: array
+          items:
+            $ref: '#/components/schemas/Poi'
+        transit_stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransitStop'
+      required:
+      - baseline
+      - detour_m
+      - extra_min
+      - pois
+      - pois_status
+      - route
+      - source
+      - step_free_available
+      - transit_stops
+    RoutePlanSourceEnum:
+      enum:
+      - ors
+      - fixture
+      - mock
+      type: string
+      description: |-
+        * `ors` - ors
+        * `fixture` - fixture
+        * `mock` - mock
+    RoutingEnum:
+      enum:
+      - ors
+      - mock
+      type: string
+      description: |-
+        * `ors` - ors
+        * `mock` - mock
+    StatusEnum:
+      enum:
+      - planned
+      - done
+      type: string
+      description: |-
+        * `planned` - Planned
+        * `done` - Done
+    Stop:
+      type: object
+      description: Fields shared by the nested stop and the standalone stop.
+      properties:
+        walk:
+          type: integer
+        id:
+          type: integer
+          readOnly: true
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        osm_id:
+          type: string
+          maxLength: 40
+        planned_minutes:
+          type: integer
+          maximum: 120
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 200
+        source:
+          $ref: '#/components/schemas/StopSourceEnum'
+      required:
+      - category
+      - id
+      - lat
+      - lng
+      - order
+      - walk
+    StopRequest:
+      type: object
+      description: Fields shared by the nested stop and the standalone stop.
+      properties:
+        walk:
+          type: integer
+        order:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        name:
+          type: string
+          maxLength: 120
+        category:
+          $ref: '#/components/schemas/CategoryEnum'
+        lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        osm_id:
+          type: string
+          maxLength: 40
+        planned_minutes:
+          type: integer
+          maximum: 120
+          minimum: 1
+        reason:
+          type: string
+          maxLength: 200
+        source:
+          $ref: '#/components/schemas/StopSourceEnum'
+      required:
+      - category
+      - lat
+      - lng
+      - order
+      - walk
+    StopSourceEnum:
+      enum:
+      - ai
+      - rules
+      - user
+      type: string
+      description: |-
+        * `ai` - AI
+        * `rules` - Rules
+        * `user` - User
+    Throttled:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    TransitStop:
+      type: object
+      properties:
+        name:
+          type: string
+          nullable: true
+        kind:
+          $ref: '#/components/schemas/KindEnum'
+        near:
+          $ref: '#/components/schemas/NearEnum'
+        distance_m:
+          type: integer
+      required:
+      - distance_m
+      - kind
+      - name
+      - near
+    TripIdeaError:
+      type: object
+      properties:
+        code:
+          $ref: '#/components/schemas/TripIdeaErrorCodeEnum'
+        detail:
+          type: string
+      required:
+      - code
+      - detail
+    TripIdeaErrorCodeEnum:
+      enum:
+      - no_places_nearby
+      - places_unavailable
+      - no_route
+      - no_routable_point
+      type: string
+      description: |-
+        * `no_places_nearby` - no_places_nearby
+        * `places_unavailable` - places_unavailable
+        * `no_route` - no_route
+        * `no_routable_point` - no_routable_point
+    TripIdeaRequestRequest:
+      type: object
+      description: Only these fields are read. A client cannot send its own candidate
+        list.
+      properties:
+        start:
+          $ref: '#/components/schemas/PointRequest'
+        profile_id:
+          type: integer
+          nullable: true
+        max_minutes:
+          type: integer
+          maximum: 180
+          minimum: 15
+        round_trip:
+          type: boolean
+          default: true
+        language:
+          allOf:
+          - $ref: '#/components/schemas/LanguageEnum'
+          default: pl
+        wishes:
+          type: string
+          default: ''
+          maxLength: 200
+      required:
+      - max_minutes
+      - start
+    TripIdeaResponse:
+      type: object
+      properties:
+        engine:
+          $ref: '#/components/schemas/EngineEnum'
+        source:
+          $ref: '#/components/schemas/RoutePlanSourceEnum'
+        step_free_available:
+          type: boolean
+          nullable: true
+        route:
+          $ref: '#/components/schemas/Route'
+        baseline:
+          $ref: '#/components/schemas/Route'
+        detour_m:
+          type: integer
+          nullable: true
+        extra_min:
+          type: integer
+          nullable: true
+        summary:
+          type: string
+        tips:
+          type: array
+          items:
+            type: string
+        unmet_wishes:
+          type: array
+          items:
+            type: string
+        stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TripStop'
+        dropped_stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/DroppedStop'
+          description: Removed to fit the time limit.
+        walking_min:
+          type: integer
+        stops_min:
+          type: integer
+        total_min:
+          type: integer
+        max_minutes:
+          type: integer
+        over_limit:
+          type: boolean
+          description: true = more than 10% over max_minutes.
+        weather:
+          allOf:
+          - $ref: '#/components/schemas/Weather'
+          nullable: true
+        transit_stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/TransitStop'
+      required:
+      - baseline
+      - detour_m
+      - dropped_stops
+      - engine
+      - extra_min
+      - max_minutes
+      - over_limit
+      - route
+      - source
+      - step_free_available
+      - stops
+      - stops_min
+      - summary
+      - tips
+      - total_min
+      - transit_stops
+      - unmet_wishes
+      - walking_min
+      - weather
+    TripStop:
+      type: object
+      properties:
+        poi_id:
+          type: string
+        name:
+          type: string
+          nullable: true
+        category:
+          type: string
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+        distance_m:
+          type: integer
+          description: Straight line from the start.
+        opening_hours:
+          type: string
+          nullable: true
+        open_now:
+          type: boolean
+          nullable: true
+        arrive_min:
+          type: integer
+          description: Minutes from the start of the trip.
+        planned_minutes:
+          type: integer
+        reason:
+          type: string
+      required:
+      - arrive_min
+      - category
+      - distance_m
+      - lat
+      - lng
+      - name
+      - open_now
+      - opening_hours
+      - planned_minutes
+      - poi_id
+      - reason
+    TripThrottled:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    TripValidationError:
+      type: object
+      properties:
+        detail:
+          type: object
+          additionalProperties: {}
+      required:
+      - detail
+    ValidationError:
+      type: object
+      properties:
+        detail:
+          type: object
+          additionalProperties: {}
+      required:
+      - detail
+    Walk:
+      type: object
+      description: Detail and write serializer. Accepts an optional "stops" list on
+        create only.
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          maxLength: 80
+        start_lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        start_lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        end_lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        end_lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        start_label:
+          type: string
+          maxLength: 120
+        end_label:
+          type: string
+          maxLength: 120
+        avoid_stairs:
+          type: boolean
+        distance_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        duration_min:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stairs_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stairs_avoided_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        detour_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        geometry:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            minItems: 2
+            maxItems: 2
+          description: '[[lat, lng], ...]'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+        notes:
+          type: string
+          maxLength: 1000
+        ai_summary:
+          type: string
+          maxLength: 2000
+        stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/NestedStop'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created_at
+      - distance_m
+      - duration_min
+      - end_lat
+      - end_lng
+      - id
+      - name
+      - start_lat
+      - start_lng
+      - updated_at
+    WalkList:
+      type: object
+      description: 'A light version for the list: no geometry, no stops, only their
+        count.'
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        profile:
+          type: integer
+          readOnly: true
+          nullable: true
+        name:
+          type: string
+          readOnly: true
+        start_label:
+          type: string
+          readOnly: true
+        end_label:
+          type: string
+          readOnly: true
+        avoid_stairs:
+          type: boolean
+          readOnly: true
+        distance_m:
+          type: integer
+          readOnly: true
+        duration_min:
+          type: integer
+          readOnly: true
+        stairs_m:
+          type: integer
+          readOnly: true
+        stairs_avoided_m:
+          type: integer
+          readOnly: true
+        detour_m:
+          type: integer
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/StatusEnum'
+          readOnly: true
+        rating:
+          type: integer
+          readOnly: true
+          nullable: true
+        stops_count:
+          type: integer
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - avoid_stairs
+      - created_at
+      - detour_m
+      - distance_m
+      - duration_min
+      - end_label
+      - id
+      - name
+      - profile
+      - rating
+      - stairs_avoided_m
+      - stairs_m
+      - start_label
+      - status
+      - stops_count
+      - updated_at
+    WalkRequest:
+      type: object
+      description: Detail and write serializer. Accepts an optional "stops" list on
+        create only.
+      properties:
+        profile:
+          type: integer
+          nullable: true
+        name:
+          type: string
+          minLength: 1
+          maxLength: 80
+        start_lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        start_lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        end_lat:
+          type: number
+          format: double
+          maximum: 90
+          minimum: -90
+        end_lng:
+          type: number
+          format: double
+          maximum: 180
+          minimum: -180
+        start_label:
+          type: string
+          maxLength: 120
+        end_label:
+          type: string
+          maxLength: 120
+        avoid_stairs:
+          type: boolean
+        distance_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        duration_min:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stairs_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        stairs_avoided_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: 0
+          format: int64
+        detour_m:
+          type: integer
+          maximum: 9223372036854775807
+          minimum: -9223372036854775808
+          format: int64
+        geometry:
+          type: array
+          items:
+            type: array
+            items:
+              type: number
+            minItems: 2
+            maxItems: 2
+          description: '[[lat, lng], ...]'
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        rating:
+          type: integer
+          maximum: 5
+          minimum: 1
+          nullable: true
+        notes:
+          type: string
+          maxLength: 1000
+        ai_summary:
+          type: string
+          maxLength: 2000
+        stops:
+          type: array
+          items:
+            $ref: '#/components/schemas/NestedStopRequest'
+      required:
+      - distance_m
+      - duration_min
+      - end_lat
+      - end_lng
+      - name
+      - start_lat
+      - start_lng
+    Weather:
+      type: object
+      properties:
+        temp_c:
+          type: number
+          format: double
+          nullable: true
+        precip_probability:
+          type: integer
+          nullable: true
+        wind_kmh:
+          type: number
+          format: double
+          nullable: true
+      required:
+      - precip_probability
+      - temp_c
+      - wind_kmh
+    WheelsEnum:
+      enum:
+      - none
+      - stroller
+      - kid_bike
+      type: string
+      description: |-
+        * `none` - None
+        * `stroller` - Stroller
+        * `kid_bike` - Kid bike
