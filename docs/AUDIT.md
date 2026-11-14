@@ -603,8 +603,9 @@ Order notes:
 - 10 is a product decision. If it is accepted, do it before 11, so the README does not describe
   live Overpass that is about to go.
 
-Status: tasks 1-8 are done and merged into `dev` (PRs #30-#37). Tasks 9-12 and the feature ideas
-follow the updated order below.
+Status: tasks 1-8 are done and merged into `dev` (PRs #30-#37). Phases A-D of the updated order
+are done (PRs up to #49). Next: phase E. Tasks 9, 11, 12 and the remaining ideas follow the
+order below.
 
 ### Updated order (after tasks 1-8)
 
@@ -617,7 +618,7 @@ from `dev` and one PR, unless it says otherwise.
 | A. Decisions (done 2026-11-14, `DECISIONS.md` section 11) | Task 10: yes, own `Place` table from an Overpass Turbo export (A1). D9: idea 8 as a one-time location, idea 9 as a Google Maps link with up to 9 waypoints. Idea 18: yes, `openapi-typescript`. Idea 16: up/down buttons, no drag library | These answers decide what the later phases build |
 | B. Foundations and the key feature (three branches) | 1. Idea 18: `openapi-typescript`, `@extend_schema` where the schema is wrong, CI check (M). 2. Task 10: `Place` model, `import_places` command, `POI_PROVIDER` (`db` default, `overpass` optional), the Tricity data note in the UI and README (L). 3. Ideas 8 and 9: "Use my location" and "Open in Google Maps" with up to 3 waypoints (the mobile limit) and a stairs warning (M, **done**) | Typed API before the API changes in C-F. Ideas 14 and 15 are then built on the final place source. Export is a key feature, so it comes right after the foundations; location is in the same branch because both are small and touch the planner |
 | C. Quick frontend wins (**done**) | Planner: ideas 7, 11, 12 (**done**, #44). Idea 13 dropped; idea 22 moved to D (`DECISIONS.md` section 12) | Small (S), frontend only, each group touches the same files |
-| D. Profile as a template (`DECISIONS.md` section 12) | 1. Idea 5 (W3) and the "How do you get around?" labels (`feat/profile-optional-children`). 2. Profile defaults: stairs from the way of moving, places from the age, skatepark category (`feat/profile-defaults`). 3. Idea 3 (W4), then 4, then 22; W2 on the way | 4 saves settings that include the pace from 3 |
+| D. Profile as a template (**done**, `DECISIONS.md` section 12) | 1. Idea 5 (W3) and the "How do you get around?" labels (#45). 2. Profile defaults: stairs from the way of moving, places from the age, skatepark category (#46). 3. Idea 3 (W4): pace slider in km/h (#47); idea 4: saved trip settings in the profile (#48); idea 22: recompute the time in the save dialog (#49). W2 was not touched; it moves to phase G | 4 saves settings that include the pace from 3 |
 | E. Route editing | Idea 14 (L1 budget rules apply), then 16 (up/down buttons), then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
 | F. Extras (independent, by value) | Idea 1 (after 3: calories depend on the pace); 15 (after task 10); 2 (with the X1 credit) | No other work depends on them |
 | G. Closing | Rest of task 12; idea 19 ("How it works", X1, U3 note); task 9 (deploy, stage 8); task 11 (README, stage 9) | Deploy and README describe the final app, so they come last. The README can link the live demo |
@@ -627,6 +628,11 @@ Notes:
   goes into phase G.
 - Task 9 still needs the gunicorn timeout vs L1 and a frontend build that installs dev
   dependencies (B1 follow-up).
+- Follow-ups from phase D (each S, do them with the phase that touches the same file):
+  - A -> B: a changed pace or "Avoid stairs" hides the result until "Plan route". An automatic
+    re-plan with a short delay (debounce) could be nicer (planner, with phase E).
+  - `PlannerPage.tsx` is large; split the trip and route tabs into own components when phase E
+    adds more state there.
 - Follow-ups from task 10 (place table):
   - Task 9 (deploy): run `migrate` and `import_places data/places_tricity.json.gz` on deploy (S).
   - The "Tricity only" data note on the walk page too, not only in the planner (S).
@@ -639,9 +645,9 @@ Notes:
 |---|---|---|
 | 1 Calorie estimate | Nothing; a fixed formula in the backend | S |
 | 2 Best time for a walk (3-day forecast) | `planning/weather.py`; X1 (Open-Meteo credit) | M |
-| 3 Pace slider | W4 (model and migration); speeds in `services.py` | M |
-| 4 Saved planner settings | Best after 3; a profile field | M |
-| 5 A child is not required | W3 (serializer only; the rules already work with no children) | S |
+| 3 Pace slider | W4 (model and migration); speeds in `services.py` | M (**done** #47) |
+| 4 Saved planner settings | Best after 3; a profile field | M (**done** #48) |
+| 5 A child is not required | W3 (serializer only; the rules already work with no children) | S (**done** #45) |
 | 6 Demo click centres the map | Do it with task 2 (U2) | S |
 | 7 "Trip idea" as the first tab | `PlannerPage.tsx` tabs; tests that click tabs | S |
 | 8 Use my location | D9 (a short scope decision); helps U3 | S-M |
@@ -656,7 +662,7 @@ Notes:
 | 18 TypeScript types from OpenAPI | A generator (ask first); lowers the F3 risk | M |
 | 19 "How it works" page | A good place for X1 and the U3 note | S |
 | 20 / 21 More Overpass servers, other sources | Covered by task 10 (part 2) | - |
-| 22 Recompute the time in the save dialog | Frontend, `walkPayload.ts` | S |
+| 22 Recompute the time in the save dialog | Frontend, `walkPayload.ts` | S (**done** #49) |
 
 ## Feature ideas (input for part 5)
 
