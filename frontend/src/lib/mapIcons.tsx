@@ -1,9 +1,41 @@
 // Leaflet marker icons shared by the planner map and the saved walk map.
 // Icons are HTML (divIcon), so no PNG files are needed. That also avoids the
 // known broken default marker image in Vite builds. Styles: `.sw-*-icon` in index.css.
-import { renderToStaticMarkup } from 'react-dom/server'
+import type { ReactElement } from 'react'
+import { flushSync } from 'react-dom'
+import { createRoot } from 'react-dom/client'
 import { divIcon, type DivIcon } from 'leaflet'
-import { categoryColor, categoryIcon } from '@/constants/poiCategories'
+import { categoryColor, categoryIcon, POI_CATEGORIES } from '@/constants/poiCategories'
+
+/**
+ * Turns small JSX icons into SVG text for Leaflet divIcons.
+ *
+ * Not `react-dom/server`: it put the whole server renderer into the browser bundle (about
+ * 20 % of it, audit F1). Instead each icon is rendered once into a detached element with
+ * the client renderer the app already has, and its `innerHTML` is read.
+ *
+ * This runs when the module loads, not when a map renders: `flushSync` cannot flush while
+ * React is in the middle of another render, so building icons lazily in render would give
+ * empty text.
+ */
+function renderToSvgText(element: ReactElement): string {
+  const container = document.createElement('div')
+  const root = createRoot(container)
+  flushSync(() => root.render(element))
+  const text = container.innerHTML
+  root.unmount()
+  return text
+}
+
+/** The category icons as SVG text. Unknown categories use the fallback icon (`other`). */
+const CATEGORY_SVG = new Map(
+  [...POI_CATEGORIES, 'other'].map((category) => {
+    const Icon = categoryIcon(category)
+    return [category, renderToSvgText(<Icon size={16} strokeWidth={2.25} aria-hidden />)]
+  }),
+)
+
+const FLAG_SVG = renderToSvgText(flagSvg())
 
 const iconCache = new Map<string, DivIcon>()
 
@@ -18,8 +50,7 @@ function cached(key: string, build: () => DivIcon): DivIcon {
 /** A place: white 28 px circle with a sage outline and the coloured category icon. */
 export function poiIcon(category: string): DivIcon {
   return cached(`poi:${category}`, () => {
-    const Icon = categoryIcon(category)
-    const svg = renderToStaticMarkup(<Icon size={16} strokeWidth={2.25} aria-hidden />)
+    const svg = CATEGORY_SVG.get(category) ?? CATEGORY_SVG.get('other')
     return divIcon({
       html: `<span class="sw-poi-icon" style="color:${categoryColor(category)}">${svg}</span>`,
       className: '',
@@ -45,9 +76,8 @@ export function letterIcon(letter: string, color: string): DivIcon {
 /** A round trip: start and finish at the same point. */
 export function finishIcon(): DivIcon {
   return cached('finish', () => {
-    const svg = renderToStaticMarkup(flagSvg())
     return divIcon({
-      html: `<span class="sw-point-icon" style="background:var(--brand)">${svg}</span>`,
+      html: `<span class="sw-point-icon" style="background:var(--brand)">${FLAG_SVG}</span>`,
       className: '',
       iconSize: [36, 36],
       iconAnchor: [18, 18],
@@ -71,7 +101,7 @@ export function stopIcon(number: number, category: string): DivIcon {
 }
 
 /** A small chequered flag (plain JSX, not a component: this file exports only helpers). */
-function flagSvg() {
+function flagSvg(): ReactElement {
   return (
     <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
       <path d="M3 1v14" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" />

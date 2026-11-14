@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { letterIcon, poiIcon, stopIcon } from './mapIcons'
+import { finishIcon, letterIcon, poiIcon, stopIcon } from './mapIcons'
 
 const html = (icon: ReturnType<typeof stopIcon>) => String(icon.options.html)
 
@@ -20,5 +20,20 @@ describe('map icons', () => {
     expect(letterIcon('A', 'var(--brand)')).toBe(letterIcon('A', 'var(--brand)'))
     expect(poiIcon('cafe')).toBe(poiIcon('cafe'))
     expect(stopIcon(1, 'cafe')).not.toBe(stopIcon(2, 'cafe'))
+  })
+
+  it('draws a place as the category SVG in the category colour', () => {
+    const markup = html(poiIcon('cafe'))
+    expect(markup).toContain('style="color:var(--cat-')
+    expect(markup).toMatch(/<svg[^>]*width="16"[^>]*>.*<path/)
+    expect(markup).toContain('stroke-width="2.25"')
+  })
+
+  it('draws an unknown category with the fallback icon, not empty', () => {
+    expect(html(poiIcon('unknown-kind'))).toMatch(/<svg.*<\/svg>/)
+  })
+
+  it('draws the finish flag as SVG', () => {
+    expect(html(finishIcon())).toMatch(/<svg[^>]*viewBox="0 0 16 16".*<rect/)
   })
 })
