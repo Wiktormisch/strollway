@@ -108,8 +108,10 @@
       "stats": {
         "distance": "Dystans",
         "time": "Czas",
-        "places": "Miejsca"
+        "places": "Miejsca",
+        "kcal": "Kalorie"
       },
+      "kcalValue": "ok. {{kcal}} kcal",
       "statsLabel": "Trasa w liczbach"
     },
     "legend": {
@@ -219,6 +221,7 @@
     "card": {
       "distance": "Dystans",
       "duration": "Czas marszu",
+      "kcal": "Kalorie",
       "stairsAvoided": "Ominięte schody",
       "stops": "Przystanki",
       "saved": "Zapisano {{date}}"

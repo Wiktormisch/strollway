@@ -12,6 +12,7 @@ export function makeWalkItem(overrides: Partial<WalkListItem> = {}): WalkListIte
     avoid_stairs: true,
     distance_m: 1250,
     duration_min: 25,
+    kcal: 90,
     stairs_m: 0,
     stairs_avoided_m: 16,
     detour_m: 288,

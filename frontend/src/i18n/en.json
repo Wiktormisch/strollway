@@ -108,8 +108,10 @@
       "stats": {
         "distance": "Distance",
         "time": "Time",
-        "places": "Places"
+        "places": "Places",
+        "kcal": "Calories"
       },
+      "kcalValue": "about {{kcal}} kcal",
       "statsLabel": "Route in numbers"
     },
     "legend": {
@@ -219,6 +221,7 @@
     "card": {
       "distance": "Distance",
       "duration": "Walking time",
+      "kcal": "Calories",
       "stairsAvoided": "Stairs avoided",
       "stops": "Stops",
       "saved": "Saved {{date}}"
