@@ -26,6 +26,7 @@ MAX_STOPS = 4
 STOP_MINUTES = {
     "playground": 30,
     "indoor_play": 60,
+    "skatepark": 45,
     "cafe": 20,
     "restaurant": 30,
     "toilets": 5,
@@ -41,6 +42,7 @@ LABELS = {
     "pl": {
         "playground": "plac zabaw",
         "indoor_play": "sala zabaw",
+        "skatepark": "skatepark",
         "cafe": "kawiarnia",
         "ice_cream": "lody",
         "restaurant": "restauracja",
@@ -56,6 +58,7 @@ LABELS = {
     "en": {
         "playground": "playground",
         "indoor_play": "indoor play",
+        "skatepark": "skatepark",
         "cafe": "cafe",
         "ice_cream": "ice cream",
         "restaurant": "restaurant",
@@ -96,6 +99,11 @@ class Want:
     category: str
     cuisine: str | None = None
     strict: bool = False
+    # Other categories that are just as good ("a playground or a park").
+    alternatives: tuple[str, ...] = ()
+
+    def matches(self, category):
+        return category == self.category or category in self.alternatives
 
 
 # Keywords (PL and EN) -> what they ask for. See _pattern for how they match.
@@ -133,6 +141,7 @@ KEYWORDS = [
     ),
     (("toalet", "wc", "toilet", "łazienk"), Want("toilets", "toilets")),
     (("woda", "wody", "water", "pić", "drink"), Want("water", "water")),
+    (("skate", "deskorol", "rolk", "hulajn", "scooter"), Want("skatepark", "skatepark")),
     (("park",), Want("park", "park")),
     (("zoo",), Want("zoo", "zoo")),
     (("muzeum", "museum"), Want("museum", "museum")),
@@ -164,11 +173,35 @@ def _pattern(keyword):
     return r"\b" + re.escape(keyword)
 
 
+# Default stops by the age of a child, when there are no wishes (DECISIONS.md section 12).
+# Each band is a list of wants, the most important first.
+AGE_BANDS = [
+    (0, 1, [Want("park", "park"), Want("cafe", "cafe")]),
+    (2, 8, [Want("playground", "playground"), Want("cafe", "cafe")]),
+    (
+        9,
+        12,
+        [
+            Want("playground", "playground", alternatives=("park",)),
+            Want("ice_cream", "cafe", "ice_cream"),
+        ],
+    ),
+    (13, 17, [Want("park", "park"), Want("skatepark", "skatepark")]),
+]
+# No children: a profile can be only a pace and a way of moving.
+NO_CHILDREN_WANTS = [Want("park", "park"), Want("cafe", "cafe")]
+
+
 def default_wants(children_ages):
-    """No wishes: a playground and a cafe for children of 2-8, otherwise a cafe."""
-    if any(2 <= age <= 8 for age in children_ages):
-        return [Want("playground", "playground"), Want("cafe", "cafe")]
-    return [Want("cafe", "cafe")]
+    """No wishes: the wants for each child's age band, youngest first, without repeats."""
+    if not children_ages:
+        return list(NO_CHILDREN_WANTS)
+    result = []
+    for age in sorted(children_ages):
+        for low, high, wants in AGE_BANDS:
+            if low <= age <= high:
+                result.extend(w for w in wants if w not in result)
+    return result
 
 
 def estimate_minutes(start, points, speed_m_per_min, round_trip):
@@ -182,7 +215,8 @@ def plan(candidates, wishes, children_ages, language, max_minutes, speed_m_per_m
     """Build a trip from rules. `candidates` come from pois.find_candidates."""
     texts, labels = TEXTS[language], LABELS[language]
     start = (0.0, 0.0)  # positions are relative; see _point
-    wants = parse_wishes(wishes) or default_wants(children_ages)
+    asked = parse_wishes(wishes)
+    wants = asked or default_wants(children_ages)
 
     chosen, unmet = [], []
     for want in wants:
@@ -198,6 +232,10 @@ def plan(candidates, wishes, children_ages, language, max_minutes, speed_m_per_m
             unmet.append(texts["too_long"].format(label=labels[want.key]))
             continue
         chosen.append(place)
+
+    # The default list is our guess, not the user's wish, so a missing default is not "unmet".
+    if not asked:
+        unmet = []
 
     if not chosen:
         # Nothing from the wishes fits: offer the default list, then any real destination,
@@ -219,7 +257,7 @@ def _closest(candidates, want, chosen):
     if want is None:
         options = [c for c in options if c["category"] not in AMENITIES]
     else:
-        options = [c for c in options if c["category"] == want.category]
+        options = [c for c in options if want.matches(c["category"])]
     if want and want.cuisine:
         exact = [c for c in options if want.cuisine in (c.get("cuisine") or "").lower()]
         if exact or want.strict:

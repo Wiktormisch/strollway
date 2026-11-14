@@ -69,10 +69,45 @@ def test_no_false_keyword_matches(wishes):
     assert all(w.category not in ("cafe", "beach") for w in found)
 
 
-def test_empty_wishes_use_the_ages():
-    assert stop_ids(plan("", ages=[4])) == ["node/1", "node/2"]
-    assert stop_ids(plan("", ages=[12])) == ["node/2"]
-    assert stop_ids(plan("", ages=[])) == ["node/2"]
+AGE_CANDIDATES = [
+    *CANDIDATES,
+    candidate("node/7", "park", 0, 120),
+    candidate("node/8", "skatepark", 150, 150),
+]
+
+
+@pytest.mark.parametrize(
+    ("ages", "expected"),
+    [
+        ([1], ["node/7", "node/2"]),  # baby: park and cafe
+        ([4], ["node/1", "node/2"]),  # 2-8: playground and cafe
+        ([10], ["node/1", "node/3"]),  # 9-12: playground or park, then ice cream
+        ([15], ["node/7", "node/8"]),  # 13-17: park and skatepark
+        ([], ["node/7", "node/2"]),  # no children: park and cafe
+        ([15, 4], ["node/1", "node/2", "node/7", "node/8"]),  # youngest first
+    ],
+)
+def test_empty_wishes_use_the_ages(ages, expected):
+    """DECISIONS.md section 12: the age picks the default places."""
+    assert stop_ids(plan("", ages=ages, candidates=AGE_CANDIDATES, minutes=180)) == expected
+
+
+def test_a_missing_default_place_is_not_an_unmet_wish():
+    """Without wishes the list is our guess, so "skatepark: none nearby" would confuse."""
+    answer = plan("", ages=[15], candidates=AGE_CANDIDATES[:-1])  # no skatepark
+
+    assert stop_ids(answer) == ["node/7"]
+    assert answer["unmet_wishes"] == []
+
+
+def test_an_alternative_category_is_used_when_the_first_is_missing():
+    no_playground = [c for c in AGE_CANDIDATES if c["category"] != "playground"]
+    assert stop_ids(plan("", ages=[10], candidates=no_playground))[0] == "node/7"
+
+
+@pytest.mark.parametrize("wishes", ["skatepark", "deskorolka", "hulajnoga"])
+def test_skatepark_keywords(wishes):
+    assert stop_ids(plan(wishes, candidates=AGE_CANDIDATES)) == ["node/8"]
 
 
 def test_closed_places_are_skipped():
