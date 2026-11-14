@@ -28,6 +28,7 @@ python -m venv .venv
 pip install -r requirements-dev.txt
 copy .env.example .env
 python manage.py migrate
+python manage.py import_places data/places_tricity.json.gz
 python manage.py runserver          # http://localhost:8000/api/docs/
 ```
 
@@ -40,12 +41,25 @@ source .venv/bin/activate
 pip install -r requirements-dev.txt
 cp .env.example .env
 python manage.py migrate
+python manage.py import_places data/places_tricity.json.gz
 python manage.py runserver
 ```
 
 If PowerShell blocks `Activate.ps1`, allow scripts for this window only:
 `Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned`. Or skip activation and call
 the venv directly: `.venv\Scripts\python.exe manage.py runserver`.
+
+### Place data covers the Tricity only
+
+Places (playgrounds, cafes, toilets, benches, transit stops) come from our own `Place` table.
+`import_places` loads it from `backend/data/places_tricity.json.gz`, a one-time Overpass Turbo export
+of OpenStreetMap data for Gdansk, Sopot and Gdynia (© OpenStreetMap contributors, ODbL). A point
+outside this area gets a clear "Tricity only" message instead of places.
+
+Why not live data? The public Overpass API is often overloaded and did not answer at all in our
+checks (`docs/AUDIT.md`, part 2). A local table answers in milliseconds and works offline and in
+CI. For a production version we would run our own Overpass service in Docker, or import more
+regions on the server on a schedule. `POI_PROVIDER=overpass` in `.env` still uses the live API.
 
 ### Frontend (second terminal)
 

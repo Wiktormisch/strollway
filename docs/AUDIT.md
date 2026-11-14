@@ -593,7 +593,7 @@ Each task is one branch from `dev` and one PR. "Findings" are the ids from parts
 | 7 | `chore/frontend-deps` | B1, B2 | Fewer audit warnings in the production tree | S |
 | 8 | `test/stop-editor` | F4 | The largest component without a test | M |
 | 9 | `chore/deploy` (stage 8) | S1, S4, S5, S6, S7, B4 | Already planned; add the gunicorn timeout vs L1 and the dev install for B1 | L |
-| 10 | Own place table (decision first) | Part 2, option A; makes O3-O6 mostly moot | Live places work only for the demo today. Changes `DECISIONS.md:11`, needs a new dependency or a manual export | L |
+| 10 | Own place table (decision first) | Part 2, option A; makes O3-O6 mostly moot | Live places work only for the demo today. Changes `DECISIONS.md:11`, needs a new dependency or a manual export | L, **done** in phase B (`DECISIONS.md` section 11) |
 | 11 | `docs/readme` (stage 9) | D1, D2, D3, D4, D5, D6, D8, D9, X1, X2, U3 note, O7 / D7 | The README is the first file a reviewer reads. Do it last, so it describes the final app. O7 needs a count from the developer in Overpass Turbo | M |
 | 12 | Clean-up (several small PRs) | B5, B6, B7, W2, L3, L4, P1, F7, F8, O3-O6 (only if live Overpass stays) | P3: worth it, not urgent | S each |
 
@@ -627,6 +627,11 @@ Notes:
   goes into phase G.
 - Task 9 still needs the gunicorn timeout vs L1 and a frontend build that installs dev
   dependencies (B1 follow-up).
+- Follow-ups from task 10 (place table):
+  - Task 9 (deploy): run `migrate` and `import_places data/places_tricity.json.gz` on deploy (S).
+  - The "Tricity only" data note on the walk page too, not only in the planner (S).
+  - A weather rule in `trip_rules.py`: prefer `indoor_play` (and museums) when rain is likely.
+    Today the rules do not use the weather at all (M).
 
 ### Feature ideas: what each one needs
 

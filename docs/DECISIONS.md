@@ -183,7 +183,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - **Duplicates:** places with the same category and name within 30 m are one place (a playground as a point and an outline; groups of benches). Then at most 10 benches, the closest to the route.
 - **Transit stops:** one entry per name, kind and end (a stop has one platform per direction), at most 3 per end.
 - **Overpass (checked 2026-11-11):** the public server answers **406 without a `User-Agent`**, so the client sends `StrollWay/0.1`. It also answered **502** "at capacity" with a text body. Any status other than 200, and a 200 with `remark: runtime error`, mean `pois_status: "unavailable"`.
-- **`indoor_play` not checked yet:** Overpass was at capacity during stage 3. Not a category for now; check again in stage 6.
+- **`indoor_play` not checked yet:** Overpass was at capacity during stage 3. Not a category for now; check again in stage 6. (Checked in phase B: 16 in the Tricity, now a category, see section 11.)
 - **Input limit:** start and end must be at most 20 km apart (straight line). It is a stroller walk, and it protects the ORS daily limit.
 
 ## 8. Stage 4: planner UI
@@ -430,3 +430,38 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
   always sent), and the frontend-only `Poi.accessibility`.
 - **JSON fields get a schema shape** with two schema-only subclasses in `walks/serializers.py`
   (`IntListJSONField`, `LatLngListJSONField`); validation stays in the `validate_*` methods.
+
+### Place table (phase B, audit task 10)
+
+- **Data:** `backend/data/places_tricity.json.gz`, an Overpass Turbo export from 2026-11-14, gzipped (21 036
+  elements, 5.4 MB raw, 0.6 MB gzipped). It is committed, so a fresh clone works after `migrate` and `import_places`.
+  The query (export as raw OSM data, JSON):
+
+  ```
+  [out:json][timeout:180][bbox:54.27,18.43,54.62,18.80];
+  (
+    nwr["leisure"~"^(playground|park|indoor_play)$"];
+    nwr["amenity"~"^(toilets|cafe|ice_cream|restaurant|fast_food|bench|drinking_water)$"];
+    nwr["tourism"~"^(zoo|museum)$"];
+    nwr["natural"="beach"];
+    nwr["shop"~"^(supermarket|convenience|bakery)$"];
+    node["highway"="bus_stop"];
+    node["railway"="tram_stop"];
+  );
+  out center tags;
+  ```
+- **Rows keep raw OSM tags** (only our keys plus `name`, `opening_hours`, `cuisine`, `wheelchair`,
+  `changing_table`). The `db` provider turns rows back into an Overpass-like body, so the same
+  parsers and rules in `pois.py` serve both providers.
+- **Reading:** a bounding box query (index on `lat`, `lng`), then distances in code. Route places
+  are kept within 150 m of the *segments* of the same simplified line the Overpass query uses
+  (`geo.distance_to_polyline_m`), not only of its vertices. Both routes and trips answer in
+  under 50 ms on the full import.
+- **Area:** `PlaceImport` stores the bounding box of the last import. A route end or a trip start
+  outside it gives `pois_status: "outside_area"` (route plans, still 200) or a 422 with code
+  `outside_area` (trip ideas). An empty table gives the usual `unavailable` and a log hint to run
+  `import_places`. Recorded demo places in fixtures still come first.
+- **`POI_PROVIDER`:** `db` (default) | `overpass` | `mock`. The old `auto` still means `overpass`.
+- **`indoor_play` checked (closes D7 and audit O7):** 16 elements with `leisure=indoor_play` in
+  the Tricity export. Added as a category (stop model, both tag tables, trip rules with 60 min and
+  the wishes "sala zabaw" / "indoor play", icon and pl/en labels).
