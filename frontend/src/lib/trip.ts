@@ -1,9 +1,17 @@
 // Plain trip-idea logic, kept out of components so it can be tested on its own.
 import type { Language, LatLng, TripEngine, TripIdea, TripStop } from '@/api/types'
 
-/** The time limits offered in the form (the API accepts 15-180). */
-export const TRIP_MINUTES = [30, 45, 60, 90, 120] as const
+/** The time limit range in the form; the API accepts the same 15-180 (audit idea 11). */
+export const MIN_TRIP_MINUTES = 15
+export const MAX_TRIP_MINUTES = 180
+export const TRIP_MINUTES_STEP = 5
 export const DEFAULT_TRIP_MINUTES = 60
+
+/** Turns the typed limit into a whole number inside the API range; no number gives the default. */
+export function clampTripMinutes(value: number): number {
+  if (!Number.isFinite(value)) return DEFAULT_TRIP_MINUTES
+  return Math.min(MAX_TRIP_MINUTES, Math.max(MIN_TRIP_MINUTES, Math.round(value)))
+}
 export const MAX_WISHES_LENGTH = 200
 
 /** The backend counts a plan as over the limit above +10% (D.6, step 6). */

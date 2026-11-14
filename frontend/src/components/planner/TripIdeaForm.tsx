@@ -7,14 +7,19 @@ import { Label } from '@/components/ui/label'
 import { Switch } from '@/components/ui/switch'
 import { Textarea } from '@/components/ui/textarea'
 import { ProfileSelect } from '@/components/walks/ProfileSelect'
+import { FormSection } from './FormSection'
 import { LocateButton } from './LocateButton'
 import { PointRow } from './PointRow'
+import { Input } from '@/components/ui/input'
 import {
   apiLanguage,
+  clampTripMinutes,
   DEFAULT_TRIP_MINUTES,
   DEMO_TRIP_START,
+  MAX_TRIP_MINUTES,
   MAX_WISHES_LENGTH,
-  TRIP_MINUTES,
+  MIN_TRIP_MINUTES,
+  TRIP_MINUTES_STEP,
 } from '@/lib/trip'
 import { cn } from '@/lib/utils'
 
@@ -38,7 +43,10 @@ interface TripIdeaFormProps {
 export function TripIdeaForm(props: TripIdeaFormProps) {
   const { t, i18n } = useTranslation()
   const ids = useId()
-  const [maxMinutes, setMaxMinutes] = useState<number>(DEFAULT_TRIP_MINUTES)
+  // One source of truth: the text in the number field. The slider and the request read the
+  // clamped number, so a half-typed value never reaches the API.
+  const [minutesText, setMinutesText] = useState(String(DEFAULT_TRIP_MINUTES))
+  const maxMinutes = clampTripMinutes(minutesText === '' ? NaN : Number(minutesText))
   const [roundTrip, setRoundTrip] = useState(true)
   const [wishes, setWishes] = useState('')
 
@@ -67,78 +75,107 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
         onChange={props.onUseMapCenter}
         onClear={props.onClearStart}
       />
-      <LocateButton onLocate={props.onLocate} />
-      <Button type="button" variant="demo" size="sm" onClick={props.onDemoStart}>
-        <Play aria-hidden />
-        {t('trip.form.demoStart')}
-      </Button>
+      {/* Two equal columns: always side by side; a long label breaks into two lines instead. */}
+      <div className="grid grid-cols-2 items-start gap-2">
+        <LocateButton onLocate={props.onLocate} fullWidth />
+        <Button
+          type="button"
+          variant="demo"
+          size="sm"
+          onClick={props.onDemoStart}
+          className="h-auto min-h-9 w-full py-1.5 whitespace-normal"
+        >
+          <Play aria-hidden />
+          {t('trip.form.demoStart')}
+        </Button>
+      </div>
 
-      <fieldset className="space-y-1.5">
-        <legend className="text-sm font-medium">{t('trip.form.minutes')}</legend>
-        {/* Toggle buttons, not a dropdown: five values fit on one line and are one tap away. */}
-        <div className="flex flex-wrap gap-1.5">
-          {TRIP_MINUTES.map((minutes) => (
-            <Button
-              key={minutes}
-              type="button"
-              size="sm"
-              variant={minutes === maxMinutes ? 'default' : 'outline'}
-              aria-pressed={minutes === maxMinutes}
-              onClick={() => setMaxMinutes(minutes)}
+      <FormSection>
+        <fieldset className="space-y-1.5" aria-describedby={`${ids}-minutes-range`}>
+          <legend className="text-sm font-medium">{t('trip.form.minutes')}</legend>
+          {/* A native range input: no new dependency, keyboard and screen reader support for free. */}
+          <div className="flex items-center gap-3">
+            <input
+              type="range"
+              min={MIN_TRIP_MINUTES}
+              max={MAX_TRIP_MINUTES}
+              step={TRIP_MINUTES_STEP}
+              value={maxMinutes}
+              aria-label={t('trip.form.minutesSlider')}
+              aria-valuetext={t('trip.form.minutesOption', { minutes: maxMinutes })}
+              onChange={(event) => setMinutesText(event.target.value)}
+              className="h-11 min-w-0 flex-1 cursor-pointer accent-primary"
+            />
+            <Input
+              type="number"
+              inputMode="numeric"
+              min={MIN_TRIP_MINUTES}
+              max={MAX_TRIP_MINUTES}
+              value={minutesText}
+              aria-label={t('trip.form.minutesField')}
+              onChange={(event) => setMinutesText(event.target.value)}
+              // While typing, "1" on the way to "120" is allowed; leaving the field fixes the value.
+              onBlur={() => setMinutesText(String(maxMinutes))}
+              className="w-20 text-center"
+            />
+          </div>
+          <p id={`${ids}-minutes-range`} className="text-xs text-muted-foreground">
+            {t('trip.form.minutesRange', { min: MIN_TRIP_MINUTES, max: MAX_TRIP_MINUTES })}
+          </p>
+        </fieldset>
+      </FormSection>
+
+      <FormSection>
+        <div className="space-y-1.5">
+          <Label htmlFor={`${ids}-profile`}>{t('planner.profile.label')}</Label>
+          <ProfileSelect
+            id={`${ids}-profile`}
+            profiles={props.profiles}
+            value={props.profileId}
+            onChange={props.onProfileChange}
+          />
+        </div>
+
+        <div className="flex min-h-11 items-center justify-between gap-2">
+          <Label htmlFor={`${ids}-round`}>
+            <Repeat aria-hidden className="size-5 text-brand" />
+            {t('trip.form.roundTrip')}
+          </Label>
+          <Switch id={`${ids}-round`} checked={roundTrip} onCheckedChange={setRoundTrip} />
+        </div>
+      </FormSection>
+
+      <FormSection>
+        <div className="space-y-1.5">
+          <div className="flex items-baseline justify-between">
+            <Label htmlFor={`${ids}-wishes`}>{t('trip.form.wishes')}</Label>
+            <span
+              className={cn(
+                'text-xs',
+                wishes.length >= MAX_WISHES_LENGTH
+                  ? 'font-medium text-destructive'
+                  : 'text-muted-foreground',
+              )}
+              aria-live="polite"
             >
-              {t('trip.form.minutesOption', { minutes })}
-            </Button>
-          ))}
+              {t('trip.form.wishesCount', { count: wishes.length, max: MAX_WISHES_LENGTH })}
+            </span>
+          </div>
+          <Textarea
+            id={`${ids}-wishes`}
+            value={wishes}
+            rows={3}
+            maxLength={MAX_WISHES_LENGTH}
+            placeholder={t('trip.form.wishesPlaceholder')}
+            aria-describedby={`${ids}-wishes-hint`}
+            // maxLength stops typing; slice also cuts a longer pasted text.
+            onChange={(event) => setWishes(event.target.value.slice(0, MAX_WISHES_LENGTH))}
+          />
+          <p id={`${ids}-wishes-hint`} className="text-xs text-stairs-text">
+            {t('trip.form.privacy')}
+          </p>
         </div>
-      </fieldset>
-
-      <div className="space-y-1.5">
-        <Label htmlFor={`${ids}-profile`}>{t('planner.profile.label')}</Label>
-        <ProfileSelect
-          id={`${ids}-profile`}
-          profiles={props.profiles}
-          value={props.profileId}
-          onChange={props.onProfileChange}
-        />
-      </div>
-
-      <div className="flex min-h-11 items-center justify-between gap-2">
-        <Label htmlFor={`${ids}-round`}>
-          <Repeat aria-hidden className="size-5 text-brand" />
-          {t('trip.form.roundTrip')}
-        </Label>
-        <Switch id={`${ids}-round`} checked={roundTrip} onCheckedChange={setRoundTrip} />
-      </div>
-
-      <div className="space-y-1.5">
-        <div className="flex items-baseline justify-between">
-          <Label htmlFor={`${ids}-wishes`}>{t('trip.form.wishes')}</Label>
-          <span
-            className={cn(
-              'text-xs',
-              wishes.length >= MAX_WISHES_LENGTH
-                ? 'font-medium text-destructive'
-                : 'text-muted-foreground',
-            )}
-            aria-live="polite"
-          >
-            {t('trip.form.wishesCount', { count: wishes.length, max: MAX_WISHES_LENGTH })}
-          </span>
-        </div>
-        <Textarea
-          id={`${ids}-wishes`}
-          value={wishes}
-          rows={3}
-          maxLength={MAX_WISHES_LENGTH}
-          placeholder={t('trip.form.wishesPlaceholder')}
-          aria-describedby={`${ids}-wishes-hint`}
-          // maxLength stops typing; slice also cuts a longer pasted text.
-          onChange={(event) => setWishes(event.target.value.slice(0, MAX_WISHES_LENGTH))}
-        />
-        <p id={`${ids}-wishes-hint`} className="text-xs text-stairs-text">
-          {t('trip.form.privacy')}
-        </p>
-      </div>
+      </FormSection>
 
       <Button type="submit" className="w-full" disabled={!props.start || props.planning}>
         {props.planning ? (

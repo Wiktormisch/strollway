@@ -103,10 +103,6 @@ blocks every request to other hosts, so map tiles stay grey. Options are listed 
 
 Ideas from manual testing that did not fit before the feature freeze (stage 7):
 
-- **Any time limit:** a slider with a number field (15-180 min) instead of five buttons. The API
-  already accepts any value in this range.
-- **Keep the old trip when a new start is picked:** show the new start in another colour and ask
-  "This trip is not saved and will be lost. Plan a new one?" before replacing it.
 - **At least one stop on a saved trip:** the walk page lets you delete every stop. This is fine for
   A -> B walks, but a trip walk should keep one. It needs the walk to remember where it came from.
 - **Recalculate the route after removing a stop:** today the planned route is kept (see

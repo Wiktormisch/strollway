@@ -379,6 +379,9 @@
       "demoStart": "Wypróbuj start demo",
       "minutes": "Limit czasu",
       "minutesOption": "{{minutes}} min",
+      "minutesSlider": "Limit czasu, suwak",
+      "minutesField": "Limit czasu w minutach",
+      "minutesRange": "Od {{min}} do {{max}} min.",
       "roundTrip": "Wróć do startu",
       "wishes": "Wasze życzenia (opcjonalnie)",
       "wishesCount": "{{count}} / {{max}}",
@@ -417,6 +420,12 @@
       "wind": "wiatr {{value}} km/h"
     },
     "saveDescription": "Nadaj wycieczce nazwę. Przystanki do zapisania: {{count}}.",
+    "replace": {
+      "title": "Zastąpić obecną wycieczkę?",
+      "description": "Nowy start wymaga nowej wycieczki. Obecna zniknie z mapy. Jeśli chcesz ją zachować, najpierw ją zapisz.",
+      "confirm": "Użyj nowego startu",
+      "cancel": "Zostaw obecną wycieczkę"
+    },
     "map": {
       "startFinish": "Start i meta"
     }

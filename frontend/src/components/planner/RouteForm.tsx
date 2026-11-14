@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { DEMO_ROUTES, type DemoRoute } from '@/constants/demoRoutes'
 import { demoRouteOf } from '@/lib/planner'
+import { FormSection } from './FormSection'
 import { LocateButton } from './LocateButton'
 import { PointRow } from './PointRow'
 import { StairsIcon } from './StairsIcon'
@@ -53,9 +54,10 @@ export function RouteForm(props: RouteFormProps) {
         <LocateButton onLocate={props.onLocate} />
       </div>
 
-      <div className="space-y-2">
+      <FormSection>
         <p className="text-sm font-medium">{t('planner.form.demoTitle')}</p>
-        <div className="flex flex-wrap gap-2">
+        {/* Wrap + center: three in a row when they fit, otherwise two and one, all centred. */}
+        <div className="flex flex-wrap justify-center gap-2">
           {DEMO_ROUTES.map((route) => (
             <Button key={route.id} variant="demo" size="sm" onClick={() => props.onDemo(route)}>
               <Play aria-hidden />
@@ -63,22 +65,24 @@ export function RouteForm(props: RouteFormProps) {
             </Button>
           ))}
         </div>
-      </div>
+      </FormSection>
 
-      {props.profileField}
+      <FormSection>
+        {props.profileField}
 
-      <div className="flex min-h-11 items-center justify-between gap-2">
-        <label htmlFor={switchId} className="flex items-center gap-2 text-sm font-medium">
-          {/* Terracotta is only for stairs (DESIGN.md section 1). */}
-          <StairsIcon aria-hidden className="size-5 text-stairs" />
-          {t('planner.form.avoidStairs')}
-        </label>
-        <Switch
-          id={switchId}
-          checked={props.avoidStairs}
-          onCheckedChange={props.onAvoidStairsChange}
-        />
-      </div>
+        <div className="flex min-h-11 items-center justify-between gap-2">
+          <label htmlFor={switchId} className="flex items-center gap-2 text-sm font-medium">
+            {/* Terracotta is only for stairs (DESIGN.md section 1). */}
+            <StairsIcon aria-hidden className="size-5 text-stairs" />
+            {t('planner.form.avoidStairs')}
+          </label>
+          <Switch
+            id={switchId}
+            checked={props.avoidStairs}
+            onCheckedChange={props.onAvoidStairsChange}
+          />
+        </div>
+      </FormSection>
 
       <Button
         className="w-full"
