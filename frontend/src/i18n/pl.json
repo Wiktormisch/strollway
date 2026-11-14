@@ -329,6 +329,7 @@
     "editNamed": "Edytuj {{name}}",
     "deleteNamed": "Usuń {{name}}",
     "ageChip": "{{age}} l.",
+    "noChildren": "Bez dzieci",
     "empty": {
       "title": "Nie masz jeszcze profili.",
       "text": "Dodaj profil, aby planować spacery w tempie Twojej rodziny.",
@@ -336,8 +337,8 @@
     },
     "wheels": {
       "none": "Pieszo",
-      "stroller": "Wózek",
-      "kid_bike": "Rowerek"
+      "stroller": "Z wózkiem",
+      "kid_bike": "Z rowerkiem biegowym"
     },
     "pace": {
       "relaxed": "Spokojne tempo",
@@ -347,15 +348,14 @@
       "name": "Nazwa profilu",
       "namePlaceholder": "np. Weekend z wózkiem",
       "ages": "Wiek dzieci",
-      "agesHint": "Od 1 do {{max}} dzieci, wiek 0-{{maxAge}}.",
+      "agesHint": "Opcjonalne. Najwyżej {{max}} dzieci, wiek 0-{{maxAge}}.",
       "age": "Wiek dziecka",
       "addAge": "Dodaj wiek",
       "removeAge": "Usuń wiek {{age}}",
-      "wheels": "Na kółkach",
+      "wheels": "Jak się poruszacie?",
       "pace": "Tempo",
       "errors": {
         "nameRequired": "Podaj nazwę profilu.",
-        "noChildren": "Dodaj wiek co najmniej jednego dziecka.",
         "ageInvalid": "Wiek to liczba całkowita od 0 do {{maxAge}}.",
         "tooMany": "Najwyżej {{max}} dzieci."
       }

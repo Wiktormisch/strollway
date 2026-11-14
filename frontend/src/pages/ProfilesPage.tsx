@@ -174,13 +174,17 @@ function ProfileCard({
             </Button>
           </div>
         </div>
-        <ul className="flex flex-wrap gap-2" aria-label={t('profiles.form.ages')}>
-          {profile.children_ages.map((age, index) => (
-            <li key={index} className="rounded-full bg-brand-soft px-3 py-1 text-sm font-medium">
-              {t('profiles.ageChip', { age })}
-            </li>
-          ))}
-        </ul>
+        {profile.children_ages.length > 0 ? (
+          <ul className="flex flex-wrap gap-2" aria-label={t('profiles.form.ages')}>
+            {profile.children_ages.map((age, index) => (
+              <li key={index} className="rounded-full bg-brand-soft px-3 py-1 text-sm font-medium">
+                {t('profiles.ageChip', { age })}
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p className="text-sm text-muted-foreground">{t('profiles.noChildren')}</p>
+        )}
         <p className="text-sm text-muted-foreground">
           {t(`profiles.wheels.${profile.wheels}`)} · {t(`profiles.pace.${profile.pace}`)}
         </p>

@@ -11,17 +11,11 @@ function setup(props: Partial<Parameters<typeof ProfileForm>[0]> = {}) {
 }
 
 describe('ProfileForm', () => {
-  it('rejects an age out of range and a profile without children', async () => {
-    const { onSubmit, user } = setup()
-    await user.type(screen.getByLabelText('Profile name'), 'Fake family')
-
+  it('rejects an age out of range', async () => {
+    const { user } = setup()
     await user.type(screen.getByLabelText("Child's age"), '18')
     await user.click(screen.getByRole('button', { name: 'Add age' }))
     expect(screen.getByText('An age is a whole number from 0 to 17.')).toBeInTheDocument()
-
-    await user.click(screen.getByRole('button', { name: 'Save' }))
-    expect(screen.getByText("Add at least one child's age.")).toBeInTheDocument()
-    expect(onSubmit).not.toHaveBeenCalled()
   })
 
   it('requires a name', async () => {
@@ -48,6 +42,13 @@ describe('ProfileForm', () => {
       wheels: 'stroller',
       pace: 'relaxed',
     })
+  })
+
+  it('saves a profile without children (audit idea 5)', async () => {
+    const { onSubmit, user } = setup()
+    await user.type(screen.getByLabelText('Profile name'), 'Fake adults')
+    await user.click(screen.getByRole('button', { name: 'Save' }))
+    expect(onSubmit).toHaveBeenCalledWith(expect.objectContaining({ children_ages: [] }))
   })
 
   it('allows at most six children', async () => {

@@ -77,13 +77,22 @@ def test_delete_keeps_walks_and_clears_their_profile(api):
 
 @pytest.mark.parametrize(
     "ages",
-    [[], [1, 2, 3, 4, 5, 6, 7], [-1], [18], [2.5], ["3"], [True], "3", None],
+    [[1, 2, 3, 4, 5, 6, 7], [-1], [18], [2.5], ["3"], [True], "3", None],
 )
 def test_invalid_children_ages(api, ages):
     response = api.post(URL, {"name": "F", "children_ages": ages}, format="json")
 
     assert response.status_code == 400
     assert "children_ages" in response.json()
+
+
+@pytest.mark.parametrize("payload", [{"children_ages": []}, {}])
+def test_a_profile_without_children_is_allowed(api, payload):
+    """Audit idea 5: a profile can be only a pace and a way of moving."""
+    response = api.post(URL, {"name": "F", **payload}, format="json")
+
+    assert response.status_code == 201
+    assert response.json()["children_ages"] == []
 
 
 def test_six_children_is_allowed(api):

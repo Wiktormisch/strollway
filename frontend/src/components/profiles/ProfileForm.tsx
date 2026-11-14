@@ -62,7 +62,6 @@ export function ProfileForm(props: ProfileFormProps) {
     event.preventDefault()
     const next: Record<string, string> = {}
     if (!name.trim()) next.name = t('profiles.form.errors.nameRequired')
-    if (ages.length === 0) next.children_ages = t('profiles.form.errors.noChildren')
     setClientErrors(next)
     if (Object.keys(next).length > 0) return
     props.onSubmit({ name: name.trim(), children_ages: ages, wheels, pace })

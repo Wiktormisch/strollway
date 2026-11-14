@@ -63,8 +63,9 @@ class FamilyProfileSerializer(serializers.ModelSerializer):
     def validate_children_ages(self, value):
         if not isinstance(value, list):
             raise serializers.ValidationError("Must be a list of ages.")
-        if not 1 <= len(value) <= MAX_CHILDREN:
-            raise serializers.ValidationError(f"Give between 1 and {MAX_CHILDREN} ages.")
+        # No children is fine: a profile can be only a pace and a way of moving (audit idea 5).
+        if len(value) > MAX_CHILDREN:
+            raise serializers.ValidationError(f"Give at most {MAX_CHILDREN} ages.")
         for age in value:
             if not is_int(age) or not 0 <= age <= MAX_CHILD_AGE:
                 raise serializers.ValidationError(
