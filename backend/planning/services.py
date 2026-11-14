@@ -6,7 +6,7 @@ or mock). A point outside the imported area gives pois_status "outside_area".
 NoRoute and NoRoutablePoint are real answers and reach the view (422).
 """
 
-from planning import fixtures, places, pois, routing
+from planning import calories, fixtures, places, pois, routing
 from walks.models import STROLLER_MAX_KMH
 
 SOURCE_ORS = "ors"
@@ -30,6 +30,11 @@ def pace_kmh_for(profile=None, pace_kmh=None):
     return pace_kmh
 
 
+def has_stroller(profile=None):
+    """True for a stroller profile, and without a profile (the app assumes a stroller)."""
+    return profile is None or profile.wheels == "stroller"
+
+
 def speed_m_per_min(profile=None, pace_kmh=None):
     """Walking speed in metres per minute (see pace_kmh_for)."""
     return pace_kmh_for(profile, pace_kmh) * 1000 / 60
@@ -43,7 +48,7 @@ def build_route_plan(start, end, avoid_stairs=True, profile=None, pace_kmh=None)
 
     comparison, source = _route(start, end, avoid_stairs, fixture)
     poi_result = _pois(comparison, start, end, speed, fixture)
-    return _serialize(comparison, source, poi_result, speed)
+    return _serialize(comparison, source, poi_result, speed, has_stroller(profile))
 
 
 def _route(start, end, avoid_stairs, fixture):
@@ -102,13 +107,13 @@ def _keep_indexes(comparison):
     return keep
 
 
-def _serialize(comparison, source, poi_result, speed):
+def _serialize(comparison, source, poi_result, speed, stroller):
     detour = comparison.detour_m
     return {
         "source": source,
         "step_free_available": comparison.step_free_available,
-        "route": route_dict(comparison.route, speed),
-        "baseline": route_dict(comparison.baseline, speed),
+        "route": route_dict(comparison.route, speed, stroller),
+        "baseline": route_dict(comparison.baseline, speed, stroller),
         "detour_m": None if detour is None else round(detour),
         "extra_min": None if detour is None else round(detour / speed),
         "pois_status": poi_result.status,
@@ -117,11 +122,13 @@ def _serialize(comparison, source, poi_result, speed):
     }
 
 
-def route_dict(route, speed):
+def route_dict(route, speed, stroller=True):
+    pace_kmh = speed * 60 / 1000
     return {
         "geometry": [[round(lat, 6), round(lng, 6)] for lat, lng in route.geometry],
         "distance_m": round(route.distance_m),
         "duration_min": max(1, round(route.distance_m / speed)),
+        "kcal": calories.estimate_kcal(route.distance_m, pace_kmh, stroller),
         "stairs_m": route.stairs_m,
         "stairs_segments": [
             [[round(lat, 6), round(lng, 6)] for lat, lng in segment]

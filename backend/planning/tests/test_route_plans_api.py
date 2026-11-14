@@ -56,6 +56,7 @@ def test_live_route_matches_contract(api, ors):
     assert body["route"]["stairs_m"] == 0
     # Stroller pace, 4 km/h: 833 m -> 12.5 min.
     assert body["route"]["duration_min"] == 12
+    assert body["route"]["kcal"] == 46  # 3.0 MET x 70 kg x 0.21 h, +5% stroller
     assert body["route"]["geometry"][0][0] == pytest.approx(54.41, abs=0.01)  # [lat, lng]
     assert body["baseline"]["stairs_segments"]
     assert (body["pois_status"], body["pois"], body["transit_stops"]) == ("ok", [], [])
@@ -110,6 +111,7 @@ def test_profile_pace_changes_duration(api, ors):
     body = post(api, payload(profile_id=profile.id)).json()
 
     assert body["route"]["duration_min"] == round(833 / (3500 / 60))
+    assert body["route"]["kcal"] == 48  # slower pace takes longer; no stroller bonus
 
 
 # --- Fallbacks -------------------------------------------------------------------------

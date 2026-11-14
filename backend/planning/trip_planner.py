@@ -287,8 +287,10 @@ def _serialize(comparison, source, stops, dropped, answer, engine, found, contex
         "engine": engine,
         "source": source,
         "step_free_available": comparison.step_free_available,
-        "route": services.route_dict(route, speed),
-        "baseline": services.route_dict(comparison.baseline, speed),
+        "route": services.route_dict(route, speed, services.has_stroller(context["profile"])),
+        "baseline": services.route_dict(
+            comparison.baseline, speed, services.has_stroller(context["profile"])
+        ),
         "detour_m": None if detour is None else round(detour),
         "extra_min": None if detour is None else round(detour / speed),
         "summary": answer["summary"],
