@@ -103,7 +103,7 @@ def test_avoid_stairs_false(api, ors):
 @pytest.mark.django_db
 def test_profile_pace_changes_duration(api, ors):
     profile = FamilyProfile.objects.create(
-        client_id=CLIENT_A, name="Slow", children_ages=[2], wheels="none", pace="relaxed"
+        client_id=CLIENT_A, name="Slow", children_ages=[2], wheels="none", pace_kmh=3.5
     )
     ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_avoid.json"))
 
@@ -304,3 +304,23 @@ def test_route_outside_the_place_data_is_outside_area(api, settings):
     assert response.status_code == 200
     assert response.json()["pois_status"] == "outside_area"
     assert response.json()["pois"] == []
+
+
+@pytest.mark.django_db
+def test_request_pace_wins_over_profile(api, ors):
+    profile = FamilyProfile.objects.create(
+        client_id=CLIENT_A, name="Slow", children_ages=[], wheels="none", pace_kmh=3.0
+    )
+    ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_avoid.json"))
+
+    body = post(api, payload(profile_id=profile.id, pace_kmh=5.0)).json()
+
+    assert body["route"]["duration_min"] == round(833 / (5000 / 60))
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("pace", [2.0, 6.0, 3.2])
+def test_request_pace_outside_range_or_step_is_rejected(api, pace):
+    response = post(api, payload(pace_kmh=pace))
+
+    assert response.status_code == 400

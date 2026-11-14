@@ -1,4 +1,4 @@
-import { formatDate, formatDistance, formatDuration } from './format'
+import { formatDate, formatDistance, formatDuration, formatKmh } from './format'
 
 describe('formatDistance', () => {
   it('shows metres below 1 km, rounded', () => {
@@ -37,5 +37,12 @@ describe('formatDate', () => {
   it('uses a short month in the given language', () => {
     expect(formatDate('2026-03-05T12:00:00Z', 'en')).toBe('Mar 5, 2026')
     expect(formatDate('2026-03-05T12:00:00Z', 'pl')).toBe('5 mar 2026')
+  })
+})
+
+describe('formatKmh', () => {
+  it('always shows one decimal in the locale format', () => {
+    expect(formatKmh(4)).toBe('4.0 km/h')
+    expect(formatKmh(3.5, 'pl')).toBe('3,5 km/h')
   })
 })

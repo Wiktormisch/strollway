@@ -15,6 +15,9 @@ function renderForm(overrides: Partial<Parameters<typeof TripIdeaForm>[0]> = {})
       profileId={null}
       planning={false}
       onProfileChange={vi.fn()}
+      pace={3.5}
+      maxPace={5.5}
+      onPaceChange={vi.fn()}
       onClearStart={vi.fn()}
       onUseMapCenter={vi.fn()}
       onDemoStart={vi.fn()}
@@ -45,6 +48,7 @@ describe('TripIdeaForm', () => {
       round_trip: false,
       language: 'en',
       wishes: 'coffee, then pizza',
+      pace_kmh: 3.5,
     })
   })
 

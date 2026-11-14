@@ -4,7 +4,21 @@ There is no user model. Every row (except Stop) has a client_id taken from the
 X-Client-Id header, and all queries are filtered by it (see walks/scoping.py).
 """
 
+from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
+
+# Walking pace in km/h (audit idea 3). A stroller is limited to STROLLER_MAX_KMH.
+PACE_MIN_KMH = 2.5
+PACE_MAX_KMH = 5.5
+PACE_STEP_KMH = 0.5
+PACE_DEFAULT_KMH = 3.5
+STROLLER_MAX_KMH = 4.0
+
+
+def is_pace_step(kmh):
+    """True when the pace is a multiple of PACE_STEP_KMH (2.5, 3.0, ... 5.5)."""
+    steps = kmh / PACE_STEP_KMH
+    return abs(steps - round(steps)) < 1e-9
 
 
 class FamilyProfile(models.Model):
@@ -13,16 +27,15 @@ class FamilyProfile(models.Model):
         STROLLER = "stroller", "Stroller"
         KID_BIKE = "kid_bike", "Kid bike"
 
-    class Pace(models.TextChoices):
-        RELAXED = "relaxed", "Relaxed"
-        NORMAL = "normal", "Normal"
-
     client_id = models.CharField(max_length=36, db_index=True)
     name = models.CharField(max_length=60)
     # A list of ints 0-17, 1-6 items. No names on purpose (no personal data).
     children_ages = models.JSONField(default=list)
     wheels = models.CharField(max_length=10, choices=Wheels.choices, default=Wheels.STROLLER)
-    pace = models.CharField(max_length=10, choices=Pace.choices, default=Pace.RELAXED)
+    pace_kmh = models.FloatField(
+        default=PACE_DEFAULT_KMH,
+        validators=[MinValueValidator(PACE_MIN_KMH), MaxValueValidator(PACE_MAX_KMH)],
+    )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

@@ -325,7 +325,8 @@ export interface components {
             name: string;
             children_ages?: number[];
             wheels?: components["schemas"]["WheelsEnum"];
-            pace?: components["schemas"]["PaceEnum"];
+            /** Format: double */
+            pace_kmh?: number;
             /** Format: date-time */
             readonly created_at: string;
             /** Format: date-time */
@@ -335,7 +336,8 @@ export interface components {
             name: string;
             children_ages?: number[];
             wheels?: components["schemas"]["WheelsEnum"];
-            pace?: components["schemas"]["PaceEnum"];
+            /** Format: double */
+            pace_kmh?: number;
         };
         Health: {
             status: string;
@@ -392,17 +394,12 @@ export interface components {
             reason?: string;
             source?: components["schemas"]["StopSourceEnum"];
         };
-        /**
-         * @description * `relaxed` - Relaxed
-         *     * `normal` - Normal
-         * @enum {string}
-         */
-        PaceEnum: "relaxed" | "normal";
         PatchedFamilyProfileRequest: {
             name?: string;
             children_ages?: number[];
             wheels?: components["schemas"]["WheelsEnum"];
-            pace?: components["schemas"]["PaceEnum"];
+            /** Format: double */
+            pace_kmh?: number;
         };
         /** @description Fields shared by the nested stop and the standalone stop. */
         PatchedStopRequest: {
@@ -514,6 +511,11 @@ export interface components {
             /** @default true */
             avoid_stairs: boolean;
             profile_id?: number | null;
+            /**
+             * Format: double
+             * @description Walking pace in km/h, in steps of 0.5. Empty = the profile pace.
+             */
+            pace_kmh?: number | null;
         };
         RoutePlanResponse: {
             source: components["schemas"]["RoutePlanSourceEnum"];
@@ -621,6 +623,11 @@ export interface components {
         TripIdeaRequestRequest: {
             start: components["schemas"]["PointRequest"];
             profile_id?: number | null;
+            /**
+             * Format: double
+             * @description Walking pace in km/h, in steps of 0.5. Empty = the profile pace.
+             */
+            pace_kmh?: number | null;
             max_minutes: number;
             /** @default true */
             round_trip: boolean;

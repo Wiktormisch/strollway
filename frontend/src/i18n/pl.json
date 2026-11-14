@@ -341,10 +341,6 @@
       "stroller": "Z wózkiem",
       "kid_bike": "Z rowerkiem biegowym"
     },
-    "pace": {
-      "relaxed": "Spokojne tempo",
-      "normal": "Normalne tempo"
-    },
     "form": {
       "name": "Nazwa profilu",
       "namePlaceholder": "np. Weekend z wózkiem",
@@ -354,7 +350,6 @@
       "addAge": "Dodaj wiek",
       "removeAge": "Usuń wiek {{age}}",
       "wheels": "Jak się poruszacie?",
-      "pace": "Tempo",
       "errors": {
         "nameRequired": "Podaj nazwę profilu.",
         "ageInvalid": "Wiek to liczba całkowita od 0 do {{maxAge}}.",
@@ -456,5 +451,11 @@
     "newTab": "(otwiera się w nowej karcie)",
     "warning": "Google sam wyznacza drogę między naszymi punktami, więc może wybrać drogę ze schodami. Sprawdź trasę na naszej mapie.",
     "stopsCut": "Link zawiera tylko pierwsze przystanki (maks. {{count}}, limit Google Maps na telefonach)."
+  },
+  "pace": {
+    "label": "Tempo",
+    "slow": "Wolno",
+    "fast": "Szybko",
+    "strollerLimit": "Z wózkiem najwyżej {{max}}."
   }
 }

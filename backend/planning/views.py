@@ -129,7 +129,11 @@ class RoutePlanView(APIView):
         data = serializer.validated_data
         try:
             plan = services.build_route_plan(
-                data["start_point"], data["end_point"], data["avoid_stairs"], data["profile"]
+                data["start_point"],
+                data["end_point"],
+                data["avoid_stairs"],
+                data["profile"],
+                pace_kmh=data["pace_kmh"],
             )
         except routing.RoutingError as exc:
             return Response(
@@ -245,6 +249,7 @@ class TripIdeaView(APIView):
                 language=data["language"],
                 wishes=data["wishes"],
                 profile=data["profile"],
+                pace_kmh=data["pace_kmh"],
             )
         except (routing.RoutingError, trip_planner.TripError) as exc:
             return Response(

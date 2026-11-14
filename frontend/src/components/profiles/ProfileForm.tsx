@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { X } from 'lucide-react'
-import type { FamilyProfile, Pace, ProfileInput, Wheels } from '@/api/types'
+import type { FamilyProfile, ProfileInput, Wheels } from '@/api/types'
+import { PaceSlider } from '@/components/common/PaceSlider'
 import { FieldError } from '@/components/common/States'
 import { Button } from '@/components/ui/button'
 import { DialogFooter } from '@/components/ui/dialog'
@@ -15,10 +16,10 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { ageError, MAX_CHILD_AGE, MAX_CHILDREN } from '@/lib/formRules'
+import { clampPace, PACE_DEFAULT_KMH, paceMax } from '@/lib/pace'
 
 const MAX_NAME_LENGTH = 60
 const WHEELS: Wheels[] = ['stroller', 'kid_bike', 'none']
-const PACES: Pace[] = ['relaxed', 'normal']
 
 interface ProfileFormProps {
   initial?: FamilyProfile
@@ -35,11 +36,17 @@ export function ProfileForm(props: ProfileFormProps) {
   const [ages, setAges] = useState<number[]>(props.initial?.children_ages ?? [])
   const [ageText, setAgeText] = useState('')
   const [wheels, setWheels] = useState<Wheels>(props.initial?.wheels ?? 'stroller')
-  const [pace, setPace] = useState<Pace>(props.initial?.pace ?? 'relaxed')
+  const [pace, setPace] = useState(props.initial?.pace_kmh ?? PACE_DEFAULT_KMH)
   const [clientErrors, setClientErrors] = useState<Record<string, string>>({})
 
   // A field error typed by the user is newer than the last server answer, so it wins.
   const errors = { ...props.serverErrors, ...clientErrors }
+
+  /** A stroller caps the pace, so a faster pace drops to the cap (audit idea 3). */
+  function changeWheels(next: Wheels) {
+    setWheels(next)
+    setPace((current) => clampPace(current, next))
+  }
 
   function addAge() {
     const key = ageError(ageText, ages.length)
@@ -64,7 +71,7 @@ export function ProfileForm(props: ProfileFormProps) {
     if (!name.trim()) next.name = t('profiles.form.errors.nameRequired')
     setClientErrors(next)
     if (Object.keys(next).length > 0) return
-    props.onSubmit({ name: name.trim(), children_ages: ages, wheels, pace })
+    props.onSubmit({ name: name.trim(), children_ages: ages, wheels, pace_kmh: pace })
   }
 
   return (
@@ -139,7 +146,7 @@ export function ProfileForm(props: ProfileFormProps) {
       <div className="grid gap-4 sm:grid-cols-2">
         <div className="space-y-1.5">
           <Label htmlFor="profile-wheels">{t('profiles.form.wheels')}</Label>
-          <Select value={wheels} onValueChange={(value) => setWheels(value as Wheels)}>
+          <Select value={wheels} onValueChange={(value) => changeWheels(value as Wheels)}>
             <SelectTrigger id="profile-wheels" className="w-full">
               <SelectValue />
             </SelectTrigger>
@@ -154,20 +161,8 @@ export function ProfileForm(props: ProfileFormProps) {
           <FieldError id="profile-wheels-error" message={errors.wheels} />
         </div>
         <div className="space-y-1.5">
-          <Label htmlFor="profile-pace">{t('profiles.form.pace')}</Label>
-          <Select value={pace} onValueChange={(value) => setPace(value as Pace)}>
-            <SelectTrigger id="profile-pace" className="w-full">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {PACES.map((value) => (
-                <SelectItem key={value} value={value}>
-                  {t(`profiles.pace.${value}`)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <FieldError id="profile-pace-error" message={errors.pace} />
+          <PaceSlider id="profile-pace" value={pace} max={paceMax(wheels)} onChange={setPace} />
+          <FieldError id="profile-pace-error" message={errors.pace_kmh} />
         </div>
       </div>
 

@@ -73,11 +73,10 @@ export type TripIdeaErrorCode = Schemas['TripIdeaErrorCodeEnum']
 // ----- Saved data -----
 
 export type Wheels = Schemas['WheelsEnum']
-export type Pace = Schemas['PaceEnum']
 
 export type FamilyProfile = Required<Schemas['FamilyProfile']>
 
-export type ProfileInput = Pick<FamilyProfile, 'name' | 'children_ages' | 'wheels' | 'pace'>
+export type ProfileInput = Pick<FamilyProfile, 'name' | 'children_ages' | 'wheels' | 'pace_kmh'>
 
 export type WalkStatus = Schemas['StatusEnum']
 
