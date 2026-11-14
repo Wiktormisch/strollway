@@ -45,6 +45,7 @@ function renderForm(overrides: Partial<FormProps> = {}) {
       onUseMapCenter={vi.fn()}
       onDemoStart={vi.fn()}
       onLocate={vi.fn()}
+      onSearchPick={vi.fn()}
       onSubmit={onSubmit}
       {...overrides}
     />,

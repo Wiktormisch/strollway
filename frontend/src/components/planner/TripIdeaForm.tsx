@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { ProfileSelect } from '@/components/walks/ProfileSelect'
 import { FormSection } from './FormSection'
 import { LocateButton } from './LocateButton'
+import { PlaceSearch } from './PlaceSearch'
 import { PointRow } from './PointRow'
 import { Input } from '@/components/ui/input'
 import {
@@ -48,6 +49,8 @@ interface TripIdeaFormProps {
   onUseMapCenter: () => void
   onDemoStart: () => void
   onLocate: (point: LatLng) => void
+  /** A place picked in the name search becomes the start. */
+  onSearchPick: (point: LatLng) => void
   onSubmit: (request: TripIdeaRequest) => void
 }
 
@@ -101,6 +104,7 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
         onChange={props.onUseMapCenter}
         onClear={props.onClearStart}
       />
+      <PlaceSearch onPick={props.onSearchPick} />
       {/* Two equal columns: always side by side; a long label breaks into two lines instead. */}
       <div className="grid grid-cols-2 items-start gap-2">
         <LocateButton onLocate={props.onLocate} fullWidth />

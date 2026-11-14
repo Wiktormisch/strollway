@@ -169,6 +169,8 @@
     "none": "W OpenStreetMap nie ma oznaczonych miejsc przy tej trasie.",
     "allHidden": "Wszystkie kategorie są ukryte.",
     "categories": {
+      "bus_stop": "Przystanek autobusowy",
+      "tram_stop": "Przystanek tramwajowy",
       "playground": "Plac zabaw",
       "indoor_play": "Sala zabaw",
       "skatepark": "Skatepark",
@@ -450,6 +452,13 @@
   "topBar": {
     "menu": "Więcej opcji",
     "theme": "Motyw"
+  },
+  "placeSearch": {
+    "label": "Szukaj miejsca na start",
+    "placeholder": "np. Park Oliwski",
+    "loading": "Szukam…",
+    "empty": "Nic nie znaleziono. Mamy tylko miejsca z Trójmiasta.",
+    "error": "Wyszukiwanie nie działa. Spróbuj później."
   },
   "location": {
     "use": "Użyj mojej lokalizacji",

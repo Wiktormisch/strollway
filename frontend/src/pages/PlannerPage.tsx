@@ -247,6 +247,7 @@ export function PlannerPage() {
               onUseMapCenter={() => changeTripStart(mapCenter.current)}
               onDemoStart={() => changeTripStart(DEMO_TRIP_START, true)}
               onLocate={(point) => changeTripStart(point, true)}
+              onSearchPick={(point) => changeTripStart(point, true)}
               onSubmit={suggestTrip}
             />
             <ResultsDivider />
@@ -309,6 +310,10 @@ export function PlannerPage() {
               onUseMapCenter={(which) => setPoints({ ...points, [which]: mapCenter.current })}
               onLocate={(point) => {
                 // The position comes later (async): read the current points, not this render's.
+                setPoints((current) => ({ ...current, start: point }))
+                focusOn([point])
+              }}
+              onSearchPick={(point) => {
                 setPoints((current) => ({ ...current, start: point }))
                 focusOn([point])
               }}

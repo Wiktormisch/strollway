@@ -15,6 +15,8 @@ export type LatLngTuple = [number, number]
 
 export type LatLng = Schemas['PointRequest']
 
+export type PlaceSearchResult = Schemas['PlaceSearchResult']
+
 export type RoutePlanRequest = Schemas['RoutePlanRequestRequest']
 
 export type RouteGeometry = Omit<Schemas['Route'], 'geometry' | 'stairs_segments'> & {
