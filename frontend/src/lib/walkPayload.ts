@@ -11,6 +11,7 @@ import type {
 
 const STOP_CATEGORIES: readonly StopCategory[] = [
   'playground',
+  'indoor_play',
   'toilets',
   'cafe',
   'restaurant',

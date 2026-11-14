@@ -45,6 +45,7 @@ ERROR_DETAILS = {
     "no_routable_point": "A point is too far from any path (more than 350 m).",
     "no_places_nearby": "No places for a trip were found near the start point.",
     "places_unavailable": "The map data service did not answer. Try again in a moment.",
+    "outside_area": "Place data covers the Tricity (Gdansk, Sopot, Gdynia) only.",
 }
 
 REQUEST_EXAMPLE = OpenApiExample(

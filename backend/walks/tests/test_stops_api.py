@@ -40,7 +40,7 @@ def test_empty_name_is_allowed(api):
     assert response.status_code == 201
 
 
-@pytest.mark.parametrize("category", ["park", "zoo", "museum", "beach"])
+@pytest.mark.parametrize("category", ["park", "zoo", "museum", "beach", "indoor_play"])
 def test_trip_categories_are_allowed(api, category):
     response = api.post(URL, stop_payload(make_walk(), category=category), format="json")
 
@@ -48,7 +48,7 @@ def test_trip_categories_are_allowed(api, category):
 
 
 def test_unknown_category_is_rejected(api):
-    response = api.post(URL, stop_payload(make_walk(), category="indoor_play"), format="json")
+    response = api.post(URL, stop_payload(make_walk(), category="spaceship"), format="json")
 
     assert response.status_code == 400
     assert "category" in response.json()

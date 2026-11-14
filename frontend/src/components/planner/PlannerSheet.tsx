@@ -57,6 +57,7 @@ export function PlannerSheet({ open, onToggle, sheetRef, children }: PlannerShee
         className={cn('min-h-0 flex-1 overflow-y-auto px-4 pb-4', !open && 'hidden md:block')}
       >
         {children}
+        <p className="mt-4 text-xs text-muted-foreground">{t('planner.dataArea')}</p>
       </div>
     </section>
   )

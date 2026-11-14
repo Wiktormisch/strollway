@@ -133,6 +133,7 @@
       "unknown": "Coś poszło nie tak podczas planowania trasy.",
       "noPlacesNearby": "Nie znaleźliśmy placów zabaw, kawiarni ani restauracji w pobliżu tego startu. Wybierz inny start albo dłuższy limit czasu.",
       "placesUnavailable": "Usługa z miejscami nie odpowiedziała. Poczekaj chwilę i spróbuj ponownie.",
+      "outsideArea": "Mamy dane o miejscach tylko dla Trójmiasta (Gdańsk, Sopot, Gdynia). Wybierz start w tym obszarze.",
       "invalidTrip": "Formularz ma nieprawidłową wartość. Sprawdź start i profil, potem spróbuj ponownie."
     },
     "save": "Zapisz spacer",
@@ -145,7 +146,8 @@
       "change": "Zmień",
       "details": "Szczegóły"
     },
-    "results": "Twój spacer"
+    "results": "Twój spacer",
+    "dataArea": "Dane o miejscach (OpenStreetMap) obejmują tylko Trójmiasto. Publiczne API Overpass jest często przeciążone, więc korzystamy z własnego importu."
   },
   "poi": {
     "title": "Miejsca po drodze",
@@ -159,12 +161,14 @@
       "wheelchair": "Dostęp dla wózków",
       "changing_table": "Przewijak"
     },
+    "outsideArea": "Mamy dane o miejscach tylko dla Trójmiasta. Ta trasa jest poza tym obszarem.",
     "unavailable": "Usługa z miejscami nie odpowiedziała.",
     "reload": "Wczytaj miejsca ponownie",
     "none": "W OpenStreetMap nie ma oznaczonych miejsc przy tej trasie.",
     "allHidden": "Wszystkie kategorie są ukryte.",
     "categories": {
       "playground": "Plac zabaw",
+      "indoor_play": "Sala zabaw",
       "toilets": "Toaleta",
       "cafe": "Kawiarnia",
       "restaurant": "Restauracja",

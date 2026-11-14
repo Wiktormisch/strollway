@@ -265,3 +265,42 @@ def test_throttle_limits_requests(api, monkeypatch):
 
 def test_get_is_not_allowed(api):
     assert api.get(URL).status_code == 405
+
+
+# --- Place table (POI_PROVIDER=db) ------------------------------------------------------
+
+
+def _import_fake_places(*elements):
+    from planning import places
+    from planning.tests.factories import node
+
+    corners = [
+        node(900001, 54.27, 18.43, amenity="bench"),
+        node(900002, 54.62, 18.80, amenity="bench"),
+    ]
+    places.replace_places(places.parse_export({"elements": [*elements, *corners]}), "test.json")
+
+
+@pytest.mark.django_db
+def test_demo_pair_without_recorded_places_reads_the_place_table(api, settings):
+    from planning.tests.factories import node
+
+    settings.POI_PROVIDER = "db"
+    _import_fake_places(node(1, PAIR_3_START[0], PAIR_3_START[1] + 0.0003, leisure="playground"))
+
+    data = post(api, payload()).json()
+
+    assert data["pois_status"] == "ok"
+    assert [p["poi_id"] for p in data["pois"]] == ["node/1"]
+
+
+@pytest.mark.django_db
+def test_route_outside_the_place_data_is_outside_area(api, settings):
+    settings.POI_PROVIDER = "db"
+    _import_fake_places()
+
+    response = post(api, payload(OTHER_START, OTHER_END))
+
+    assert response.status_code == 200
+    assert response.json()["pois_status"] == "outside_area"
+    assert response.json()["pois"] == []

@@ -292,6 +292,7 @@ export interface components {
     schemas: {
         /**
          * @description * `playground` - Playground
+         *     * `indoor_play` - Indoor play
          *     * `toilets` - Toilets
          *     * `cafe` - Cafe
          *     * `restaurant` - Restaurant
@@ -305,7 +306,7 @@ export interface components {
          *     * `other` - Other
          * @enum {string}
          */
-        CategoryEnum: "playground" | "toilets" | "cafe" | "restaurant" | "bench" | "water" | "park" | "zoo" | "museum" | "beach" | "shop" | "other";
+        CategoryEnum: "playground" | "indoor_play" | "toilets" | "cafe" | "restaurant" | "bench" | "water" | "park" | "zoo" | "museum" | "beach" | "shop" | "other";
         DroppedStop: {
             poi_id: string;
             name: string | null;
@@ -477,9 +478,10 @@ export interface components {
         /**
          * @description * `ok` - ok
          *     * `unavailable` - unavailable
+         *     * `outside_area` - outside_area
          * @enum {string}
          */
-        PoisStatusEnum: "ok" | "unavailable";
+        PoisStatusEnum: "ok" | "unavailable" | "outside_area";
         Route: {
             /** @description [[lat, lng], ...] */
             geometry: number[][];
@@ -522,6 +524,13 @@ export interface components {
             baseline: components["schemas"]["Route"];
             detour_m: number | null;
             extra_min: number | null;
+            /**
+             * @description outside_area = no place data for this area (the data covers the Tricity).
+             *
+             *     * `ok` - ok
+             *     * `unavailable` - unavailable
+             *     * `outside_area` - outside_area
+             */
             pois_status: components["schemas"]["PoisStatusEnum"];
             pois: components["schemas"]["Poi"][];
             transit_stops: components["schemas"]["TransitStop"][];
@@ -601,11 +610,12 @@ export interface components {
         /**
          * @description * `no_places_nearby` - no_places_nearby
          *     * `places_unavailable` - places_unavailable
+         *     * `outside_area` - outside_area
          *     * `no_route` - no_route
          *     * `no_routable_point` - no_routable_point
          * @enum {string}
          */
-        TripIdeaErrorCodeEnum: "no_places_nearby" | "places_unavailable" | "no_route" | "no_routable_point";
+        TripIdeaErrorCodeEnum: "no_places_nearby" | "places_unavailable" | "outside_area" | "no_route" | "no_routable_point";
         /** @description Only these fields are read. A client cannot send its own candidate list. */
         TripIdeaRequestRequest: {
             start: components["schemas"]["PointRequest"];

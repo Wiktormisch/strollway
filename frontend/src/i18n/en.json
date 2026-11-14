@@ -133,6 +133,7 @@
       "unknown": "Something went wrong while planning the route.",
       "noPlacesNearby": "We found no playgrounds, cafes or restaurants near this start point. Try another start, or a longer time limit.",
       "placesUnavailable": "The places service did not answer. Wait a moment and try again.",
+      "outsideArea": "We have place data for the Tricity only (Gdansk, Sopot, Gdynia). Choose a start in that area.",
       "invalidTrip": "The form has an invalid value. Check the start point and the profile, then try again."
     },
     "save": "Save walk",
@@ -145,7 +146,8 @@
       "change": "Change",
       "details": "Details"
     },
-    "results": "Your walk"
+    "results": "Your walk",
+    "dataArea": "Place data (OpenStreetMap) covers the Tricity only. The public Overpass API is often overloaded, so we use our own import."
   },
   "poi": {
     "title": "Places on the way",
@@ -159,12 +161,14 @@
       "wheelchair": "Wheelchair access",
       "changing_table": "Changing table"
     },
+    "outsideArea": "We have place data for the Tricity only. This route is outside that area.",
     "unavailable": "The places service did not answer.",
     "reload": "Load places again",
     "none": "There are no tagged places near this route in OpenStreetMap.",
     "allHidden": "All categories are hidden.",
     "categories": {
       "playground": "Playground",
+      "indoor_play": "Indoor play",
       "toilets": "Toilets",
       "cafe": "Cafe",
       "restaurant": "Restaurant",

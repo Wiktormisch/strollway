@@ -64,3 +64,20 @@ def test_simplify_short_line_unchanged():
 def test_straight_line():
     line = geo.straight_line((54.0, 18.0), (54.4, 18.4), points=5)
     assert line == [[54.0, 18.0], [54.1, 18.1], [54.2, 18.2], [54.3, 18.3], [54.4, 18.4]]
+
+
+def test_distance_to_polyline_uses_the_segment_not_only_vertices():
+    # A 1 km line west-east; the point is 50 m north of its middle, ~500 m from each vertex.
+    line = [(54.35, 18.60), (54.35, 18.6153)]
+    middle_north = (54.35045, 18.60765)
+
+    assert 45 < geo.distance_to_polyline_m(line, middle_north) < 55
+    assert geo.nearest_vertex(line, middle_north)[1] > 400
+
+
+def test_distance_to_polyline_past_the_end_and_single_point():
+    line = [(54.35, 18.60), (54.35, 18.61)]
+    east_of_end = (54.35, 18.6115)  # ~100 m east of the last vertex
+
+    assert 90 < geo.distance_to_polyline_m(line, east_of_end) < 110
+    assert geo.distance_to_polyline_m([(54.35, 18.60)], (54.35, 18.60)) == 0

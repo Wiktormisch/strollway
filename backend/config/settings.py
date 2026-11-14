@@ -144,7 +144,8 @@ CACHES = {
 ROUTING_PROVIDER = os.getenv("ROUTING_PROVIDER", "auto")  # auto | ors | mock
 ORS_BASE_URL = os.getenv("ORS_BASE_URL", "https://api.heigit.org/openrouteservice").rstrip("/")
 ORS_API_KEY = os.getenv("ORS_API_KEY", "")
-POI_PROVIDER = os.getenv("POI_PROVIDER", "auto")  # auto | overpass | mock
+# db = our Place table (run `import_places` first); overpass = live; "auto" = overpass.
+POI_PROVIDER = os.getenv("POI_PROVIDER", "db")  # db | overpass | mock
 OVERPASS_URL = os.getenv("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
 
 WEATHER_PROVIDER = os.getenv("WEATHER_PROVIDER", "auto")  # auto | mock

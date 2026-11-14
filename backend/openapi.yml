@@ -995,6 +995,7 @@ components:
     CategoryEnum:
       enum:
       - playground
+      - indoor_play
       - toilets
       - cafe
       - restaurant
@@ -1009,6 +1010,7 @@ components:
       type: string
       description: |-
         * `playground` - Playground
+        * `indoor_play` - Indoor play
         * `toilets` - Toilets
         * `cafe` - Cafe
         * `restaurant` - Restaurant
@@ -1426,10 +1428,12 @@ components:
       enum:
       - ok
       - unavailable
+      - outside_area
       type: string
       description: |-
         * `ok` - ok
         * `unavailable` - unavailable
+        * `outside_area` - outside_area
     Route:
       type: object
       properties:
@@ -1531,7 +1535,14 @@ components:
           type: integer
           nullable: true
         pois_status:
-          $ref: '#/components/schemas/PoisStatusEnum'
+          allOf:
+          - $ref: '#/components/schemas/PoisStatusEnum'
+          description: |-
+            outside_area = no place data for this area (the data covers the Tricity).
+
+            * `ok` - ok
+            * `unavailable` - unavailable
+            * `outside_area` - outside_area
         pois:
           type: array
           items:
@@ -1716,12 +1727,14 @@ components:
       enum:
       - no_places_nearby
       - places_unavailable
+      - outside_area
       - no_route
       - no_routable_point
       type: string
       description: |-
         * `no_places_nearby` - no_places_nearby
         * `places_unavailable` - places_unavailable
+        * `outside_area` - outside_area
         * `no_route` - no_route
         * `no_routable_point` - no_routable_point
     TripIdeaRequestRequest:
