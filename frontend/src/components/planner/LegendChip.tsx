@@ -22,14 +22,14 @@ export function LegendChip() {
         aria-label={label}
         title={label}
         onClick={() => setOpen((value) => !value)}
-        className="flex size-11 shrink-0 items-center justify-center rounded-full border bg-card text-foreground shadow-lg hover:bg-muted md:hidden"
+        className="flex size-11 shrink-0 items-center justify-center rounded-full border border-float-edge bg-card text-foreground shadow-float hover:bg-muted md:hidden"
       >
         {open ? <X aria-hidden className="size-5" /> : <Info aria-hidden className="size-5" />}
       </button>
       <div
         id="map-legend"
         className={cn(
-          'pointer-events-none rounded-2xl border bg-card px-3 py-2 shadow-lg md:block',
+          'pointer-events-none rounded-2xl border border-float-edge bg-card px-3 py-2 shadow-float md:block',
           !open && 'hidden',
         )}
       >
