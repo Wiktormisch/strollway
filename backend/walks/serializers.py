@@ -5,6 +5,7 @@ from django.db import transaction
 from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
+from planning import calories, services
 from walks.models import PACE_STEP_KMH, FamilyProfile, Stop, Walk, is_pace_step
 
 MAX_CHILDREN = 6
@@ -68,7 +69,7 @@ class FamilyProfileSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "kcal", "created_at", "updated_at"]
 
     def validate_children_ages(self, value):
         if not isinstance(value, list):
@@ -148,7 +149,21 @@ class StopSerializer(StopFieldsMixin, serializers.ModelSerializer):
         return attrs
 
 
-class WalkListSerializer(serializers.ModelSerializer):
+class KcalMixin(serializers.Serializer):
+    """`kcal`: computed when read, not stored (audit idea 1, DECISIONS.md section 13).
+
+    It uses the pace and the way of moving of the walk's profile, like the planner did.
+    """
+
+    kcal = serializers.SerializerMethodField()
+
+    def get_kcal(self, walk) -> int:
+        profile = walk.profile
+        pace_kmh = services.pace_kmh_for(profile)
+        return calories.estimate_kcal(walk.distance_m, pace_kmh, services.has_stroller(profile))
+
+
+class WalkListSerializer(KcalMixin, serializers.ModelSerializer):
     """A light version for the list: no geometry, no stops, only their count."""
 
     stops_count = serializers.IntegerField(read_only=True)
@@ -164,6 +179,7 @@ class WalkListSerializer(serializers.ModelSerializer):
             "avoid_stairs",
             "distance_m",
             "duration_min",
+            "kcal",
             "stairs_m",
             "stairs_avoided_m",
             "detour_m",
@@ -176,7 +192,7 @@ class WalkListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class WalkSerializer(serializers.ModelSerializer):
+class WalkSerializer(KcalMixin, serializers.ModelSerializer):
     """Detail and write serializer. Accepts an optional "stops" list on create only."""
 
     geometry = LatLngListJSONField(required=False)
@@ -208,6 +224,7 @@ class WalkSerializer(serializers.ModelSerializer):
             "avoid_stairs",
             "distance_m",
             "duration_min",
+            "kcal",
             "stairs_m",
             "stairs_avoided_m",
             "detour_m",
@@ -220,7 +237,7 @@ class WalkSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "kcal", "created_at", "updated_at"]
 
     def get_fields(self):
         fields = super().get_fields()

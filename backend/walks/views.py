@@ -48,7 +48,7 @@ class WalkViewSet(ClientScopedMixin, viewsets.ModelViewSet):
         return WalkListSerializer if self.action == "list" else WalkSerializer
 
     def get_queryset(self):
-        queryset = super().get_queryset()
+        queryset = super().get_queryset().select_related("profile")  # for kcal
         if self.action != "list":
             return queryset.prefetch_related("stops")
         status_filter = self.request.query_params.get("status")

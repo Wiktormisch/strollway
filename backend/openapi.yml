@@ -336,6 +336,7 @@ paths:
                         - 18.618458
                       distance_m: 420
                       duration_min: 6
+                      kcal: 23
                       stairs_m: 0
                       stairs_segments: []
                     baseline:
@@ -346,6 +347,7 @@ paths:
                         - 18.618458
                       distance_m: 132
                       duration_min: 2
+                      kcal: 7
                       stairs_m: 16.0
                       stairs_segments:
                       - - - 54.348
@@ -690,6 +692,7 @@ paths:
                         - 18.62
                       distance_m: 180
                       duration_min: 3
+                      kcal: 10
                       stairs_m: null
                       stairs_segments: []
                     baseline:
@@ -702,6 +705,7 @@ paths:
                         - 18.62
                       distance_m: 180
                       duration_min: 3
+                      kcal: 10
                       stairs_m: null
                       stairs_segments: []
                     detour_m: null
@@ -1473,6 +1477,9 @@ components:
         duration_min:
           type: integer
           description: At the family pace, computed in code.
+        kcal:
+          type: integer
+          description: Rough estimate for a 70 kg adult (+5% stroller).
         stairs_m:
           type: number
           format: double
@@ -1494,6 +1501,7 @@ components:
       - distance_m
       - duration_min
       - geometry
+      - kcal
       - stairs_m
       - stairs_segments
     RoutePlanError:
@@ -1999,6 +2007,9 @@ components:
           maximum: 9223372036854775807
           minimum: 0
           format: int64
+        kcal:
+          type: integer
+          readOnly: true
         stairs_m:
           type: integer
           maximum: 9223372036854775807
@@ -2055,6 +2066,7 @@ components:
       - end_lat
       - end_lng
       - id
+      - kcal
       - name
       - start_lat
       - start_lng
@@ -2087,6 +2099,9 @@ components:
           type: integer
           readOnly: true
         duration_min:
+          type: integer
+          readOnly: true
+        kcal:
           type: integer
           readOnly: true
         stairs_m:
@@ -2125,6 +2140,7 @@ components:
       - duration_min
       - end_label
       - id
+      - kcal
       - name
       - profile
       - rating

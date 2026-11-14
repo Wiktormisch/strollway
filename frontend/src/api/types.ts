@@ -105,7 +105,16 @@ export type WalkDetail = Required<Omit<Schemas['Walk'], 'geometry' | 'stops'>> &
 
 export type WalkCreate = Omit<
   WalkDetail,
-  'id' | 'status' | 'rating' | 'notes' | 'ai_summary' | 'stops' | 'created_at' | 'updated_at'
+  // kcal is computed by the server when it reads a walk, so a new walk never sends it.
+  | 'id'
+  | 'kcal'
+  | 'status'
+  | 'rating'
+  | 'notes'
+  | 'ai_summary'
+  | 'stops'
+  | 'created_at'
+  | 'updated_at'
 > & { stops: NestedStopInput[]; ai_summary?: string }
 
 export type WalkUpdate = Partial<Pick<WalkDetail, 'name' | 'notes' | 'status' | 'rating'>>
