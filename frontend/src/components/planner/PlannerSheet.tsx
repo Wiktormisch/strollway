@@ -23,8 +23,8 @@ export function PlannerSheet({ open, onToggle, sheetRef, children }: PlannerShee
       ref={sheetRef}
       aria-labelledby="planner-title"
       className={cn(
-        'absolute inset-x-0 bottom-0 z-10 flex max-h-[65%] flex-col rounded-t-3xl border-t bg-card shadow-[0_-8px_24px_rgb(0_0_0/0.12)]',
-        'md:static md:z-auto md:h-full md:max-h-none md:w-100 md:shrink-0 md:rounded-none md:border-t-0 md:border-r md:shadow-[8px_0_24px_rgb(0_0_0/0.08)]',
+        'absolute inset-x-0 bottom-0 z-10 flex max-h-[65%] flex-col rounded-t-3xl border-t border-float-edge bg-card shadow-[0_-8px_24px_var(--float-shadow-color)]',
+        'md:static md:z-auto md:h-full md:max-h-none md:w-100 md:shrink-0 md:rounded-none md:border-t-0 md:border-r md:shadow-[8px_0_24px_var(--float-shadow-color)]',
       )}
     >
       {/* Phones: one big button (the handle and the title). The h1 stays outside the button,

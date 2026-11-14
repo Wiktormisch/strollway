@@ -310,7 +310,7 @@ export function PlannerPage() {
       {/* Phone only: with the panel folded, the next step is a button on the map. */}
       {!sheetOpen && mode === 'trip' && tripStart && (
         <Button
-          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-float md:hidden"
           disabled={tripIdea.isPending}
           // Without a result it submits the folded form (the `form` attribute), so the
           // request has the same limit and wishes as the panel shows.
@@ -327,7 +327,7 @@ export function PlannerPage() {
       )}
       {!sheetOpen && mode === 'route' && request && (
         <Button
-          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-float md:hidden"
           disabled={fetching}
           onClick={result ? () => setSaveOpen(true) : plan}
         >

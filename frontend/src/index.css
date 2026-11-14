@@ -22,6 +22,7 @@
   --color-input: var(--input);
   --color-control-border: var(--control-border);
   --color-border: var(--border);
+  --color-float-edge: var(--float-edge);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
   --color-accent: var(--accent);
@@ -68,6 +69,9 @@
   --input: #e4e2dc;
   /* The edge of inputs, selects and text areas: 3:1 or more on card and background. */
   --control-border: #86837a;
+  /* Things that float over the map (top bar, panel, legend): edge and shadow colour. */
+  --float-edge: #e4e2dc;
+  --float-shadow-color: rgb(0 0 0 / 0.12);
   --ring: #2d6a4f;
   --brand: #2d6a4f;
   --brand-foreground: #ffffff;
@@ -103,6 +107,9 @@
   --border: #24394a;
   --input: #24394a;
   --control-border: #66808f;
+  /* The dark map is close to the card colour, so floating things need a clear edge. */
+  --float-edge: #3d5566;
+  --float-shadow-color: rgb(0 0 0 / 0.55);
   --ring: #74c69d;
   --brand: #74c69d;
   --brand-foreground: #0e1e2a;
@@ -190,12 +197,18 @@
  * OSM tiles are images, so CSS variables cannot recolour them. A filter does:
  * light theme: softer colours, so the sage route stands out;
  * dark theme: invert the brightness, and hue-rotate turns the colours back (green stays green).
+ *   Brightness stays a bit above 1, so the map is lighter than the panels over it.
  */
+/* One shadow for everything that floats over the map; its colour is a theme token. */
+@utility shadow-float {
+  box-shadow: 0 8px 24px var(--float-shadow-color);
+}
+
 .leaflet-tile-pane {
   filter: saturate(var(--map-saturate, 0.7)) contrast(0.95);
 }
 .dark .leaflet-tile-pane {
-  filter: invert(1) hue-rotate(180deg) saturate(0.4) brightness(0.9) contrast(0.9);
+  filter: invert(1) hue-rotate(180deg) saturate(0.4) brightness(1.05) contrast(0.9);
 }
 
 /* Leaflet paints popups white; in the dark theme they follow the app colours instead. */

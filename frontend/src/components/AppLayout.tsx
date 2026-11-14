@@ -41,7 +41,7 @@ export function AppLayout() {
           fullScreen ? 'absolute inset-x-0 top-0 md:left-100' : 'sticky top-0',
         )}
       >
-        <div className="mx-auto flex max-w-240 items-center gap-1 rounded-full border bg-card p-1.5 shadow-lg">
+        <div className="mx-auto flex max-w-240 items-center gap-1 rounded-full border border-float-edge bg-card p-1.5 shadow-float">
           <NavLink
             to="/"
             aria-label={t('app.name')}

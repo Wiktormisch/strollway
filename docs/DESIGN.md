@@ -40,6 +40,7 @@ Contrast was checked against WCAG 2.2: text needs 4.5:1, graphics need 3:1.
 | `stairs-text` | `#A8531F` | `#F0A574` | text about stairs | 4.9:1 (dark: 8.3:1) |
 | `border` | `#E4E2DC` | `#24394A` | lines, outlines | - |
 | `control-border` | `#86837A` | `#66808F` | edge of inputs, selects, text areas (WCAG 1.4.11) | 3.8:1 on card, 3.5:1 on background (dark: 4.1:1 / 3.6:1) |
+| `float-edge` | `#E4E2DC` | `#3D5566` | edge of things that float over the map (top bar, panel, legend), with the `shadow-float` utility (`--float-shadow-color`: 12% black, dark 55%) | dark: clearly lighter than the dark map |
 | `destructive` | `oklch(0.55 0.22 27.3)` | `oklch(0.704 0.191 22.2)` | delete actions, error text | 5.0:1 on background (dark: 5.9:1) |
 | `muted` | `#EFEDE7` | `#1A2F3F` | tab track, skeletons, hover | - |
 | `cat-play` | `#B83280` | `#F687B3` | playground, zoo, beach icons (graphics only) | 5.5:1 on white |
