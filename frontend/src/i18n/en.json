@@ -380,7 +380,7 @@
       "privacy": "Do not enter personal data. This text is sent to the AI model.",
       "submit": "Suggest a trip",
       "planning": "Planning the trip…",
-      "planningHint": "The AI model can take 10-20 seconds. Please wait.",
+      "planningHint": "The AI model can take up to a minute. Please wait.",
       "demoName": "Demo start"
     },
     "engine": {

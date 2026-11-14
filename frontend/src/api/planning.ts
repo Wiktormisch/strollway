@@ -11,7 +11,8 @@ export function postTripIdea(request: TripIdeaRequest): Promise<TripIdea> {
 
 /**
  * A mutation, not a query: every click on "Suggest" is a new LLM call, so nothing is cached.
- * No timeout on purpose: the backend ends the LLM call after 60 s and answers with rules.
+ * No client timeout: the backend gives the whole LLM chain one 50 s deadline and then answers
+ * with the rules, so a request ends in about a minute even when the AI model is slow.
  */
 export function useTripIdea() {
   return useMutation({ mutationFn: postTripIdea, retry: false })

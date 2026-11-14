@@ -28,14 +28,17 @@ def good_answer(*poi_ids):
 
 
 class FakeLLM:
-    def __init__(self, name, answer=None, error=None):
+    def __init__(self, name, answer=None, error=None, on_call=None):
         self.name = name
+        self.on_call = on_call
         self.answer = answer
         self.error = error
         self.calls = []
 
-    def complete_json(self, system, user, schema):
-        self.calls.append({"system": system, "user": user, "schema": schema})
+    def complete_json(self, system, user, schema, timeout_s=None):
+        self.calls.append({"system": system, "user": user, "schema": schema, "timeout": timeout_s})
+        if self.on_call:
+            self.on_call()
         if self.error:
             raise self.error
         return self.answer
@@ -210,3 +213,68 @@ def test_prompt_keeps_numbers_and_accessibility_claims_in_code():
     text = prompt.SYSTEM_PROMPT
     assert "Do not write distances, walking times or temperatures" in text
     assert "Do not claim that a route is step-free" in text
+
+
+# --- time budget (one deadline for the whole LLM chain) -----------------------------------
+
+
+class FakeClock:
+    def __init__(self):
+        self.now = 1000.0
+
+    def __call__(self):
+        return self.now
+
+
+@pytest.fixture
+def clock(monkeypatch):
+    fake = FakeClock()
+    monkeypatch.setattr(trip_planner.time, "monotonic", fake)
+    return fake
+
+
+def test_each_backend_gets_only_the_time_that_is_left(setup, clock):
+    def slow():
+        clock.now += 30
+
+    first, second = setup(
+        FakeLLM("anthropic", error=LLMError("timeout"), on_call=slow),
+        FakeLLM("nvidia", good_answer("node/1")),
+    )
+
+    idea = build()
+
+    assert idea["engine"] == "nvidia"
+    assert first.calls[0]["timeout"] == trip_planner.LLM_CHAIN_BUDGET_S
+    assert second.calls[0]["timeout"] == trip_planner.LLM_CHAIN_BUDGET_S - 30
+
+
+def test_no_backend_starts_when_the_budget_is_used_up(setup, clock):
+    def slow():
+        clock.now += trip_planner.LLM_CHAIN_BUDGET_S - trip_planner.MIN_LLM_CALL_S + 1
+
+    first, second = setup(
+        FakeLLM("anthropic", error=LLMError("timeout"), on_call=slow),
+        FakeLLM("nvidia", good_answer("node/1")),
+    )
+
+    idea = build()
+
+    assert idea["engine"] == "rules"
+    assert len(first.calls) == 1
+    assert second.calls == []
+
+
+def test_the_budget_counts_from_the_request_start(setup, clock, monkeypatch):
+    real_weather = trip_planner.weather.current_weather
+
+    def slow_weather(start):
+        clock.now += 20  # time spent before the LLM chain counts too
+        return real_weather(start)
+
+    monkeypatch.setattr(trip_planner.weather, "current_weather", slow_weather)
+    (llm,) = setup(FakeLLM("anthropic", good_answer("node/1")))
+
+    build()
+
+    assert llm.calls[0]["timeout"] == trip_planner.LLM_CHAIN_BUDGET_S - 20

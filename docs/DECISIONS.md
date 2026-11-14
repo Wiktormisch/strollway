@@ -353,3 +353,21 @@ Checked by hand on 2026-11-12.
 - **`/api/stops/` checks what the nested create checks:** at most 20 stops per walk and a different
   `order` for each stop. No database constraint yet: it needs a migration, and old databases may
   already have duplicate orders.
+
+### LLM time budget and Anthropic effort (audit L1, L2)
+
+- **One deadline for the LLM chain:** it ends 50 s after the request starts. Each backend gets
+  only the time that is left as its timeout, and none starts with less than 5 s. The Anthropic
+  client does not retry. With up to 60 s of ORS calls after it, a request stays under the planned
+  120 s gunicorn timeout. Known gap: the httpx and SDK timeouts limit each network step, not the
+  whole call, so a very slow stream can go a little over.
+- **`effort: medium`, `max_tokens: 8000`.** Measured on 2026-11-14 with `claude-opus-5-5`, the
+  demo trip (40 candidates, about 4,170 input tokens), 3 fake wishes per level:
+  - `low`: 4.7-5.5 s, 292-333 output tokens, 2 of 3 answers valid (one `unmet_wishes` text over
+    80 characters).
+  - `medium`: 8.2-8.5 s, 672-706 output tokens, 3 of 3 valid.
+  An invalid answer is paid for and then replaced by the rules, so `medium` wins for now. The
+  sample is small. Try `low` again after audit L3 (cutting too-long texts in code). Every call
+  ended with `end_turn`, far below 8,000 tokens.
+- **`ANTHROPIC_MODEL` takes an API model id** (`claude-opus-5-5`), not a CLI alias like `opus`:
+  the API answers 404, and every trip falls back to the rules. Leave it empty for the default.

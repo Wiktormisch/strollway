@@ -72,6 +72,6 @@ describe('TripIdeaForm', () => {
   it('shows a clear in-progress state', () => {
     renderForm({ planning: true })
     expect(screen.getByRole('button', { name: 'Planning the trip…' })).toBeDisabled()
-    expect(screen.getByRole('status')).toHaveTextContent(/10-20 seconds/)
+    expect(screen.getByRole('status')).toHaveTextContent(/up to a minute/)
   })
 })

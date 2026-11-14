@@ -380,7 +380,7 @@
       "privacy": "Nie wpisuj danych osobowych. Ten tekst jest wysyłany do modelu AI.",
       "submit": "Zaproponuj wycieczkę",
       "planning": "Planuję wycieczkę…",
-      "planningHint": "Model AI może potrzebować 10-20 sekund. Poczekaj chwilę.",
+      "planningHint": "Model AI może potrzebować do minuty. Poczekaj chwilę.",
       "demoName": "Start demo"
     },
     "engine": {
