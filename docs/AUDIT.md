@@ -25,7 +25,7 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 | 0 | Baseline: tests, linters, build, dependency audit | Done |
 | 1 | Documentation | Done |
 | 2 | Overpass and place data: diagnosis and alternatives | Done |
-| 3a | Backend: `config/`, `walks/`, security, deploy readiness | To do |
+| 3a | Backend: `config/`, `walks/`, security, deploy readiness | Done |
 | 3b | Backend: `planning/` and `planning/llm/` | To do |
 | 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | To do |
 | 4b | Frontend: UI/UX, accessibility, i18n, mobile | To do |
@@ -201,6 +201,79 @@ own stage before the deploy (stage 8). Keep live Overpass as an optional provide
 (`POI_PROVIDER=overpass`) for regions outside the import. Option A changes a decision in
 `DECISIONS.md:11` (from "Overpass only" to "OSM data, imported"), so record it there first. It
 also unblocks feature idea 10 (place search): a local table can be searched by name.
+
+## Part 3a: Backend core, security and deploy readiness
+
+Run on 2026-11-14 on `dev` at `9656488` (after the fixes for O1 and O2).
+
+Files read: `config/settings.py`, `config/urls.py`, `walks/` (`models.py`, `serializers.py`,
+`views.py`, `scoping.py`, `urls.py`, `demo_data.py`, `seed_demo`), `requirements*.txt`,
+`backend/.env.example`, `docs/PLAN.md` D.10 and "Stage 8". The deploy target is a small VPS with
+Docker Compose (Django on gunicorn, nginx, cloudflared).
+
+### Findings
+
+- **S1 [P1/M] `config/settings.py`** - there are no production security settings, and none of
+  them can be turned on by an environment variable: `SECURE_PROXY_SSL_HEADER`,
+  `SECURE_SSL_REDIRECT`, HSTS, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`,
+  `CSRF_TRUSTED_ORIGINS`. This confirms B4. Checked: with `DEBUG=0`, a strong random key and a
+  real host, `check --deploy` still gives W004, W008, W012 and W016. Stage 8 already plans this. Fix there, with the planned
+  production settings test.
+- **S2 [P1/S] write endpoints have no rate limit** - only `route-plans` and `trip-ideas` are
+  throttled (`planning/views.py:103`, `:210`). `/api/walks/`, `/api/stops/`, `/api/profiles/`
+  and `/api/demo-data/` accept any number of writes, and every random UUID is a new client.
+  Checked: 150 walk POSTs in a row all gave 201, and 30 `demo-data` POSTs with new UUIDs created
+  60 more walks. One walk at the limits (5,000 points, 20 stops, full texts) is 138 kB of JSON.
+  A simple script could fill the disk of the VPS with SQLite rows. Fix: a per-IP throttle for unsafe methods (for example
+  `120/hour`), and optionally a limit of walks per client (for example 200).
+- **S3 [P2/S] the shared `demo` client can be changed by anyone** - a request without
+  `X-Client-Id` uses the `demo` client (`walks/scoping.py:32-33`). On a public deploy, Swagger
+  "Try it out" can rename, delete or add walks for every visitor who looks at the demo data.
+  `seed_demo` matches items by name (`walks/demo_data.py:96-105`). Checked: a PATCH without a
+  header renamed a demo walk (200); after `seed_demo` the renamed walk stayed and a new copy was
+  added next to it (2 demo walks became 3). Fix: make `demo` read-only (only safe methods; writes without a
+  header give 400 with a clear message).
+- **S4 [P2/S] fixed paths for the database and the cache** - `db.sqlite3` and `.cache/` live in
+  `BASE_DIR` (`settings.py:80`, `:131`). In a container these must be on a volume, not next to the
+  code. Fix: `SQLITE_PATH` and `CACHE_DIR` variables with the current values as defaults. Do this in
+  stage 8.
+- **S5 [P3/S] no `LOGGING` setting** - Django configures only its own `django` loggers. For our
+  loggers (`planning.*`) Python prints only WARNING and higher, with no time and no logger name.
+  Checked: `info()` printed nothing, `warning()` printed the bare message. In `docker logs`, "Overpass unavailable" or an invalid LLM answer has no
+  context. Fix: a small `LOGGING` dict (console, level from `LOG_LEVEL`, a format with the time and
+  the logger).
+- **S6 [P3/S] `settings.py:124`, `:149`** - `int(os.getenv(...))` fails with a bare `ValueError`
+  when the variable is present but empty (`LLM_DAILY_LIMIT=`). Fix: an `env_int` helper next to
+  `env_list` with a clear message.
+- **S7 [P3/S] `/admin/` is on** - nobody uses it (there is no superuser and no admin task in the
+  plan), but on a public deploy it is a login page open to guessing. Fix: turn it on only with
+  `DEBUG=1` or an `ADMIN_ENABLED` variable. It also removes one reason for `collectstatic`.
+- **W1 [P2/S] `walks/serializers.py:83-96`** - `/api/stops/` does not check what the nested
+  create checks (`:200-206`): there is no limit of stops per walk, and two stops can have the same
+  `order`. Checked: 25 stops with `order: 1` on one walk all gave 201; the nested create with the
+  same order twice gives 400. Fix: the same two checks in `StopSerializer.validate`.
+- **W2 [P3/S] no pagination** - the list endpoints return all rows. Fine with the limit from S2;
+  without it, a client with thousands of walks gets one large answer.
+- **W3 [P3/S] `walks/serializers.py:42`** - a profile needs 1-6 child ages. Feature idea 5 ("a
+  child is not required") needs 0-6 here; the planner rules must then handle an empty list (check
+  in part 3b).
+- **W4 [P3/M] `walks/models.py:192-194`** - the pace has two values (`relaxed`, `normal`). Feature
+  idea 3 (a pace slider) needs a model change and a migration, and the speeds in
+  `planning/services.py` must follow.
+
+### What is good
+
+- Scoping by client is careful. A foreign object gives 404, not 403. A foreign profile or walk in
+  a payload gives "not found", with no hint that it exists. UUIDs are normalized, and a bad
+  header gives 400 before any lookup.
+- All validation is in the serializers, with clear limits (geometry 2-5,000 points, 20 nested
+  stops, text lengths, ranges for coordinates, `bool` is not accepted as a number).
+- No N+1 queries: the list uses a light serializer with `Count("stops")`, the detail uses
+  `prefetch_related`. A walk and its stops are created in one transaction with `bulk_create`.
+- `SECRET_KEY` is required when `DEBUG` is off. CORS is an explicit list with explicit headers.
+  `NUM_PROXIES` is documented, and forged `X-Forwarded-For` is ignored (#20).
+- `/api/health/` exists, and `seed_demo` is idempotent and works offline.
+- 66 tests in `walks/` and 5 in `tests/` (CORS, health).
 
 ## Feature ideas (input for part 5)
 
