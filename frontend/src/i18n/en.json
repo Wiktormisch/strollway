@@ -52,12 +52,10 @@
       "expand": "Show the panel"
     },
     "form": {
-      "hint": "Click the map: the first click sets the start, the second the end.",
+      "hint": "Tap the map: the first tap sets A, the second B. Or move the map and tap \"Change\".",
       "start": "Start",
       "end": "End",
-      "notSet": "not set",
       "clear": "Clear {{point}}",
-      "useCenter": "Set {{point}} at the map centre",
       "demoTitle": "Try a demo route",
       "avoidStairs": "Avoid stairs",
       "plan": "Plan route",
@@ -69,41 +67,55 @@
       "noStepFree": "No stair-free route"
     },
     "detour": {
-      "summary": "Route to follow: {{distance}}, {{duration}}.",
       "bigDetour": {
         "title": "Stair-free route: +{{detour}}, +{{minutes}} min",
-        "detail": "The shortest route has <stairs>{{stairs}} of stairs</stairs>. Stair-free route: +{{detour}}, +{{minutes}} min."
+        "detail": "The shortest route has <stairs>{{stairs}} of stairs</stairs>. Stair-free route: +{{detour}}, +{{minutes}} min.",
+        "tag": "Stair-free detour"
       },
       "tinyDetour": {
         "title": "You can avoid the stairs with almost no extra distance.",
-        "detail": "The shortest route has <stairs>{{stairs}} of stairs</stairs>. The stair-free route is only +{{detour}}."
+        "detail": "The shortest route has <stairs>{{stairs}} of stairs</stairs>. The stair-free route is only +{{detour}}.",
+        "tag": "Stair-free"
       },
       "noStepFree": {
         "title": "There is no stair-free route between these points.",
-        "detail": "The route has <stairs>{{stairs}} of stairs</stairs>, marked in red on the map."
+        "detail": "The route has <stairs>{{stairs}} of stairs</stairs>, marked in red on the map.",
+        "tag": "Stairs on the route"
       },
       "noStairs": {
         "title": "No stairs on this route.",
-        "detail": "You can go with a stroller the shortest way."
+        "detail": "You can go with a stroller the shortest way.",
+        "tag": "Stair-free"
       },
       "notSearched": {
         "title": "Stairs are not avoided.",
-        "detail": "The route has <stairs>{{stairs}} of stairs</stairs>, marked in red on the map."
+        "detail": "The route has <stairs>{{stairs}} of stairs</stairs>, marked in red on the map.",
+        "tag": "Stairs allowed"
       },
       "checkFailed": {
         "title": "We could not check for a stair-free route.",
-        "detail": "Showing the shortest route. It has <stairs>{{stairs}} of stairs</stairs>, marked in red."
+        "detail": "Showing the shortest route. It has <stairs>{{stairs}} of stairs</stairs>, marked in red.",
+        "tag": "Not checked"
       },
       "unknownStairs": {
         "title": "This is a straight line, not a real route.",
-        "detail": "We do not know if it has stairs."
-      }
+        "detail": "We do not know if it has stairs.",
+        "tag": "Estimate"
+      },
+      "stats": {
+        "distance": "Distance",
+        "time": "Time",
+        "places": "Places"
+      },
+      "statsLabel": "Route in numbers"
     },
     "legend": {
       "title": "Map legend",
       "route": "Route to follow",
       "baseline": "Shortest route",
-      "stairs": "Stairs"
+      "stairs": "Stairs",
+      "show": "Show the map legend",
+      "hide": "Hide the map legend"
     },
     "demoMode": {
       "fixture": "Demo mode: a recorded route (no routing key, or the service did not answer).",
@@ -123,7 +135,14 @@
     "save": "Save walk",
     "profile": {
       "label": "Family profile (sets the pace)"
-    }
+    },
+    "point": {
+      "onMap": "Point on the map",
+      "notSet": "Not set",
+      "change": "Change",
+      "details": "Details"
+    },
+    "results": "Your walk"
   },
   "poi": {
     "title": "Places on the way",
@@ -172,6 +191,7 @@
     "save": "Save",
     "saving": "Saving…",
     "cancel": "Cancel",
+    "close": "Close",
     "delete": "Delete",
     "retry": "Try again",
     "loading": "Loading…",
@@ -192,7 +212,8 @@
       "distance": "Distance",
       "duration": "Walking time",
       "stairsAvoided": "Stairs avoided",
-      "stops": "Stops"
+      "stops": "Stops",
+      "saved": "Saved {{date}}"
     },
     "rating": {
       "value": "{{value}} of 5"
@@ -232,6 +253,7 @@
     "back": "Back to my walks",
     "editName": "Edit the name",
     "stairsOnRoute": "Stairs on the route",
+    "statsLabel": "The walk in numbers",
     "notFound": {
       "title": "Walk not found.",
       "text": "It may have been deleted, or it was saved in another browser."
@@ -301,7 +323,8 @@
     "ageChip": "{{age}} y.",
     "empty": {
       "title": "No profiles yet.",
-      "text": "Add a profile to plan walks at your family's pace."
+      "text": "Add a profile to plan walks at your family's pace.",
+      "action": "Add a profile"
     },
     "wheels": {
       "none": "On foot",
@@ -343,10 +366,8 @@
   "trip": {
     "empty": "Set a start on the map (or try the demo start), say what you would like, and press \"Suggest a trip\".",
     "form": {
-      "hint": "Click the map to set the start. The trip starts and ends there.",
+      "hint": "Tap the map to set the start, or move the map and tap \"Change\". The trip starts and ends there.",
       "start": "Start",
-      "useCenter": "Set the start at the map centre",
-      "clearStart": "Clear the start",
       "demoStart": "Try the demo start",
       "minutes": "Time limit",
       "minutesOption": "{{minutes}} min",
@@ -357,7 +378,8 @@
       "privacy": "Do not enter personal data. This text is sent to the AI model.",
       "submit": "Suggest a trip",
       "planning": "Planning the trip…",
-      "planningHint": "The AI model can take 10-20 seconds. Please wait."
+      "planningHint": "The AI model can take 10-20 seconds. Please wait.",
+      "demoName": "Demo start"
     },
     "engine": {
       "ai": "Planned by AI",
@@ -396,5 +418,9 @@
       "dark": "Switch to dark theme",
       "light": "Switch to light theme"
     }
+  },
+  "topBar": {
+    "menu": "More options",
+    "theme": "Theme"
   }
 }

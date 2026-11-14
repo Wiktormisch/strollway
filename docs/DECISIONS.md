@@ -252,3 +252,87 @@ Checked by hand on 2026-11-12.
 - **Saved data:** stops get `order` 1..n in the trip order, `source` `"rules"` for the rule engine and `"ai"` for any LLM engine, the LLM `reason`, and the trip `summary` as `ai_summary`. A round trip ends at the start; a one-way trip ends at the last kept stop.
 - **One request, no cache:** trip ideas are a TanStack Query mutation. Every "Suggest" is a new call, and the client sets no timeout, because the backend ends the LLM call after 60 s and answers with rules.
 - **Language:** the UI language is sent as `pl` or `en` (`en-GB` becomes `en`).
+
+### Visual redesign "Nordic Sage" (stage 7b)
+
+- **Why a redesign:** an audit of the code (2026-11-13) found that all colour tokens were the
+  default grey shadcn palette, about 40 raw colours lived in components and map code, the stairs
+  result was a small alert in a long list, and most text was 12-14 px.
+- **Direction:** three directions were compared (warm natural, calm tool-like, playful). The
+  developer chose the warm natural one with a Scandinavian, minimal style and a deep navy
+  (`#12334A`) from an earlier idea. Spec: `docs/DESIGN.md`.
+- **No reverse geocoding.** The mock-up showed a place name for a clicked point. Getting it would
+  send the user's coordinates to a new outside service (AGENTS.md rule 5). The UI shows
+  "Point on the map" instead; demo routes keep their names.
+- **No dragging of the bottom sheet.** It needs gestures, keyboard access, tests and maybe a new
+  package. The handle is visual only and the sheet opens and closes as before.
+- **Figma:** Light and Dark are two variable collections, because the free Figma plan allows one
+  mode per collection. The Figma MCP Starter plan has a monthly call limit, so `docs/DESIGN.md`,
+  not Figma, is the source of truth for agents.
+- **Map colours follow the theme (stage 7b, session 2).** Leaflet draws lines as SVG with a
+  colour attribute, and an attribute cannot read `var(--brand)`. `src/lib/cssColors.ts` reads the
+  CSS variables from `<html>` and a `MutationObserver` on its `class` re-reads them when the theme
+  changes (button or system setting), so `lib/theme.ts` did not need to change. Markers are HTML,
+  so they use `var(--...)` directly and need no JavaScript. Missing variables fall back to the
+  light theme values.
+- **Success card text stays navy.** With the first sage `brand`, its text on `brand-soft` was only
+  about 4.3:1 (under 4.5:1). The success card uses `foreground` text with a `brand` icon and
+  border; with the later forest green this is kept for calm, readable text. Stars in the rating use `sage-500` (graphics only).
+- **Removed tokens:** the shadcn `sidebar-*` and `chart-*` tokens; nothing in the app used them.
+- **Readable route on OSM tiles.** Sage green is close to the parks and grey streets on the tiles.
+  Routes and stairs get a casing (a wider line in the `card` colour underneath), and the tile pane
+  gets a CSS filter: softer colours in the light theme (saturate 0.7), inverted brightness with `hue-rotate` in
+  the dark theme. The tiles stay OpenStreetMap; only the browser recolours them.
+- **More colour: forest green actions, turquoise route (2026-11-13).** The first Nordic Sage
+  version looked calm but grey. The developer chose a forest green `brand` for the main button,
+  switches and selected states, a turquoise `route` line with a white casing and a glow (a wide,
+  transparent line, because CSS filters on SVG paths are not reliable in every browser), A = green,
+  B = navy. Orange stays for stairs and warnings only, never for markers or actions, so it
+  always means "be careful".
+- **Category colours: five groups, not eleven colours (stage 7b, session 3).** New tokens
+  `cat-play` (playground, zoo, beach), `cat-food` (cafe, restaurant, shop) and `cat-care`
+  (toilets, water); parks and benches use `sage-500`, museums and unknown places
+  `muted-foreground`. Each has at least 5:1 on white and 6:1 on the dark card (graphics need 3:1).
+  No orange or yellow, because terracotta means stairs. `categoryColor()` returns `var(--...)`,
+  because Tailwind cannot see class names built at runtime; the map markers use the same value.
+- **Touch sizes in the shared components.** Buttons, inputs, selects and tabs are 44-48 px high,
+  so every page gets larger targets, not only the planner. Dense chips (`size="sm"`, demo routes,
+  time limits, place filters) are 36 px with an 8 px gap.
+- **Phone menu as a popover.** Language and theme are toggles, not commands, so the "more" button
+  opens a Radix Popover (already in `radix-ui`, no new package). From 768 px they sit in the bar.
+- **Point rows never show coordinates.** The label is "Point on the map" or the demo name; the
+  coordinates are in a closed `<details>`. The demo name is derived from the point (a point equal
+  to a demo point), so a map click removes it with no extra state.
+- **Result title is 20 px, not 24 px.** Polish result titles are long full sentences; at 24 px they
+  wrap to three or four lines on a phone.
+- **Legend chip.** Phones: an "i" button under the zoom buttons opens it, because an open chip
+  covered point B (developer check). From 768 px: always open, bottom left of the map.
+- **Marker outline is `card`, not white.** In the dark theme point B is light, so a white outline
+  disappeared. `card` is white in the light theme (as in the mock-up) and navy in the dark one.
+- **Collapsible sections use a button inside the heading**, not `<details>`: a heading inside
+  `<summary>` is lost for some screen readers, because `<summary>` acts as a button.
+- **Other pages: a 960 px column (stage 7b, session 4).** Walks, walk detail and profiles use
+  `max-w-240` with cards on `background`; the top bar uses the same width, so both edges line up.
+- **One warning banner for every load error.** `WarningBanner` (`stairs-text` on an 8% `stairs`
+  tint) replaces the red `destructive` boxes on all pages and in the planner. 8%, not 10%: at 10%
+  the text is 4.42:1 on the light background (under 4.5:1); at 8% it is 4.52:1 on `background`,
+  4.87:1 on `card` and over 7:1 in the dark theme (checked with a script).
+- **Empty states have one action.** A dashed card with a `muted-foreground/40` outline (the plain
+  `border` colour was almost invisible on white, developer check). When the page header already
+  has the primary button, the empty state action is `secondary`, so there is one primary per screen.
+- **Walk cards: a stretched link.** Only the name is a link; its `::after` layer covers the card.
+  The whole card is clickable and the heading stays a heading for screen readers.
+- **Walk filters look like tabs but are toggle buttons** (`aria-pressed`). They filter one list;
+  tabs (`role="tab"`) would promise separate panels.
+- **Saved stops: number + category colour.** On the walk map a stop is its number on a `card` circle
+  with a category-coloured outline. The order matters on a saved walk, so the number stays; the
+  colour matches the icon in the stop list. Marker helpers moved from `MapView` to `lib/mapIcons.tsx`
+  so both maps share them.
+- **"Delete walk" sits at the end of the page,** under a line, as a red outline button. It is rare
+  and cannot be undone, so it is not next to the title.
+- **Dialogs scroll and keep their actions visible.** The base dialog is `card`, `rounded-2xl`,
+  `max-h-[calc(100dvh-2rem)]` with its own scroll (`dvh` shrinks with the on-screen keyboard), and
+  `DialogFooter` sticks to the bottom. Its negative margins match the dialog padding (20/24 px); change
+  both together. The overlay is `foreground/25` (light) and `background/70` (dark) instead of black.
+- **Shadows use plain black with low alpha** (`rgb(0 0 0 / 0.12)`). They are not palette colours,
+  and both themes need the same dark shadow, so there is no token for them.

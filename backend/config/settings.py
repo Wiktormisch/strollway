@@ -102,6 +102,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 CORS_ALLOWED_ORIGINS = env_list("CORS_ALLOWED_ORIGINS", "http://localhost:5173")
 CORS_ALLOW_HEADERS = ["accept", "content-type", "x-client-id"]
 
+# Defaults of the per-IP limits; .env can change them (tests check these, not .env).
+ROUTE_PLANS_DEFAULT_RATE = "60/hour"
+TRIP_IDEAS_DEFAULT_RATE = "20/hour"
+
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_RENDERER_CLASSES": ["rest_framework.renderers.JSONRenderer"],
@@ -111,9 +115,13 @@ REST_FRAMEWORK = {
     "UNAUTHENTICATED_USER": None,
     # Per-IP limits for the endpoints that call shared external APIs.
     "DEFAULT_THROTTLE_RATES": {
-        "route_plans": os.getenv("ROUTE_PLANS_RATE", "60/hour"),
-        "trip_ideas": os.getenv("TRIP_IDEAS_RATE", "20/hour"),
+        "route_plans": os.getenv("ROUTE_PLANS_RATE", ROUTE_PLANS_DEFAULT_RATE),
+        "trip_ideas": os.getenv("TRIP_IDEAS_RATE", TRIP_IDEAS_DEFAULT_RATE),
     },
+    # How many reverse proxies stand in front of Django. 0 = trust only the TCP address,
+    # so a client cannot pick its own "IP" with an X-Forwarded-For header and skip the
+    # limits. Behind one proxy (e.g. nginx or a PaaS router), set DRF_NUM_PROXIES=1.
+    "NUM_PROXIES": int(os.getenv("DRF_NUM_PROXIES", "0")),
 }
 
 # File cache for external API results (ORS and Overpass), 24 h. Survives restarts.

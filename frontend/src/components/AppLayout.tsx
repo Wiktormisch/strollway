@@ -4,6 +4,7 @@ import { Baby } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { LanguageSwitch } from './LanguageSwitch'
 import { ThemeSwitch } from './ThemeSwitch'
+import { TopBarMenu } from './TopBarMenu'
 
 const NAV_ITEMS = [
   { to: '/', key: 'nav.planner', end: true },
@@ -20,17 +21,30 @@ export function AppLayout() {
     <div
       className={cn(
         'flex flex-col bg-background text-foreground',
-        fullScreen ? 'h-svh' : 'min-h-svh',
+        fullScreen ? 'relative h-svh' : 'min-h-svh',
       )}
     >
-      <header className="border-b">
-        {/* One row on phones: only the logo icon and short language codes are visible there. */}
-        <div className="mx-auto flex max-w-5xl items-center gap-2 px-4 py-2 sm:gap-4 sm:py-3">
-          <NavLink to="/" className="flex shrink-0 items-center gap-2 text-lg font-semibold">
-            <Baby aria-hidden className="size-5" />
-            <span className="sr-only sm:not-sr-only">{t('app.name')}</span>
+      {/* A floating pill bar (DESIGN.md section 6). Over the map on the planner (to the right
+          of the 400 px panel on wide screens), and sticky at the top on other pages. */}
+      <header
+        className={cn(
+          'z-20 px-3 pt-3',
+          fullScreen ? 'absolute inset-x-0 top-0 md:left-100' : 'sticky top-0',
+        )}
+      >
+        <div className="mx-auto flex max-w-240 items-center gap-1 rounded-full border bg-card p-1.5 shadow-lg">
+          <NavLink
+            to="/"
+            aria-label={t('app.name')}
+            className="flex size-11 shrink-0 items-center justify-center gap-2 rounded-full text-brand hover:bg-muted lg:w-auto lg:px-3"
+          >
+            <Baby aria-hidden className="size-6" />
+            <span className="hidden text-base font-semibold text-foreground lg:inline">
+              {t('app.name')}
+            </span>
           </NavLink>
-          <nav className="flex min-w-0 flex-1 gap-0.5 overflow-x-auto sm:gap-1">
+          {/* No sideways scrolling: three short links fit next to the logo and the menu. */}
+          <nav className="flex min-w-0 flex-1 gap-0.5">
             {NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.to}
@@ -38,22 +52,29 @@ export function AppLayout() {
                 end={item.end}
                 className={({ isActive }) =>
                   cn(
-                    'shrink-0 rounded-md px-2 py-1.5 text-sm whitespace-nowrap hover:bg-muted sm:px-3',
-                    isActive && 'bg-muted font-medium',
+                    'flex h-11 min-w-0 items-center rounded-full px-2.5 text-sm whitespace-nowrap hover:bg-muted sm:px-4',
+                    isActive && 'bg-brand-soft font-medium text-foreground hover:bg-brand-soft',
                   )
                 }
               >
-                {t(item.key)}
+                <span className="truncate">{t(item.key)}</span>
               </NavLink>
             ))}
           </nav>
-          <ThemeSwitch />
-          <LanguageSwitch />
+          <div className="md:hidden">
+            <TopBarMenu />
+          </div>
+          <div className="hidden items-center gap-1 md:flex">
+            <ThemeSwitch />
+            <LanguageSwitch />
+          </div>
         </div>
       </header>
       <main
         className={cn(
-          fullScreen ? 'relative min-h-0 flex-1' : 'mx-auto w-full max-w-5xl px-4 py-6',
+          fullScreen
+            ? 'relative min-h-0 flex-1'
+            : 'mx-auto w-full max-w-240 px-4 pt-6 pb-10 md:pt-8',
         )}
       >
         <Outlet />

@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { categoryIcon } from '@/constants/poiCategories'
+import { categoryColor, categoryIcon } from '@/constants/poiCategories'
 import type { CategoryCount } from '@/lib/planner'
 import { cn } from '@/lib/utils'
 import { categoryLabel } from '@/lib/poiLabel'
@@ -15,7 +15,7 @@ export function PoiFilterChips({ categories, hidden, onToggle }: PoiFilterChipsP
   const { t } = useTranslation()
 
   return (
-    <div role="group" aria-label={t('poi.filterLabel')} className="flex flex-wrap gap-1.5">
+    <div role="group" aria-label={t('poi.filterLabel')} className="flex flex-wrap gap-2">
       {categories.map(({ category, count }) => {
         const Icon = categoryIcon(category)
         const shown = !hidden.has(category)
@@ -26,14 +26,19 @@ export function PoiFilterChips({ categories, hidden, onToggle }: PoiFilterChipsP
             aria-pressed={shown}
             onClick={() => onToggle(category)}
             className={cn(
-              'inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs outline-none',
+              'inline-flex h-9 items-center gap-1.5 rounded-full border px-3 text-sm outline-none',
               'focus-visible:ring-3 focus-visible:ring-ring/50',
+              // Shown: a brand outline and a coloured icon. Hidden: muted and crossed out.
               shown
-                ? 'border-primary bg-primary text-primary-foreground'
-                : 'bg-background line-through opacity-70',
+                ? 'border-brand/60 bg-card text-foreground hover:bg-brand-soft'
+                : 'bg-muted text-muted-foreground line-through hover:bg-background',
             )}
           >
-            <Icon aria-hidden className="size-3.5" />
+            <Icon
+              aria-hidden
+              className="size-4"
+              style={shown ? { color: categoryColor(category) } : undefined}
+            />
             {categoryLabel(t, category)} <span className="tabular-nums">({count})</span>
           </button>
         )

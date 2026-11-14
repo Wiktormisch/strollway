@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from 'react'
+import { createElement, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
 import { Plus, Trash2 } from 'lucide-react'
 import { toast } from 'sonner'
@@ -16,6 +16,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select'
+import { categoryColor, categoryIcon } from '@/constants/poiCategories'
 import { errorMessage, parseFieldErrors } from '@/lib/fieldErrors'
 import {
   MAX_STOP_MINUTES as MAX_MINUTES,
@@ -70,13 +71,13 @@ export function StopEditor(props: StopEditorProps) {
   }
 
   return (
-    <section aria-labelledby="stops-title" className="space-y-3">
+    <section aria-labelledby="stops-title" className="space-y-3 rounded-2xl border bg-card p-5">
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 id="stops-title" className="text-lg font-semibold">
           {t('stops.title')}
         </h2>
         {!props.adding && (
-          <Button size="sm" variant="outline" onClick={() => props.onAddingChange(true)}>
+          <Button variant="secondary" onClick={() => props.onAddingChange(true)}>
             <Plus aria-hidden />
             {t('stops.add')}
           </Button>
@@ -166,14 +167,9 @@ function StopRow(props: {
   }
 
   return (
-    <form noValidate onSubmit={save} className="space-y-2 rounded-lg border p-3">
+    <form noValidate onSubmit={save} className="space-y-3 rounded-xl border p-3 sm:p-4">
       <div className="flex items-start justify-between gap-2">
-        <p className="font-medium break-words">
-          <span className="mr-2 inline-flex size-6 items-center justify-center rounded-full bg-blue-600 text-xs text-white">
-            {props.number}
-          </span>
-          {props.label}
-        </p>
+        <StopTitle number={props.number} category={props.stop.category} label={props.label} />
         <Button
           type="button"
           variant="ghost"
@@ -215,12 +211,37 @@ function StopRow(props: {
       </div>
       {dirty && (
         <div className="flex justify-end">
-          <Button type="submit" size="sm" disabled={update.isPending}>
+          <Button type="submit" disabled={update.isPending}>
             {update.isPending ? t('common.saving') : t('common.save')}
           </Button>
         </div>
       )}
     </form>
+  )
+}
+
+/**
+ * The number matches the map marker (same category-coloured outline); the icon tells the
+ * category at a glance. The label never contains coordinates (the name or the category).
+ */
+export function StopTitle(props: { number: number; category: string; label: string }) {
+  const color = categoryColor(props.category)
+  return (
+    <p className="flex min-w-0 items-center gap-2.5 pt-1.5 font-medium">
+      <span
+        className="inline-flex size-8 shrink-0 items-center justify-center rounded-full border-3 bg-card text-sm font-bold"
+        style={{ borderColor: color }}
+      >
+        {props.number}
+      </span>
+      {/* createElement: the icon is looked up, not created, during render (React Compiler rule). */}
+      {createElement(categoryIcon(props.category), {
+        'aria-hidden': true,
+        className: 'size-5 shrink-0',
+        style: { color },
+      })}
+      <span className="min-w-0 break-words">{props.label}</span>
+    </p>
   )
 }
 
@@ -274,7 +295,11 @@ function NewStopForm(props: {
   }
 
   return (
-    <form noValidate onSubmit={submit} className="space-y-3 rounded-lg border border-amber-400 p-3">
+    <form
+      noValidate
+      onSubmit={submit}
+      className="space-y-3 rounded-xl border-2 border-brand p-3 sm:p-4"
+    >
       <p className="text-sm" aria-live="polite">
         {props.draft ? t('stops.pointSet') : t('stops.addHint')}
       </p>
@@ -324,10 +349,10 @@ function NewStopForm(props: {
         </div>
       </div>
       <div className="flex justify-end gap-2">
-        <Button type="button" variant="outline" size="sm" onClick={props.onDone}>
+        <Button type="button" variant="outline" onClick={props.onDone}>
           {t('common.cancel')}
         </Button>
-        <Button type="submit" size="sm" disabled={create.isPending}>
+        <Button type="submit" disabled={create.isPending}>
           {create.isPending ? t('common.saving') : t('stops.addSubmit')}
         </Button>
       </div>

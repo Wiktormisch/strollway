@@ -4,6 +4,7 @@ import { X } from 'lucide-react'
 import type { FamilyProfile, Pace, ProfileInput, Wheels } from '@/api/types'
 import { FieldError } from '@/components/common/States'
 import { Button } from '@/components/ui/button'
+import { DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import {
@@ -85,20 +86,20 @@ export function ProfileForm(props: ProfileFormProps) {
 
       <fieldset className="space-y-1.5">
         <legend className="text-sm font-medium">{t('profiles.form.ages')}</legend>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-sm text-muted-foreground">
           {t('profiles.form.agesHint', { max: MAX_CHILDREN, maxAge: MAX_CHILD_AGE })}
         </p>
         {ages.length > 0 && (
-          <ul className="flex flex-wrap gap-1.5">
+          <ul className="flex flex-wrap gap-2">
             {ages.map((age, index) => (
               <li
                 key={index}
-                className="flex items-center gap-1 rounded-full bg-muted py-0.5 pr-1 pl-3 text-sm"
+                className="flex h-9 items-center gap-1 rounded-full bg-muted pr-0.5 pl-3 text-sm"
               >
                 {t('profiles.ageChip', { age })}
                 <button
                   type="button"
-                  className="rounded-full p-1 hover:bg-background"
+                  className="flex size-8 items-center justify-center rounded-full outline-none hover:bg-card focus-visible:ring-3 focus-visible:ring-ring/50"
                   aria-label={t('profiles.form.removeAge', { age })}
                   onClick={() => setAges(ages.filter((_, i) => i !== index))}
                 >
@@ -129,7 +130,7 @@ export function ProfileForm(props: ProfileFormProps) {
               }
             }}
           />
-          <Button type="button" variant="outline" onClick={addAge}>
+          <Button type="button" variant="secondary" onClick={addAge}>
             {t('profiles.form.addAge')}
           </Button>
         </div>
@@ -171,14 +172,14 @@ export function ProfileForm(props: ProfileFormProps) {
         </div>
       </div>
 
-      <div className="flex justify-end gap-2">
+      <DialogFooter>
         <Button type="button" variant="outline" onClick={props.onCancel}>
           {t('common.cancel')}
         </Button>
         <Button type="submit" disabled={props.submitting}>
           {props.submitting ? t('common.saving') : t('common.save')}
         </Button>
-      </div>
+      </DialogFooter>
     </form>
   )
 }

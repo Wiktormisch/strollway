@@ -1,11 +1,13 @@
-// A thin Leaflet wrapper for a saved walk: the route, A/B and numbered stops.
+// A thin Leaflet wrapper for a saved walk: the route, A/B and numbered stops in category colours.
 // The planner map is built around a RoutePlan, so this one stays separate and simple.
 import { useEffect } from 'react'
-import { divIcon, latLngBounds, type DivIcon } from 'leaflet'
+import { latLngBounds } from 'leaflet'
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
 import type { LatLng, LatLngTuple, Stop } from '@/api/types'
-import { ROUTE_STYLE } from '@/constants/mapStyles'
+import { mapLineStyles } from '@/constants/mapStyles'
+import { useMapColors } from '@/lib/cssColors'
+import { letterIcon, stopIcon } from '@/lib/mapIcons'
 
 export interface WalkMapProps {
   geometry: LatLngTuple[]
@@ -20,6 +22,7 @@ export interface WalkMapProps {
 }
 
 export function WalkMap(props: WalkMapProps) {
+  const lines = mapLineStyles(useMapColors())
   return (
     <MapContainer
       center={[props.start.lat, props.start.lng]}
@@ -33,20 +36,28 @@ export function WalkMap(props: WalkMapProps) {
       />
       <FitBounds points={props.geometry} />
       {props.onMapClick && <ClickHandler onClick={props.onMapClick} />}
-      <Polyline positions={props.geometry} pathOptions={ROUTE_STYLE} />
-      <Marker position={[props.start.lat, props.start.lng]} icon={badgeIcon('A', '#059669')} />
-      <Marker position={[props.end.lat, props.end.lng]} icon={badgeIcon('B', '#7c3aed')} />
+      <Polyline positions={props.geometry} pathOptions={lines.routeGlow} />
+      <Polyline positions={props.geometry} pathOptions={lines.routeCasing} />
+      <Polyline positions={props.geometry} pathOptions={lines.route} />
+      <Marker
+        position={[props.start.lat, props.start.lng]}
+        icon={letterIcon('A', 'var(--brand)')}
+      />
+      <Marker position={[props.end.lat, props.end.lng]} icon={letterIcon('B', 'var(--primary)')} />
       {props.stops.map((stop, index) => (
         <Marker
           key={stop.id}
           position={[stop.lat, stop.lng]}
-          icon={badgeIcon(String(index + 1), '#2563eb')}
+          icon={stopIcon(index + 1, stop.category)}
           title={props.stopLabel(stop)}
           alt={props.stopLabel(stop)}
         />
       ))}
       {props.draft && (
-        <Marker position={[props.draft.lat, props.draft.lng]} icon={badgeIcon('+', '#d97706')} />
+        <Marker
+          position={[props.draft.lat, props.draft.lng]}
+          icon={letterIcon('+', 'var(--sage-500)')}
+        />
       )}
     </MapContainer>
   )
@@ -66,20 +77,4 @@ function FitBounds({ points }: { points: LatLngTuple[] }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, key])
   return null
-}
-
-const iconCache = new Map<string, DivIcon>()
-
-function badgeIcon(text: string, color: string): DivIcon {
-  const cacheKey = `${text}-${color}`
-  const cached = iconCache.get(cacheKey)
-  if (cached) return cached
-  const icon = divIcon({
-    html: `<span class="sw-point-icon" style="background:${color}">${text}</span>`,
-    className: '',
-    iconSize: [30, 30],
-    iconAnchor: [15, 15],
-  })
-  iconCache.set(cacheKey, icon)
-  return icon
 }

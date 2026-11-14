@@ -5,12 +5,11 @@ import { toast } from 'sonner'
 import { useCreateProfile, useDeleteProfile, useProfiles, useUpdateProfile } from '@/api/profiles'
 import type { FamilyProfile, ProfileInput } from '@/api/types'
 import { ConfirmDialog } from '@/components/common/ConfirmDialog'
-import { EmptyState, LoadError } from '@/components/common/States'
+import { EmptyState, ListSkeleton, LoadError } from '@/components/common/States'
 import { ProfileForm } from '@/components/profiles/ProfileForm'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
-import { Skeleton } from '@/components/ui/skeleton'
 import { errorMessage, NO_ERRORS, parseFieldErrors, type FormErrors } from '@/lib/fieldErrors'
 import { PROFILE_FIELDS } from '@/lib/formRules'
 import { usePageTitle } from '@/lib/usePageTitle'
@@ -68,25 +67,32 @@ export function ProfilesPage() {
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex flex-wrap items-center justify-between gap-2">
-        <h1 className="text-2xl font-semibold">{t('pages.profiles.title')}</h1>
+    <div className="space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <h1 className="text-2xl font-semibold tracking-[-0.01em]">{t('pages.profiles.title')}</h1>
         <Button onClick={() => openForm('new')}>
           <Plus aria-hidden />
           {t('profiles.new')}
         </Button>
       </div>
-      <p className="text-sm text-muted-foreground">{t('profiles.intro')}</p>
+      <p className="-mt-2 text-sm text-muted-foreground">{t('profiles.intro')}</p>
 
       {profiles.isPending && (
-        <div className="grid gap-3 sm:grid-cols-2" role="status" aria-label={t('common.loading')}>
-          <Skeleton className="h-28" />
-          <Skeleton className="h-28" />
-        </div>
+        <ListSkeleton count={2} itemClassName="h-28" className="sm:grid-cols-2" />
       )}
       {profiles.isError && <LoadError error={profiles.error} onRetry={() => profiles.refetch()} />}
       {profiles.data?.length === 0 && (
-        <EmptyState title={t('profiles.empty.title')} text={t('profiles.empty.text')} />
+        <EmptyState
+          title={t('profiles.empty.title')}
+          text={t('profiles.empty.text')}
+          // Secondary: the green "New profile" in the header stays the one primary action.
+          action={
+            <Button variant="secondary" onClick={() => openForm('new')}>
+              <Plus aria-hidden />
+              {t('profiles.empty.action')}
+            </Button>
+          }
+        />
       )}
       {profiles.data && profiles.data.length > 0 && (
         <ul className="grid gap-3 sm:grid-cols-2">
@@ -103,7 +109,7 @@ export function ProfilesPage() {
       )}
 
       <Dialog open={editing !== null} onOpenChange={(open) => !open && setEditing(null)}>
-        <DialogContent className="max-h-[90svh] overflow-y-auto">
+        <DialogContent>
           <DialogHeader>
             <DialogTitle>{editing === 'new' ? t('profiles.new') : t('profiles.edit')}</DialogTitle>
           </DialogHeader>
@@ -146,9 +152,9 @@ function ProfileCard({
   const { t } = useTranslation()
   return (
     <Card>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-3">
         <div className="flex items-start justify-between gap-2">
-          <h2 className="font-medium break-words">{profile.name}</h2>
+          <h2 className="min-w-0 pt-2.5 text-base font-semibold break-words">{profile.name}</h2>
           <div className="flex shrink-0 gap-1">
             <Button
               variant="ghost"
@@ -168,9 +174,9 @@ function ProfileCard({
             </Button>
           </div>
         </div>
-        <ul className="flex flex-wrap gap-1.5" aria-label={t('profiles.form.ages')}>
+        <ul className="flex flex-wrap gap-2" aria-label={t('profiles.form.ages')}>
           {profile.children_ages.map((age, index) => (
-            <li key={index} className="rounded-full bg-muted px-2.5 py-0.5 text-sm">
+            <li key={index} className="rounded-full bg-brand-soft px-3 py-1 text-sm font-medium">
               {t('profiles.ageChip', { age })}
             </li>
           ))}

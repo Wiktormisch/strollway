@@ -49,6 +49,17 @@ describe('WalkDetailPage', () => {
     expect(screen.getByText('Fake Playground')).toBeInTheDocument()
   })
 
+  it('shows the stats row and the status chip, and no raw coordinates', async () => {
+    mockWalk()
+    renderPage()
+    await screen.findByRole('heading', { name: 'Fake park loop' })
+    const stats = screen.getByLabelText('The walk in numbers')
+    expect(within(stats).getByText('Stairs on the route')).toBeInTheDocument()
+    expect(screen.getByText('Planned')).toBeInTheDocument()
+    // Stop rows show a name or a category, never "54.35, 18.64" style numbers.
+    expect(document.body.textContent).not.toMatch(/\d+\.\d{3,}/)
+  })
+
   it('shows a not-found state for a missing walk', async () => {
     mockApi({ 'GET /api/walks/1/': Response.json({ detail: 'Not found.' }, { status: 404 }) })
     renderPage()

@@ -38,6 +38,35 @@ Before any code, the riskiest assumptions of the plan were checked by hand again
 - The flags of `claude -p` were read from `claude --help`, not guessed, and were tested in stage 6. The test showed that without `--safe-mode` the CLI read the developer's global `CLAUDE.md` and answered with a triage block instead of JSON.
 - In stage 7 the developer asked whether the agent had followed the global rules and to review its plan critically. The agent admitted two misses (it wrote in English instead of Polish, and gave no score) and found a contract gap it had played down: after removing a stop, the route and the arrival times are out of date, and the browser cannot recalculate them. The developer chose to keep the route and say so in the UI. Later reviews of the agent's own diff found a wrong error message, unsafe list keys and a light theme flash, all fixed before commit.
 - Manual testing by the developer (a checklist of about 45 points) found what automated tests did not: a missing map button on phones, the ignored dark system theme, and a cached favicon. The agent also proposed a merge commit prefix (`release:`) that is not a Conventional Commits type, and corrected it itself when the developer asked for the exact merge texts.
+- In stage 7b, session 2 (tokens), the agent did not see the running app; the developer's
+  screenshots showed what tests could not: the sage route was hard to read on OSM tiles and the map
+  stayed light in the dark theme (tiles are images). The agent added a route casing and a CSS filter
+  on the tiles, then a temporary in-app colour playground so the developer could try colours live;
+  the developer chose forest green actions and a turquoise route from it. Each critical review of
+  the agent's own plan or diff found real gaps (a CSS filter on SVG paths is not reliable in every
+  browser, the legend kept the old colour, outdated contrast notes).
+- In the redesign (stage 7b) the agent audited the UI from the code, proposed three directions, and
+  built the colour variables, type styles, one mobile screen (light and dark) and four components in
+  Figma through the Figma MCP server. It reported honestly that it had not seen the running app.
+  The free MCP plan ran out of calls mid-task, before the agent could check the dark screen; the
+  developer checked it by hand. When asked to review its own plan critically, the agent found that
+  the mock-up implied reverse geocoding (sending coordinates to a new service, against rule 5) and a
+  draggable sheet (a feature, not a style); the developer chose to leave both out.
+- In stage 7b, session 3 (planner layout), the developer asked the agent to check its plan in the
+  code before starting. The check found 32 px buttons (under the 44 px touch target), the Leaflet
+  zoom hidden by the new floating top bar, and a second start row in the trip form. The developer
+  split the work into four parts, each checked on screenshots and committed on its own. Screenshots
+  again found what tests could not: the legend chip covered point B, and the white marker outline
+  disappeared on the light B marker in the dark theme. New ideas from the developer (a time slider,
+  centring the map on a demo, the tab order) were logged for later instead of growing the session.
+  One `git add` ran in the wrong folder; the agent saw that nothing was committed and repeated it.
+- In stage 7b, session 4 (other pages), the developer asked twice for a critical check of the plan
+  before any code. It found real gaps: a link layout that would hide the card heading from screen
+  readers, a dialog that would lose its save button under the phone keyboard, and a warning colour
+  that a contrast script then showed was under 4.5:1 at the first tint. The agent proposed changes
+  outside the plan (moving "Delete walk", the shared map icons) openly before the screenshots, and
+  logged smaller ideas for later instead of doing them. Screenshots again found what tests could
+  not: an almost invisible dashed outline.
 
 ## What the AI is allowed to do inside the app
 

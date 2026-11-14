@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import type { FamilyProfile, Poi } from '@/api/types'
 import { FieldError } from '@/components/common/States'
 import { Button } from '@/components/ui/button'
+import { DialogFooter } from '@/components/ui/dialog'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { MAX_STOPS } from '@/lib/formRules'
@@ -86,7 +87,7 @@ export function WalkForm(props: WalkFormProps) {
           onChange={setProfileId}
         />
         {profileId !== props.defaultProfileId && (
-          <p className="text-sm text-amber-700 dark:text-amber-400">{t('walkForm.paceMismatch')}</p>
+          <p className="text-sm text-stairs-text">{t('walkForm.paceMismatch')}</p>
         )}
         <FieldError id="walk-profile-error" message={errors.profile} />
       </div>
@@ -98,24 +99,24 @@ export function WalkForm(props: WalkFormProps) {
             <p className="text-sm text-muted-foreground">{t('walkForm.noPlaces')}</p>
           ) : (
             <>
-              <p className="text-xs text-muted-foreground">
+              <p className="text-sm text-muted-foreground">
                 {t('walkForm.stopsHint', { max: MAX_STOPS })}
               </p>
-              <ul className="max-h-60 space-y-1 overflow-y-auto rounded-md border p-2">
+              <ul className="max-h-60 space-y-1 overflow-y-auto rounded-xl border p-2">
                 {sortedPois.map((poi) => {
                   const checked = chosen.has(poi.poi_id)
                   return (
                     <li key={poi.poi_id}>
-                      <label className="flex cursor-pointer items-center gap-2 rounded px-1 py-1.5 text-sm hover:bg-muted">
+                      <label className="flex min-h-11 cursor-pointer items-center gap-3 rounded-lg px-2 text-sm hover:bg-muted">
                         <input
                           type="checkbox"
-                          className="size-4 accent-primary"
+                          className="size-5 accent-brand"
                           checked={checked}
                           disabled={!checked && chosen.size >= MAX_STOPS}
                           onChange={() => toggle(poi.poi_id)}
                         />
                         <span className="flex-1">{poiLabel(poi)}</span>
-                        <span className="text-xs text-muted-foreground">
+                        <span className="text-sm text-muted-foreground">
                           {t('poi.fromStart', { minutes: poi.at_min })}
                         </span>
                       </label>
@@ -130,14 +131,14 @@ export function WalkForm(props: WalkFormProps) {
       )}
       {props.pois === null && <FieldError id="walk-stops-error" message={errors.stops} />}
 
-      <div className="flex justify-end gap-2">
+      <DialogFooter>
         <Button type="button" variant="outline" onClick={props.onCancel}>
           {t('common.cancel')}
         </Button>
         <Button type="submit" disabled={props.submitting}>
           {props.submitting ? t('common.saving') : t('walkForm.submit')}
         </Button>
-      </div>
+      </DialogFooter>
     </form>
   )
 }
