@@ -29,6 +29,20 @@ function mockApi(...answers: RouteAnswer[]) {
 }
 
 describe('PlannerPage', () => {
+  it('shows the demo points on the map at once, again on each click (audit idea 6)', async () => {
+    mockApi(makePlan(), makePlan())
+    const user = userEvent.setup()
+    renderWithProviders(<PlannerPage />)
+
+    expect(screen.getByText('map focus: none')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    expect(
+      screen.getByText('map focus: 1 [[54.347791,18.618119],[54.34874,18.618458]]'),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    expect(screen.getByText(/^map focus: 2 /)).toBeInTheDocument()
+  })
+
   it('plans a demo route and shows the comparison, places and stops', async () => {
     const calls = mockApi(makePlan({ source: 'fixture' }))
     const user = userEvent.setup()

@@ -12,7 +12,7 @@ import { buildTripWalkPayload, buildWalkPayload } from '@/lib/walkPayload'
 import { HealthStatus } from '@/components/HealthStatus'
 import { DemoModeBanner, ErrorBanner } from '@/components/planner/Banners'
 import { DetourCard, DetourCardSkeleton } from '@/components/planner/DetourCard'
-import { MapView } from '@/components/planner/MapView'
+import { MapView, type MapFocus } from '@/components/planner/MapView'
 import { PlacesSection } from '@/components/planner/PlacesSection'
 import { PlannerSheet } from '@/components/planner/PlannerSheet'
 import { RouteForm } from '@/components/planner/RouteForm'
@@ -27,6 +27,7 @@ import { DEFAULT_MAP_CENTER, type DemoRoute } from '@/constants/demoRoutes'
 import { usePoiLabel } from '@/lib/poiLabel'
 import { nextPoints, visiblePois, type PlannerPoints } from '@/lib/planner'
 import { usePageTitle } from '@/lib/usePageTitle'
+import { useSheetInset } from '@/lib/useSheetInset'
 
 export function PlannerPage() {
   const { t } = useTranslation()
@@ -38,6 +39,16 @@ export function PlannerPage() {
   const [avoidStairs, setAvoidStairs] = useState(true)
   const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set())
   const [sheetOpen, setSheetOpen] = useState(true)
+  const sheetRef = useRef<HTMLElement>(null)
+  const sheetInset = useSheetInset(sheetRef)
+  // A demo click shows its points at once (audit idea 6); the id makes a repeated click count.
+  const [focus, setFocus] = useState<MapFocus | null>(null)
+  function focusOn(points: LatLng[]) {
+    setFocus((previous) => ({
+      id: (previous?.id ?? 0) + 1,
+      points: points.map((point) => [point.lat, point.lng]),
+    }))
+  }
   const [profileId, setProfileId] = useState<number | null>(null)
   const [saveOpen, setSaveOpen] = useState(false)
   const profiles = useProfiles()
@@ -104,6 +115,7 @@ export function PlannerPage() {
 
   function pickDemo(route: DemoRoute) {
     setPoints({ start: route.start, end: route.end })
+    focusOn([route.start, route.end])
     fetchRoutePlan(
       queryClient,
       withProfile({ start: route.start, end: route.end, avoid_stairs: avoidStairs }, profileId),
@@ -123,7 +135,11 @@ export function PlannerPage() {
 
   return (
     <div className="relative h-full md:flex">
-      <PlannerSheet open={sheetOpen} onToggle={() => setSheetOpen((open) => !open)}>
+      <PlannerSheet
+        open={sheetOpen}
+        onToggle={() => setSheetOpen((open) => !open)}
+        sheetRef={sheetRef}
+      >
         {/* Controlled tabs: the map outside the panel must know the mode too. */}
         <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
           <TabsList className="mb-3 w-full">
@@ -140,7 +156,10 @@ export function PlannerPage() {
               onProfileChange={setProfileId}
               onClearStart={() => changeTripStart(null)}
               onUseMapCenter={() => changeTripStart(mapCenter.current)}
-              onDemoStart={() => changeTripStart(DEMO_TRIP_START)}
+              onDemoStart={() => {
+                changeTripStart(DEMO_TRIP_START)
+                focusOn([DEMO_TRIP_START])
+              }}
               onSubmit={suggestTrip}
             />
             <ResultsDivider />
@@ -347,6 +366,8 @@ export function PlannerPage() {
           onCenterChange={(center) => {
             mapCenter.current = center
           }}
+          bottomInset={sheetInset}
+          focus={focus}
         />
       </div>
     </div>

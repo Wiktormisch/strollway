@@ -43,6 +43,8 @@ describe('PlannerPage, trip idea', () => {
 
     await user.click(screen.getByRole('tab', { name: 'Trip idea' }))
     await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
+    // The demo start is shown on the map at once (audit idea 6).
+    expect(screen.getByText(/^map focus: 1 \[\[/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
 
     expect(await screen.findByText('Planned by rules (demo mode)')).toBeInTheDocument()
