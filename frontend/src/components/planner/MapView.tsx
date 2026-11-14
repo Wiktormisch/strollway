@@ -18,7 +18,7 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '@/constants/demoRoutes'
 import { mapLineStyles } from '@/constants/mapStyles'
 import { useMapColors } from '@/lib/cssColors'
 import { finishIcon, letterIcon, poiIcon } from '@/lib/mapIcons'
-import { planBounds } from '@/lib/planner'
+import { fitPadding, planBounds } from '@/lib/planner'
 import { PoiDetails } from './PoiDetails'
 
 interface MapViewProps {
@@ -34,6 +34,15 @@ interface MapViewProps {
   pointLabels: { start: string; end: string }
   onMapClick: (point: LatLng) => void
   onCenterChange: (center: LatLng) => void
+  /** Px of the map covered by the phone bottom sheet; fitted points stay above it. */
+  bottomInset?: number
+  /** Points to show at once (a demo click), before any result. `id` changes on every click. */
+  focus?: MapFocus | null
+}
+
+export interface MapFocus {
+  id: number
+  points: LatLngTuple[]
 }
 
 export interface NumberedStop {
@@ -45,6 +54,7 @@ export interface NumberedStop {
 
 export function MapView(props: MapViewProps) {
   const { plan } = props
+  const inset = props.bottomInset ?? 0
   const lines = mapLineStyles(useMapColors())
   return (
     <MapContainer
@@ -61,9 +71,18 @@ export function MapView(props: MapViewProps) {
         maxZoom={19}
       />
       <MapEvents onClick={props.onMapClick} onCenterChange={props.onCenterChange} />
+      {/* Before the plan's FitBounds: when both change at once, the route fit runs last. */}
+      {props.focus && (
+        <FitBounds
+          points={props.focus.points}
+          fitKey={`focus-${props.focus.id}`}
+          bottomInset={inset}
+          maxZoom={16}
+        />
+      )}
       {plan && (
         <>
-          <FitBounds points={planBounds(plan)} />
+          <FitBounds points={planBounds(plan)} bottomInset={inset} />
           <Polyline positions={plan.baseline.geometry} pathOptions={lines.baseline} />
           <Polyline positions={plan.route.geometry} pathOptions={lines.routeGlow} />
           <Polyline positions={plan.route.geometry} pathOptions={lines.routeCasing} />
@@ -126,12 +145,23 @@ function MapEvents({
   return null
 }
 
-function FitBounds({ points }: { points: LatLngTuple[] }) {
+interface FitBoundsProps {
+  points: LatLngTuple[]
+  /** Fit again only when this changes. Defaults to the first and last point and the count. */
+  fitKey?: string
+  bottomInset: number
+  maxZoom?: number
+}
+
+function FitBounds({ points, fitKey, bottomInset, maxZoom = 18 }: FitBoundsProps) {
   const map = useMap()
-  const key = JSON.stringify([points[0], points[points.length - 1], points.length])
+  const key = fitKey ?? JSON.stringify([points[0], points[points.length - 1], points.length])
   useEffect(() => {
-    if (points.length > 0) map.fitBounds(latLngBounds(points), { padding: [40, 40], maxZoom: 18 })
-    // Fit only when the route changes, not on every render.
+    if (points.length > 0) {
+      map.fitBounds(latLngBounds(points), { ...fitPadding(bottomInset), maxZoom })
+    }
+    // Fit only when the route changes, not on every render and not when the sheet is
+    // opened or closed: that would move a map the user has just panned.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, key])
   return null

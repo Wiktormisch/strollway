@@ -17,6 +17,10 @@ export function FakeMapView(props: ComponentProps<typeof MapView>) {
       <p>map route: {props.plan ? 'drawn' : 'none'}</p>
       <p>map start: {props.startIsFinish ? 'start and finish' : 'start'}</p>
       <p>map places: {props.pois.length}</p>
+      <p>
+        map focus:{' '}
+        {props.focus ? `${props.focus.id} ${JSON.stringify(props.focus.points)}` : 'none'}
+      </p>
       <p>map stops: {props.stops?.map((stop) => stop.title).join(', ') ?? 'none'}</p>
     </div>
   )

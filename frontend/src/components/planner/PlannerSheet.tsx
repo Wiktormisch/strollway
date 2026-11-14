@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import type { ReactNode, Ref } from 'react'
 import { useTranslation } from 'react-i18next'
 import { ChevronDown, ChevronUp } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -6,6 +6,8 @@ import { cn } from '@/lib/utils'
 interface PlannerSheetProps {
   open: boolean
   onToggle: () => void
+  /** Lets the page measure the sheet, so the map can fit routes above it. */
+  sheetRef?: Ref<HTMLElement>
   children: ReactNode
 }
 
@@ -14,10 +16,11 @@ interface PlannerSheetProps {
  * handle; the whole header opens and closes it (no dragging). 768 px and more: a 400 px side
  * panel that is always open.
  */
-export function PlannerSheet({ open, onToggle, children }: PlannerSheetProps) {
+export function PlannerSheet({ open, onToggle, sheetRef, children }: PlannerSheetProps) {
   const { t } = useTranslation()
   return (
     <section
+      ref={sheetRef}
       aria-labelledby="planner-title"
       className={cn(
         'absolute inset-x-0 bottom-0 z-10 flex max-h-[65%] flex-col rounded-t-3xl border-t bg-card shadow-[0_-8px_24px_rgb(0_0_0/0.12)]',

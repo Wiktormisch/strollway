@@ -8,6 +8,7 @@ import {
   nextPoints,
   planErrorKey,
   visiblePois,
+  fitPadding,
 } from './planner'
 
 const A = { lat: 54.1, lng: 18.1 }
@@ -114,5 +115,16 @@ describe('demoRouteOf', () => {
     expect(demoRouteOf({ lat: 54.1, lng: 18.1 }, 'start')).toBeNull()
     expect(demoRouteOf(demo.start, 'end')).toBeNull()
     expect(demoRouteOf(null, 'start')).toBeNull()
+  })
+})
+
+describe('fitPadding', () => {
+  it('adds the sheet height to the bottom gap only', () => {
+    expect(fitPadding(300)).toEqual({ paddingTopLeft: [40, 40], paddingBottomRight: [40, 340] })
+  })
+
+  it('uses the plain gap without a sheet and never a negative inset', () => {
+    expect(fitPadding(0).paddingBottomRight).toEqual([40, 40])
+    expect(fitPadding(-5).paddingBottomRight).toEqual([40, 40])
   })
 })

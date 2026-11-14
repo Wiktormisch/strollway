@@ -114,3 +114,20 @@ export function demoRouteOf(point: LatLng | null, which: 'start' | 'end'): DemoR
   )
   return match?.id ?? null
 }
+
+/** The gap in px between the fitted points and the visible edge of the map. */
+export const MAP_FIT_GAP = 40
+
+/**
+ * Leaflet padding for fitBounds. On phones the bottom sheet covers the lower part of the map,
+ * so its height is added at the bottom: the route then fits in the part above the sheet.
+ */
+export function fitPadding(bottomInset: number): {
+  paddingTopLeft: [number, number]
+  paddingBottomRight: [number, number]
+} {
+  return {
+    paddingTopLeft: [MAP_FIT_GAP, MAP_FIT_GAP],
+    paddingBottomRight: [MAP_FIT_GAP, MAP_FIT_GAP + Math.max(0, bottomInset)],
+  }
+}
