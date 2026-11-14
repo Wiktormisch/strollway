@@ -2,6 +2,7 @@
 
 from django.conf import settings
 from django.db import transaction
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
 from walks.models import FamilyProfile, Stop, Walk
@@ -31,7 +32,29 @@ def is_number(value):
     return isinstance(value, int | float) and not isinstance(value, bool)
 
 
+# JSON fields have no shape in the OpenAPI schema ("any value"). These two subclasses only
+# describe the shape for the schema and the generated frontend types; validation stays in the
+# validate_* methods below.
+@extend_schema_field({"type": "array", "items": {"type": "integer"}})
+class IntListJSONField(serializers.JSONField):
+    pass
+
+
+@extend_schema_field(
+    {
+        "type": "array",
+        "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "description": "[[lat, lng], ...]",
+    }
+)
+class LatLngListJSONField(serializers.JSONField):
+    pass
+
+
 class FamilyProfileSerializer(serializers.ModelSerializer):
+    # required=False like the model field with default=list.
+    children_ages = IntListJSONField(required=False)
+
     class Meta:
         model = FamilyProfile
         fields = ["id", "name", "children_ages", "wheels", "pace", "created_at", "updated_at"]
@@ -140,6 +163,7 @@ class WalkListSerializer(serializers.ModelSerializer):
 class WalkSerializer(serializers.ModelSerializer):
     """Detail and write serializer. Accepts an optional "stops" list on create only."""
 
+    geometry = LatLngListJSONField(required=False)
     start_lat = latitude_field()
     start_lng = longitude_field()
     end_lat = latitude_field()

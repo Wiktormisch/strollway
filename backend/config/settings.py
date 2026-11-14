@@ -165,6 +165,9 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Stair-free walks for families with a stroller.",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # Separate request and response components, so generated frontend types do not
+    # require read-only fields (id, created_at) in POST and PATCH bodies.
+    "COMPONENT_SPLIT_REQUEST": True,
     # Two different "source" choice sets (Stop.source and route-plans source) need own names.
     "ENUM_NAME_OVERRIDES": {
         "RoutePlanSourceEnum": ["ors", "fixture", "mock"],
