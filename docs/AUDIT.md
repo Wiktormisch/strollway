@@ -27,7 +27,7 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 | 2 | Overpass and place data: diagnosis and alternatives | Done |
 | 3a | Backend: `config/`, `walks/`, security, deploy readiness | Done |
 | 3b | Backend: `planning/` and `planning/llm/` | Done |
-| 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | To do |
+| 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | Done |
 | 4b | Frontend: UI/UX, accessibility, i18n, mobile | To do |
 | 5 | Cross-cutting checks and the prioritized backlog | To do |
 
@@ -351,6 +351,72 @@ checked against the `claude-api` skill and against the installed SDK (`anthropic
 - The system prompt treats wishes and place names as data (a prompt-injection rule), and the
   client cannot send its own candidate list (`serializers.py:116-117`).
 - Upstream failures never give 500. Domain errors are 422 with a stable `code`.
+
+## Part 4a: Frontend architecture, data, types, tests and bundle
+
+Run on 2026-11-14 on `dev` at `9656488`.
+
+Files read: `package.json`, `vite.config.ts`, `tsconfig.app.json`, `main.tsx`, `App.tsx`,
+`src/api/` (all modules), `lib/mapIcons.tsx`, the map helpers in `MapView.tsx` and `WalkMap.tsx`,
+and the list of test files (130 tests in 33 files).
+
+Checks run: `npm run build`; a second build with `react-dom/server` replaced by an empty stub
+(config in a temporary folder, the repo was not changed); a TypeScript probe file compiled with
+the default options; a search for files with no test.
+
+### Findings
+
+- **F1 [P2/S] `src/lib/mapIcons.tsx:4`, `:22`, `:48`** - `react-dom/server`
+  (`renderToStaticMarkup`) is used only to turn the map marker icons into SVG text, but it brings
+  the whole server renderer into the browser bundle. Measured: without it the main chunk goes from
+  1,011 kB to 809 kB (311 kB to 250 kB gzip), so it is **20 % of the bundle**. Fix: build the SVG
+  text without `react-dom/server` (for example from the icon's SVG node data, or render once into a
+  detached element with `createRoot` and `flushSync` and read `innerHTML`).
+- **F2 [P2/M] B3 follow-up: no code splitting** - there is no `React.lazy` or `import()`; every
+  page is in one chunk. The planner (the home page) needs Leaflet anyway, so the biggest win is
+  F1. After F1: lazy-load `WalksPage`, `WalkDetailPage`, `ProfilesPage` and `NotFoundPage`, and
+  consider a separate vendor chunk so the browser keeps it between deploys. Measure after each
+  step.
+- **F3 [P2/S] no error boundary** - there is no `ErrorBoundary` and no router `errorElement`, so
+  an exception while rendering gives a blank page. API answers are cast to their types without a
+  check (`src/api/client.ts:70`, `body as T`), so an unexpected shape after a backend change can
+  do exactly that. Fix: one error boundary around the routes in `AppLayout` with a short message
+  and a reload button. Feature idea 18 (types from OpenAPI) lowers the risk of drift.
+- **F4 [P2/M] `src/components/walks/StopEditor.tsx`** - the largest untested component (361
+  lines: add, edit and delete stops, with form validation). No test renders it, not even the
+  `WalkDetailPage` tests. Other components without their own test file (`SaveWalkDialog`,
+  `RouteForm`, `PlacesSection`, `TripSummary`, `WalkCard`) are covered through the page tests.
+- **F5 [P3/S] `src/api/client.ts:29-31`** - when `localStorage` throws (blocked site data),
+  `getClientId` makes a new UUID on *every* call. Each request is then a new client, so a walk
+  saved a moment ago is not in the list. Fix: keep the id in a module variable as the fallback.
+  The test covers only the normal path.
+- **F6 [P3/S] `src/api/planning.ts:14`** - the comment says "the backend ends the LLM call after
+  60 s". This is not guaranteed (see L1). Fix it together with L1, or add a client timeout
+  (`AbortSignal.timeout`, about 90 s) with a clear message.
+- **F7 [P3/S] map helpers** - `FitBounds` is written twice (`MapView.tsx:129`, `WalkMap.tsx:71`),
+  with the same `eslint-disable` and the same key logic. Move it (and the click handler) to one
+  shared file.
+- **F8 [P3/S] `tsconfig.app.json`** - there is no `"strict": true`. Checked: TypeScript 6 turns
+  strict mode on by default (the probe gave `noImplicitAny` and `strictNullChecks` errors), so the
+  code is strict today. Writing it explicitly helps readers and keeps it on if a default changes.
+- **B1 follow-up** - `shadcn` is still needed at build time (`src/index.css:3` imports
+  `shadcn/tailwind.css`), so moving it to `devDependencies` is right; the frontend build stage in
+  stage 8 must install dev dependencies.
+
+Checked and not a problem: the `cn` package is the official one from the `shadcn-ui` repository
+(a replacement for `clsx` + `tailwind-merge`).
+
+### What is good
+
+- API calls go only through `src/api/`, with one `ApiError` type and the `X-Client-Id` header set
+  in one place.
+- TanStack Query is used with care: query key factories, invalidation by prefix, `setQueryData`
+  after create, and retry rules that fit each call (a 404 walk is not retried, route plans are
+  not retried, trip ideas are mutations, and a map click never sends a request).
+- Strict TypeScript with very few casts (mostly Radix `Select` strings into a union type) and only
+  two `eslint-disable` lines, both with a reason.
+- 130 tests. Page tests use a fake map (`src/test/FakeMapView.tsx`) instead of Leaflet, which keeps
+  them fast and stable.
 
 ## Feature ideas (input for part 5)
 
