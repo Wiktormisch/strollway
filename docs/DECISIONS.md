@@ -547,3 +547,21 @@ best time for a walk (idea 2 with the X1 credit). Each is its own branch from `d
   With `WEATHER_PROVIDER=mock` it shows a fake forecast (`planning/fixtures/weather_hourly.json`,
   moved to today), so the demo works offline. Own limit `BEST_TIME_RATE` (default `120/hour`).
   The card and the trip weather line credit Open-Meteo with a link (X1).
+
+## 14. Closing the project (2026-11-14)
+
+Decided with the developer before phase G. The goal is to finish a complete, documented app
+instead of adding more features.
+
+- **Phase E (route editing) is dropped / out of scope:** ideas 14, 16 and 17, L3, L4, the
+  debounced re-plan in the A -> B tab, and the split of `PlannerPage.tsx`. They stay in
+  `docs/AUDIT.md` as a record. The app works without them; they would add risk at the end.
+- **No weather rule in `trip_rules.py`.** The "Best time for a walk" card (section 13) already
+  helps with the weather; a rule that changes the stops is extra logic to test and explain.
+- **The "Tricity only" data note** goes into the README and the "How it works" page, not
+  onto the walk page. One clear place is enough.
+- **Rest of task 12:** B6, F7, F8 and P1 are done in phase G. B5, B7, W2 and O3-O6 are dropped (reasons in
+  `docs/AUDIT.md`, phase G notes).
+- **Licence (X2):** MIT for the code (`LICENSE`, added with the README). The place and route fixtures contain OpenStreetMap data
+  under ODbL; the README says so.
+- **Next session:** the deploy (stage 8), `docs/AI_USAGE.md` and the demo video.

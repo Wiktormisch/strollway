@@ -604,8 +604,9 @@ Order notes:
   live Overpass that is about to go.
 
 Status: tasks 1-8 are done and merged into `dev` (PRs #30-#37). Phases A-D of the updated order
-are done (PRs up to #49). Next: phase E. Tasks 9, 11, 12 and the remaining ideas follow the
-order below.
+are done (PRs up to #49). Phase E is dropped. Phase F is done (#51-#53). Now: phase G without
+the deploy (rest of task 12, idea 19, task 11). Task 9 (deploy, stage 8), `docs/AI_USAGE.md`
+and the demo video come in the next session. See `DECISIONS.md` section 14.
 
 ### Updated order (after tasks 1-8)
 
@@ -619,25 +620,35 @@ from `dev` and one PR, unless it says otherwise.
 | B. Foundations and the key feature (three branches) | 1. Idea 18: `openapi-typescript`, `@extend_schema` where the schema is wrong, CI check (M). 2. Task 10: `Place` model, `import_places` command, `POI_PROVIDER` (`db` default, `overpass` optional), the Tricity data note in the UI and README (L). 3. Ideas 8 and 9: "Use my location" and "Open in Google Maps" with up to 3 waypoints (the mobile limit) and a stairs warning (M, **done**) | Typed API before the API changes in C-F. Ideas 14 and 15 are then built on the final place source. Export is a key feature, so it comes right after the foundations; location is in the same branch because both are small and touch the planner |
 | C. Quick frontend wins (**done**) | Planner: ideas 7, 11, 12 (**done**, #44). Idea 13 dropped; idea 22 moved to D (`DECISIONS.md` section 12) | Small (S), frontend only, each group touches the same files |
 | D. Profile as a template (**done**, `DECISIONS.md` section 12) | 1. Idea 5 (W3) and the "How do you get around?" labels (#45). 2. Profile defaults: stairs from the way of moving, places from the age, skatepark category (#46). 3. Idea 3 (W4): pace slider in km/h (#47); idea 4: saved trip settings in the profile (#48); idea 22: recompute the time in the save dialog (#49). W2 was not touched; it moves to phase G | 4 saves settings that include the pace from 3 |
-| E. Route editing | Idea 14 (L1 budget rules apply), then 16 (up/down buttons), then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
+| E. Route editing (**dropped / out of scope**, `DECISIONS.md` section 14) | Idea 14 (L1 budget rules apply), then 16 (up/down buttons), then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
 | F. Extras (independent, by value) | Idea 1 (**done**, #51); 15 (**done**, #52); 2 with the Open-Meteo part of X1 (**done**, `DECISIONS.md` section 13). The ORS and OSM credits of X1 stay in phase G | No other work depends on them |
-| G. Closing | Rest of task 12; idea 19 ("How it works", X1, U3 note); task 9 (deploy, stage 8); task 11 (README, stage 9) | Deploy and README describe the final app, so they come last. The README can link the live demo |
+| G. Closing | Rest of task 12; idea 19 ("How it works", X1, U3 note); task 11 (README, stage 9). Task 9 (deploy, stage 8) moves to the next session | Deploy and README describe the final app, so they come last. The README keeps a placeholder for the live demo link |
 
 Notes:
 - Task 12 items are done together with the feature that touches the same file. Only what is left
-  goes into phase G.
-- Task 9 still needs the gunicorn timeout vs L1 and a frontend build that installs dev
-  dependencies (B1 follow-up).
-- Follow-ups from phase D (each S, do them with the phase that touches the same file):
-  - A -> B: a changed pace or "Avoid stairs" hides the result until "Plan route". An automatic
-    re-plan with a short delay (debounce) could be nicer (planner, with phase E).
-  - `PlannerPage.tsx` is large; split the trip and route tabs into own components when phase E
-    adds more state there.
+  goes into phase G. Rest of task 12 (decided 2026-11-14):
+  - Do: B6, F7, F8 (one branch `chore/final-cleanup`), P1 (`fix/opening-hours-ph`).
+  - Dropped: B5 (needs new dependencies), B7 (the suite is small), W2 (the S2 limit is enough),
+    L3 and L4 (with phase E), O3-O6 (live Overpass is optional; `POI_PROVIDER=db` is the default).
+- O7 / D7 are closed: 16 `indoor_play` places in the Tricity data
+  (`backend/data/places_tricity.json.gz`), a category since phase B (`DECISIONS.md` section 11).
+- Task 9 (deploy, next session), what we already know:
+  - The gunicorn timeout must be above the worst LLM time budget (L1), or a slow trip idea
+    request is killed as a worker timeout.
+  - The frontend build must install dev dependencies (`npm ci` with dev), because `shadcn` is
+    needed at build time (B1 follow-up).
+  - Run `python manage.py migrate` and `python manage.py import_places data/places_tricity.json.gz`
+    on deploy, or the place lists are empty.
+- Follow-ups from phase D:
+  - A -> B: automatic re-plan with a short delay (debounce) after a changed pace or "Avoid
+    stairs". **Dropped / out of scope** (with phase E).
+  - Split `PlannerPage.tsx` into tab components. **Dropped / out of scope** (with phase E).
 - Follow-ups from task 10 (place table):
-  - Task 9 (deploy): run `migrate` and `import_places data/places_tricity.json.gz` on deploy (S).
-  - The "Tricity only" data note on the walk page too, not only in the planner (S).
-  - A weather rule in `trip_rules.py`: prefer `indoor_play` (and museums) when rain is likely.
-    Today the rules do not use the weather at all (M).
+  - Task 9 (deploy): `migrate` and `import_places`, see above.
+  - The "Tricity only" data note: not on the walk page; it goes into the README and the
+    "How it works" page (idea 19) instead.
+  - A weather rule in `trip_rules.py` (prefer `indoor_play` when rain is likely). **Dropped /
+    out of scope.**
 
 ### Feature ideas: what each one needs
 
