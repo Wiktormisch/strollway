@@ -19,7 +19,7 @@ This page describes how the developer worked with AI tools on StrollWay: what th
 5. **A human reads the diff.** The agent never commits, pushes, merges or opens a PR on its own (`AGENTS.md`).
 6. **Self-review with named gaps.** At the end of a task the agent scores its own work from 1 to 10 and must name what is missing. A score without named gaps is not accepted.
 
-Each finished stage has a short log in `docs/stages/` (`docs/stages/stage-1.md` to `stage-7.md`): what was built, which checks ran, and what went wrong.
+Each finished stage has a short log in `docs/stages/` (`docs/stages/stage-1.md` to `stage-7.md`, plus `stage-7b.md` for the redesign): what was built, which checks ran, and what went wrong.
 
 ## Verify before building
 

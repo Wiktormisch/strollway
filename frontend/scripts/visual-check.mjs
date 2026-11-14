@@ -18,6 +18,7 @@
 //   THEMES      light,dark                    (default: both)
 //   LANGS       pl,en                         (default: both)
 //   CHANNEL     installed browser             (default msedge; chrome also works)
+//   ALLOW_TILES 1 = load OpenStreetMap tiles  (default off; used for the README screenshots)
 //
 // Output in OUT_DIR:
 //   <page>-<viewport>-<theme>-<lang>.png   one screenshot of the visible screen
@@ -39,6 +40,9 @@ const API_URL = (process.env.API_URL ?? 'http://localhost:8000').replace(/\/$/, 
 const OUT_DIR = path.resolve(process.env.OUT_DIR ?? 'visual-check')
 const CHANNEL = process.env.CHANNEL ?? 'msedge'
 const TAB_STOPS = 30
+// The only outside host that ALLOW_TILES=1 lets through. Nothing about the user is sent.
+const TILE_HOST = 'tile.openstreetmap.org'
+const ALLOW_TILES = process.env.ALLOW_TILES === '1'
 
 const VIEWPORTS = {
   // deviceScaleFactor 1 keeps the images small.
@@ -78,6 +82,8 @@ async function clickAndWaitFor(page, locator, apiPath) {
 }
 
 async function clickFirstDemoRoute(page, texts) {
+  // The trip tab opens first, so switch to the A -> B tab.
+  await page.getByRole('tab', { name: texts.planner.tabs.route }).click()
   const demo = page.getByRole('button', { name: texts.planner.demo.bigDetour }).first()
   await clickAndWaitFor(page, demo, '/api/route-plans/')
 }
@@ -87,6 +93,22 @@ async function planDemoTrip(page, texts) {
   await page.getByRole('button', { name: texts.trip.form.demoStart }).click()
   const submit = page.getByRole('button', { name: texts.trip.form.submit })
   await clickAndWaitFor(page, submit, '/api/trip-ideas/')
+}
+
+/** With ALLOW_TILES=1: wait until every map tile is loaded and the zoom animation is over. */
+async function waitForTiles(page) {
+  await page
+    .waitForFunction(
+      () =>
+        document.querySelector('.leaflet-zoom-anim') === null &&
+        [...document.querySelectorAll('.leaflet-tile')].every((tile) =>
+          tile.classList.contains('leaflet-tile-loaded'),
+        ),
+      undefined,
+      { timeout: 15000 },
+    )
+    .catch(() => console.warn('map tiles did not finish loading; the screenshot may be grey'))
+  await page.waitForTimeout(500) // the tile fade-in
 }
 
 async function openFirstWalk(page) {
@@ -112,8 +134,9 @@ async function newContext(browser, viewportName, theme, lang, clientId) {
     },
     [theme, lang, clientId],
   )
-  // Only the app and its API: no map tiles, fonts or anything else from the internet.
+  // Only the app and its API: no map tiles (unless ALLOW_TILES=1), fonts or anything else.
   const allowed = [new URL(BASE_URL).host, new URL(API_URL).host]
+  if (ALLOW_TILES) allowed.push(TILE_HOST)
   await context.route('**/*', (route) => {
     const host = new URL(route.request().url()).host
     return allowed.includes(host) ? route.continue() : route.abort()
@@ -182,6 +205,7 @@ async function main() {
           for (const name of pages) {
             const label = `${name}-${viewportName}-${theme}-${lang}`
             const page = await openPage(context, name, texts)
+            if (ALLOW_TILES) await waitForTiles(page)
             await page.screenshot({ path: path.join(OUT_DIR, `${label}.png`) })
             const axe = await new AxeBuilder({ page }).analyze()
             axeReport += formatAxe(label, axe.violations)
