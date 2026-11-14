@@ -29,7 +29,7 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 | 3b | Backend: `planning/` and `planning/llm/` | Done |
 | 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | Done |
 | 4b | Frontend: UI/UX, accessibility, i18n, mobile | Done |
-| 5 | Cross-cutting checks and the prioritized backlog | To do |
+| 5 | Cross-cutting checks and the prioritized backlog | Done |
 
 ## Part 0: Baseline
 
@@ -535,6 +535,94 @@ controls. Not a finding.
   page only).
 - A screen reader run (NVDA on Windows) through the planner and the walk detail page.
 - A comparison with the Figma frames, if the developer wants to spend MCP calls on it.
+
+## Part 5: Cross-cutting checks and the backlog
+
+Run on 2026-11-14 on `docs/audit-backend-core`.
+
+### Cross-cutting checks
+
+| Check | Result |
+|---|---|
+| Secrets in the whole git history (Anthropic, NVIDIA and AWS key patterns, private keys, `ORS_API_KEY=` with a value) | None found |
+| Tracked `.env`, database, cache or key files | None (only the two `.env.example` files) |
+| Tracked files over 300 kB | None |
+| Personal data in fixtures and seed data | None: demo points are public places, profiles have only ages |
+| `LICENSE` file | Missing (X2) |
+| Data attribution | OpenStreetMap is credited on the map; ORS and Open-Meteo are not credited anywhere (X1) |
+
+- **X1 [P2/S] data attribution** - the map shows "© OpenStreetMap contributors", but the routes
+  (openrouteservice by HeiGIT) and the weather (Open-Meteo) are not credited in the app or the
+  README, and the committed fixtures hold OSM and ORS data.
+  - Open-Meteo (checked by the developer on 2026-11-14): the free tier is for non-commercial use,
+    the data is CC BY 4.0, and the UI must show "Weather data by Open-Meteo.com" with a link to
+    `https://open-meteo.com`, for example below the weather line or in a footer. Our code already
+    follows the other rules: no API key, only the three fields we show
+    (`planning/weather.py:18`), and a timeout or a 429 gives "no weather", not an error. One
+    difference: the cache keeps an answer for 60 min (`weather.py:17`); the developer's notes say
+    15-30 min. The API host stays `api.open-meteo.com` (`open-meteo.com` is the project site).
+  - openrouteservice: not checked yet. Read the current ORS terms for the required credit.
+  - Fix: the Open-Meteo credit next to the weather in the trip result, a "Data sources" line in
+    the README (and later on the "How it works" page, feature idea 19), and the cache at 30 min.
+- **X2 [P3/S] no licence** - without a `LICENSE` file the code is "all rights reserved". For a
+  portfolio this is a choice, not a bug. If the repo should be open, add MIT for the code and say
+  that the fixtures contain OSM data under ODbL.
+
+### Already fixed during the audit
+
+- O1 and O2: recorded places for the demo routes, 12 s Overpass timeout, demo points never call
+  Overpass (#27).
+- Tooling for part 4b: `npm run visual-check` (branch `chore/visual-checks`, not merged yet).
+
+### Backlog: tasks in the proposed order
+
+Each task is one branch from `dev` and one PR. "Findings" are the ids from parts 0-4.
+
+| # | Task (branch) | Findings | Why now | Size |
+|---|---|---|---|---|
+| 1 | `fix/api-write-limits` | S2, W1, S3 | P1 before any public deploy: anyone can fill the disk or change the shared demo data | S-M |
+| 2 | `fix/mobile-route-in-view` | U2 (+ feature idea 6) | The first thing a reviewer sees on a phone is a result hidden under the panel | S |
+| 3 | `perf/map-icons-without-server-renderer` | F1, then F2 / B3 | 20 % of the bundle for a few SVG icons; then lazy pages | S, then M |
+| 4 | `fix/a11y-contrast-and-names` | U1, U4, U5, U6, U9, U7 | Small CSS and label changes; check with `npm run visual-check`; update the table in `DESIGN.md` | M |
+| 5 | `fix/llm-time-budget` | L1, L2, L5, F6, U8 | A worst case over the gunicorn timeout; effort and token cap on the paid backend. L2 needs a few paid calls to measure: ask first | S-M |
+| 6 | `fix/frontend-resilience` | F3, F5 | A blank page on a render error; lost data when storage is blocked | S |
+| 7 | `chore/frontend-deps` | B1, B2 | Fewer audit warnings in the production tree | S |
+| 8 | `test/stop-editor` | F4 | The largest component without a test | M |
+| 9 | `chore/deploy` (stage 8) | S1, S4, S5, S6, S7, B4 | Already planned; add the gunicorn timeout vs L1 and the dev install for B1 | L |
+| 10 | Own place table (decision first) | Part 2, option A; makes O3-O6 mostly moot | Live places work only for the demo today. Changes `DECISIONS.md:11`, needs a new dependency or a manual export | L |
+| 11 | `docs/readme` (stage 9) | D1, D2, D3, D4, D5, D6, D8, D9, X1, X2, U3 note, O7 / D7 | The README is the first file a reviewer reads. Do it last, so it describes the final app. O7 needs a count from the developer in Overpass Turbo | M |
+| 12 | Clean-up (several small PRs) | B5, B6, B7, W2, L3, L4, P1, F7, F8, O3-O6 (only if live Overpass stays) | P3: worth it, not urgent | S each |
+
+Order notes:
+- 1 and 2 first: one protects the deploy, the other fixes the first impression on a phone.
+- 3, 4 and 5 are independent and can be done in any order.
+- 10 is a product decision. If it is accepted, do it before 11, so the README does not describe
+  live Overpass that is about to go.
+
+### Feature ideas: what each one needs
+
+| Idea | Depends on / touches | Size |
+|---|---|---|
+| 1 Calorie estimate | Nothing; a fixed formula in the backend | S |
+| 2 Best time for a walk (3-day forecast) | `planning/weather.py`; X1 (Open-Meteo credit) | M |
+| 3 Pace slider | W4 (model and migration); speeds in `services.py` | M |
+| 4 Saved planner settings | Best after 3; a profile field | M |
+| 5 A child is not required | W3 (serializer only; the rules already work with no children) | S |
+| 6 Demo click centres the map | Do it with task 2 (U2) | S |
+| 7 "Trip idea" as the first tab | `PlannerPage.tsx` tabs; tests that click tabs | S |
+| 8 Use my location | D9 (a short scope decision); helps U3 | S-M |
+| 9 Export to Google Maps | D9; a directions link with the stops, no Google data stored | S |
+| 10 / 15 Place search | A geocoder (Nominatim has its own usage policy) or the own place table (task 10); fixes U3 | M-L |
+| 11 Free time limit (slider + number) | Frontend only; the API takes 15-180 min already | S |
+| 12 Keep the old trip, ask before replacing | Frontend only | S |
+| 13 At least one stop on a saved trip | Frontend check (and a serializer rule) | S |
+| 14 Recalculate the route after removing a stop | A new endpoint or an extra field in `trip-ideas`; L1 budget rules apply | M |
+| 16 Reorder stops by drag and drop | A drag library (ask first) or buttons up/down; with 14 | M |
+| 17 "Strict" wheelchair profile | ORS profile and extra request parameters | M |
+| 18 TypeScript types from OpenAPI | A generator (ask first); lowers the F3 risk | M |
+| 19 "How it works" page | A good place for X1 and the U3 note | S |
+| 20 / 21 More Overpass servers, other sources | Covered by task 10 (part 2) | - |
+| 22 Recompute the time in the save dialog | Frontend, `walkPayload.ts` | S |
 
 ## Feature ideas (input for part 5)
 
