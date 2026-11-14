@@ -2,7 +2,7 @@
 
 from rest_framework import serializers
 
-from planning import geo
+from planning import geo, place_search
 from walks.models import (
     PACE_MAX_KMH,
     PACE_MIN_KMH,
@@ -218,3 +218,22 @@ class TripIdeaErrorSerializer(serializers.Serializer):
         ]
     )
     detail = serializers.CharField()
+
+
+# --- Place search (audit idea 15) ----------------------------------------------------
+
+
+class PlaceSearchQuerySerializer(serializers.Serializer):
+    q = serializers.CharField(
+        min_length=place_search.MIN_QUERY_LENGTH, max_length=place_search.MAX_QUERY_LENGTH
+    )
+
+
+class PlaceSearchResultSerializer(serializers.Serializer):
+    poi_id = serializers.CharField(help_text='OSM id, e.g. "way/123".')
+    name = serializers.CharField()
+    category = serializers.CharField(
+        help_text='A place category, "bus_stop", "tram_stop" or "other".'
+    )
+    lat = serializers.FloatField()
+    lng = serializers.FloatField()

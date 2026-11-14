@@ -106,6 +106,8 @@ CORS_ALLOW_HEADERS = ["accept", "content-type", "x-client-id"]
 ROUTE_PLANS_DEFAULT_RATE = "60/hour"
 TRIP_IDEAS_DEFAULT_RATE = "20/hour"
 WRITES_DEFAULT_RATE = "120/hour"
+# Search runs while the user types (with a short delay), so it gets a higher limit.
+PLACE_SEARCH_DEFAULT_RATE = "300/hour"
 
 # How many walks one client can keep. `or` also covers an empty value in .env.
 MAX_WALKS_PER_CLIENT_DEFAULT = 200
@@ -124,6 +126,7 @@ REST_FRAMEWORK = {
         "route_plans": os.getenv("ROUTE_PLANS_RATE", ROUTE_PLANS_DEFAULT_RATE),
         "trip_ideas": os.getenv("TRIP_IDEAS_RATE", TRIP_IDEAS_DEFAULT_RATE),
         "writes": os.getenv("WRITES_RATE", WRITES_DEFAULT_RATE),
+        "place_search": os.getenv("PLACE_SEARCH_RATE", PLACE_SEARCH_DEFAULT_RATE),
     },
     # How many reverse proxies stand in front of Django. 0 = trust only the TCP address,
     # so a client cannot pick its own "IP" with an X-Forwarded-For header and skip the

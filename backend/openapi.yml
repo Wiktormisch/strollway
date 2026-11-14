@@ -45,6 +45,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/Health'
           description: ''
+  /api/places/search/:
+    get:
+      operationId: places_search_list
+      description: Searches only our own place table (the Tricity), not an outside
+        geocoder. Polish letters and case do not matter. Names that start with the
+        query come first. At most 8 results. Limited to 300 requests per hour per
+        IP.
+      summary: Search places by name
+      parameters:
+      - in: query
+        name: q
+        schema:
+          type: string
+          minLength: 2
+          maxLength: 100
+        required: true
+      tags:
+      - places
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PlaceSearchResult'
+          description: ''
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceSearchValidationError'
+          description: ''
+        '429':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PlaceSearchThrottled'
+          description: ''
   /api/profiles/:
     get:
       operationId: profiles_list
@@ -1393,6 +1434,44 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/NestedStopRequest'
+    PlaceSearchResult:
+      type: object
+      properties:
+        poi_id:
+          type: string
+          description: OSM id, e.g. "way/123".
+        name:
+          type: string
+        category:
+          type: string
+          description: A place category, "bus_stop", "tram_stop" or "other".
+        lat:
+          type: number
+          format: double
+        lng:
+          type: number
+          format: double
+      required:
+      - category
+      - lat
+      - lng
+      - name
+      - poi_id
+    PlaceSearchThrottled:
+      type: object
+      properties:
+        detail:
+          type: string
+      required:
+      - detail
+    PlaceSearchValidationError:
+      type: object
+      properties:
+        q:
+          type: array
+          items: {}
+      required:
+      - q
     Poi:
       type: object
       properties:
