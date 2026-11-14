@@ -1,7 +1,5 @@
 // A thin Leaflet wrapper: it only draws what it gets and reports clicks.
 // All decisions live in lib/planner.ts and PlannerPage, which are tested without Leaflet.
-import { useEffect } from 'react'
-import { latLngBounds } from 'leaflet'
 import {
   AttributionControl,
   MapContainer,
@@ -9,7 +7,6 @@ import {
   Popup,
   Polyline,
   TileLayer,
-  useMap,
   useMapEvents,
 } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -18,7 +15,8 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '@/constants/demoRoutes'
 import { mapLineStyles } from '@/constants/mapStyles'
 import { useMapColors } from '@/lib/cssColors'
 import { finishIcon, letterIcon, poiIcon } from '@/lib/mapIcons'
-import { fitPadding, planBounds, prefersReducedMotion } from '@/lib/planner'
+import { fitPadding, planBounds } from '@/lib/planner'
+import { FitBounds } from '@/components/map/FitBounds'
 import { PoiDetails } from './PoiDetails'
 
 interface MapViewProps {
@@ -76,13 +74,13 @@ export function MapView(props: MapViewProps) {
         <FitBounds
           points={props.focus.points}
           fitKey={`focus-${props.focus.id}`}
-          bottomInset={inset}
+          padding={fitPadding(inset)}
           maxZoom={16}
         />
       )}
       {plan && (
         <>
-          <FitBounds points={planBounds(plan)} bottomInset={inset} />
+          <FitBounds points={planBounds(plan)} padding={fitPadding(inset)} />
           <Polyline positions={plan.baseline.geometry} pathOptions={lines.baseline} />
           <Polyline positions={plan.route.geometry} pathOptions={lines.routeGlow} />
           <Polyline positions={plan.route.geometry} pathOptions={lines.routeCasing} />
@@ -142,33 +140,6 @@ function MapEvents({
     click: (event) => onClick({ lat: event.latlng.lat, lng: event.latlng.lng }),
     moveend: () => onCenterChange(map.getCenter()),
   })
-  return null
-}
-
-interface FitBoundsProps {
-  points: LatLngTuple[]
-  /** Fit again only when this changes. Defaults to the first and last point and the count. */
-  fitKey?: string
-  bottomInset: number
-  maxZoom?: number
-}
-
-function FitBounds({ points, fitKey, bottomInset, maxZoom = 18 }: FitBoundsProps) {
-  const map = useMap()
-  const key = fitKey ?? JSON.stringify([points[0], points[points.length - 1], points.length])
-  useEffect(() => {
-    if (points.length > 0) {
-      // No pan and zoom animation when the system asks for less motion (audit U7).
-      map.fitBounds(latLngBounds(points), {
-        ...fitPadding(bottomInset),
-        maxZoom,
-        animate: !prefersReducedMotion(),
-      })
-    }
-    // Fit only when the route changes, not on every render and not when the sheet is
-    // opened or closed: that would move a map the user has just panned.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [map, key])
   return null
 }
 
