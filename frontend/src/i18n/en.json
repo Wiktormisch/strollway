@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "StrollWay",
-    "tagline": "Stair-free walks for families with a stroller"
+    "tagline": "Stair-free walks for families with a stroller",
+    "skipToContent": "Skip to content"
   },
   "nav": {
     "planner": "Planner",
@@ -289,6 +290,7 @@
     "empty": "No stops yet.",
     "add": "Add a stop",
     "addHint": "Click the map to place the new stop.",
+    "newPoint": "New stop",
     "pointSet": "Point set. Click the map again to move it.",
     "addSubmit": "Add stop",
     "name": "Name (optional)",

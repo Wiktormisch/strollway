@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "StrollWay",
-    "tagline": "Spacery bez schodów dla rodzin z wózkiem"
+    "tagline": "Spacery bez schodów dla rodzin z wózkiem",
+    "skipToContent": "Przejdź do treści"
   },
   "nav": {
     "planner": "Planer",
@@ -289,6 +290,7 @@
     "empty": "Brak przystanków.",
     "add": "Dodaj przystanek",
     "addHint": "Kliknij mapę, aby wskazać nowy przystanek.",
+    "newPoint": "Nowy przystanek",
     "pointSet": "Punkt ustawiony. Kliknij mapę ponownie, aby go przesunąć.",
     "addSubmit": "Dodaj przystanek",
     "name": "Nazwa (opcjonalnie)",

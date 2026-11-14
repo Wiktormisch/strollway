@@ -26,11 +26,12 @@ const buttonVariants = cva(
         default:
           'h-11 gap-1.5 px-4 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
         xs: "h-6 gap-1 px-2 text-xs has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-9 gap-1 px-3 text-sm has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
+        // pointer-coarse: 44 px on touch screens (DESIGN.md: touch targets), 36 px with a mouse.
+        sm: "h-9 pointer-coarse:h-11 gap-1 px-3 text-sm has-data-[icon=inline-end]:pr-1.5 has-data-[icon=inline-start]:pl-1.5 [&_svg:not([class*='size-'])]:size-3.5",
         lg: 'h-12 gap-2 px-5 text-base has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2',
         icon: 'size-11',
         'icon-xs': "size-6 [&_svg:not([class*='size-'])]:size-3",
-        'icon-sm': 'size-9',
+        'icon-sm': 'size-9 pointer-coarse:size-11',
         'icon-lg': 'size-12',
       },
     },

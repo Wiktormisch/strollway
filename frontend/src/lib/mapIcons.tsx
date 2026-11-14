@@ -1,6 +1,8 @@
 // Leaflet marker icons shared by the planner map and the saved walk map.
 // Icons are HTML (divIcon), so no PNG files are needed. That also avoids the
 // known broken default marker image in Vite builds. Styles: `.sw-*-icon` in index.css.
+// The inner HTML is aria-hidden, so a screen reader names the marker by its `title`
+// ("Stop 1: playground"), not by the letter or number drawn inside it (audit U5).
 import type { ReactElement } from 'react'
 import { flushSync } from 'react-dom'
 import { createRoot } from 'react-dom/client'
@@ -52,7 +54,7 @@ export function poiIcon(category: string): DivIcon {
   return cached(`poi:${category}`, () => {
     const svg = CATEGORY_SVG.get(category) ?? CATEGORY_SVG.get('other')
     return divIcon({
-      html: `<span class="sw-poi-icon" style="color:${categoryColor(category)}">${svg}</span>`,
+      html: `<span aria-hidden="true" class="sw-poi-icon" style="color:${categoryColor(category)}">${svg}</span>`,
       className: '',
       iconSize: [28, 28],
       iconAnchor: [14, 14],
@@ -65,7 +67,7 @@ export function poiIcon(category: string): DivIcon {
 export function letterIcon(letter: string, color: string): DivIcon {
   return cached(`letter:${letter}:${color}`, () =>
     divIcon({
-      html: `<span class="sw-point-icon" style="background:${color}">${letter}</span>`,
+      html: `<span aria-hidden="true" class="sw-point-icon" style="background:${color}">${letter}</span>`,
       className: '',
       iconSize: [36, 36],
       iconAnchor: [18, 18],
@@ -77,7 +79,7 @@ export function letterIcon(letter: string, color: string): DivIcon {
 export function finishIcon(): DivIcon {
   return cached('finish', () => {
     return divIcon({
-      html: `<span class="sw-point-icon" style="background:var(--brand)">${FLAG_SVG}</span>`,
+      html: `<span aria-hidden="true" class="sw-point-icon" style="background:var(--brand)">${FLAG_SVG}</span>`,
       className: '',
       iconSize: [36, 36],
       iconAnchor: [18, 18],
@@ -92,7 +94,7 @@ export function finishIcon(): DivIcon {
 export function stopIcon(number: number, category: string): DivIcon {
   return cached(`stop:${number}:${category}`, () =>
     divIcon({
-      html: `<span class="sw-stop-icon" style="border-color:${categoryColor(category)}">${number}</span>`,
+      html: `<span aria-hidden="true" class="sw-stop-icon" style="border-color:${categoryColor(category)}">${number}</span>`,
       className: '',
       iconSize: [32, 32],
       iconAnchor: [16, 16],

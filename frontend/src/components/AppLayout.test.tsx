@@ -43,3 +43,14 @@ it('opens the phone menu with the theme and language switches', async () => {
   expect(screen.queryByRole('dialog', { name: 'More options' })).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'More options' })).toHaveFocus()
 })
+
+it('starts with a skip link that moves focus to the main content (audit U9)', async () => {
+  const user = userEvent.setup()
+  renderLayout()
+
+  await user.tab()
+  const skip = screen.getByRole('link', { name: 'Skip to content' })
+  expect(skip).toHaveFocus()
+  expect(skip).toHaveAttribute('href', '#content')
+  expect(screen.getByRole('main')).toHaveAttribute('id', 'content')
+})

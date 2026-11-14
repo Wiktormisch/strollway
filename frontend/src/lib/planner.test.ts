@@ -1,3 +1,4 @@
+import { afterEach, vi } from 'vitest'
 import { ApiError } from '@/api/client'
 import { makePlan, makePoi } from '@/test/routePlan'
 import { DEMO_ROUTES } from '@/constants/demoRoutes'
@@ -9,6 +10,7 @@ import {
   planErrorKey,
   visiblePois,
   fitPadding,
+  prefersReducedMotion,
 } from './planner'
 
 const A = { lat: 54.1, lng: 18.1 }
@@ -126,5 +128,20 @@ describe('fitPadding', () => {
   it('uses the plain gap without a sheet and never a negative inset', () => {
     expect(fitPadding(0).paddingBottomRight).toEqual([40, 40])
     expect(fitPadding(-5).paddingBottomRight).toEqual([40, 40])
+  })
+})
+
+describe('prefersReducedMotion', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('follows the system setting', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('reduce') }))
+    expect(prefersReducedMotion()).toBe(true)
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    expect(prefersReducedMotion()).toBe(false)
+  })
+
+  it('is false without matchMedia', () => {
+    expect(prefersReducedMotion()).toBe(false)
   })
 })
