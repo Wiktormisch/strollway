@@ -4,6 +4,7 @@ import { Footprints, Map as MapIcon, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { BrandMark } from './BrandMark'
 import { ErrorBoundary } from './ErrorBoundary'
+import { HowItWorksLink } from './HowItWorksLink'
 import { LanguageSwitch } from './LanguageSwitch'
 import { ThemeSwitch } from './ThemeSwitch'
 import { TopBarMenu } from './TopBarMenu'
@@ -80,6 +81,7 @@ export function AppLayout() {
             <TopBarMenu />
           </div>
           <div className="hidden items-center gap-1 md:flex">
+            <HowItWorksLink />
             <ThemeSwitch />
             <LanguageSwitch />
           </div>

@@ -565,7 +565,10 @@ Run on 2026-11-14 on `docs/audit-backend-core`.
     (`planning/weather.py:18`), and a timeout or a 429 gives "no weather", not an error. One
     difference: the cache keeps an answer for 60 min (`weather.py:17`); the developer's notes say
     15-30 min. The API host stays `api.open-meteo.com` (`open-meteo.com` is the project site).
-  - openrouteservice: not checked yet. Read the current ORS terms for the required credit.
+  - openrouteservice (checked by the developer on 2026-11-14, HeiGIT terms, "Attribution and
+    License"): the credit is "© openrouteservice by HeiGIT | Data from OpenStreetMap", shown in
+    the map or elsewhere. Results are licensed under CC BY-SA 4.0. Done on the "How it works"
+    page (idea 19); the README gets the same line.
   - Fix: the Open-Meteo credit next to the weather in the trip result, a "Data sources" line in
     the README (and later on the "How it works" page, feature idea 19), and the cache at 30 min.
 - **X2 [P3/S] no licence** - without a `LICENSE` file the code is "all rights reserved". For a

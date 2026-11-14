@@ -33,6 +33,9 @@
     "notFound": {
       "title": "Nie ma takiej strony",
       "back": "Wróć do planera"
+    },
+    "howItWorks": {
+      "title": "Jak to działa"
     }
   },
   "errors": {
@@ -464,7 +467,8 @@
   },
   "topBar": {
     "menu": "Więcej opcji",
-    "theme": "Motyw"
+    "theme": "Motyw",
+    "howItWorks": "Jak to działa"
   },
   "placeSearch": {
     "label": "Szukaj miejsca na start",
@@ -494,5 +498,40 @@
     "slow": "Wolno",
     "fast": "Szybko",
     "strollerLimit": "Z wózkiem najwyżej {{max}}."
+  },
+  "howItWorks": {
+    "intro": "StrollWay planuje spacery bez schodów dla rodzin z wózkiem i podpowiada krótkie rodzinne wycieczki z przystankami po drodze.",
+    "route": {
+      "title": "Trasa bez schodów",
+      "text": "Dla każdego spaceru prosimy openrouteservice o dwie trasy piesze: najkrótszą i taką, która omija schody. Na mapie widzisz obie, a schody na najkrótszej trasie są zaznaczone, więc możesz ocenić, czy objazd się opłaca."
+    },
+    "ai": {
+      "title": "Co robi kod, a co AI",
+      "text": "Odległości, czas marszu, godziny otwarcia i wybór miejsc-kandydatów liczy kod. AI tylko wybiera i układa przystanki spośród tych kandydatów oraz pisze krótkie teksty. Każda odpowiedź AI jest sprawdzana; gdy jest błędna, wycieczkę planują proste reguły. Do AI trafia tylko Twój krótki tekst „życzeń”, nigdy Twoja lokalizacja."
+    },
+    "area": {
+      "title": "Gdzie to działa",
+      "text": "Trasy działają w większości miejsc, ale lista miejsc (place zabaw, kawiarnie, toalety i inne) obejmuje tylko Trójmiasto: Gdańsk, Gdynię i Sopot. Poza Trójmiastem trasa nie ma miejsc w pobliżu."
+    },
+    "keyboard": {
+      "title": "Bez myszy",
+      "text": "Nie musisz klikać mapy, żeby wybrać start. Użyj wyszukiwarki miejsc albo przycisku „Użyj mojej lokalizacji”; oba działają z klawiaturą i czytnikiem ekranu. Punkt końcowy trasy (B) nadal wymaga mapy albo trasy demo."
+    },
+    "sources": {
+      "title": "Źródła danych",
+      "licences": "Dane mapy i miejsc z OpenStreetMap są dostępne na licencji ODbL. Trasy z openrouteservice są na licencji CC BY-SA 4.0. Dane pogodowe z Open-Meteo są na licencji CC BY 4.0.",
+      "routes": {
+        "what": "Trasy",
+        "credit": "© openrouteservice by HeiGIT | Data from OpenStreetMap"
+      },
+      "map": {
+        "what": "Mapa i miejsca",
+        "credit": "© OpenStreetMap contributors"
+      },
+      "weather": {
+        "what": "Pogoda",
+        "credit": "Weather data by Open-Meteo.com"
+      }
+    }
   }
 }
