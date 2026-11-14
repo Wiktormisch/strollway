@@ -1,6 +1,7 @@
 import pytest
 
 from walks.models import Stop
+from walks.serializers import MAX_NESTED_STOPS
 from walks.tests.conftest import CLIENT_B, make_stop, make_walk
 
 pytestmark = pytest.mark.django_db
@@ -152,3 +153,48 @@ def test_walk_filter_with_foreign_walk_is_empty(api):
 
 def test_invalid_walk_filter(api):
     assert api.get(f"{URL}?walk=abc").status_code == 400
+
+
+def test_create_rejects_a_used_order(api):
+    """Regression (audit W1): /api/stops/ checks order like the nested create."""
+    walk = make_walk()
+    make_stop(walk, order=1)
+
+    response = api.post(URL, stop_payload(walk, order=1), format="json")
+
+    assert response.status_code == 400
+    assert "order" in response.json()
+    assert walk.stops.count() == 1
+
+
+def test_create_rejects_more_than_max_stops(api):
+    """Regression (audit W1): at most MAX_NESTED_STOPS stops per walk."""
+    walk = make_walk()
+    for order in range(1, MAX_NESTED_STOPS + 1):
+        make_stop(walk, order=order)
+
+    response = api.post(URL, stop_payload(walk, order=99), format="json")
+
+    assert response.status_code == 400
+    assert "walk" in response.json()
+    assert walk.stops.count() == MAX_NESTED_STOPS
+
+
+def test_update_rejects_the_order_of_another_stop(api):
+    walk = make_walk()
+    make_stop(walk, order=1)
+    stop = make_stop(walk, order=2)
+
+    response = api.patch(f"{URL}{stop.pk}/", {"order": 1}, format="json")
+
+    assert response.status_code == 400
+    assert "order" in response.json()
+
+
+def test_update_keeps_its_own_order_on_a_full_walk(api):
+    walk = make_walk()
+    stops = [make_stop(walk, order=order) for order in range(1, MAX_NESTED_STOPS + 1)]
+
+    response = api.patch(f"{URL}{stops[0].pk}/", {"order": 1, "planned_minutes": 15}, format="json")
+
+    assert response.status_code == 200
