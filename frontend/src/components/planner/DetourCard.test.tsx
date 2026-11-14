@@ -20,6 +20,7 @@ describe('DetourCard', () => {
     const stats = screen.getByLabelText('Route in numbers')
     expect(stats).toHaveTextContent('Distance420 m')
     expect(stats).toHaveTextContent('Time6 min')
+    expect(stats).toHaveTextContent('Caloriesabout 23 kcal')
     expect(stats).toHaveTextContent('Places3')
   })
 

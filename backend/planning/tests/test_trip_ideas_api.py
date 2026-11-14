@@ -39,6 +39,7 @@ def test_mock_mode_returns_a_rule_based_trip(client, mock_engines):
     assert data["engine"] == "rules"
     assert data["stops"][0]["poi_id"] == "node/1"
     assert data["over_limit"] is False
+    assert data["route"]["kcal"] > 0
 
 
 @pytest.mark.parametrize(

@@ -4,6 +4,7 @@ import type { RouteComparison } from '@/api/types'
 import { formatDistance, formatDuration } from '@/lib/format'
 import { detourCase, type DetourCase } from '@/lib/planner'
 import { cn } from '@/lib/utils'
+import { StatList, type Stat } from '@/components/common/StatList'
 
 const TONE: Record<DetourCase, 'good' | 'info' | 'warn'> = {
   bigDetour: 'info',
@@ -55,10 +56,17 @@ export function DetourCard({ plan, avoidStairs, places }: DetourCardProps) {
   // <Trans> puts the <stairs> tag from the translation around a real <strong> element.
   const stairsTag = { stairs: <strong className="font-semibold text-stairs-text" /> }
 
+  const stat = (kind: Stat['kind'], value: string): Stat => ({
+    kind,
+    label: t(`planner.detour.stats.${kind}`),
+    value,
+  })
   const stats = [
-    { key: 'distance', value: formatDistance(plan.route.distance_m, i18n.language) },
-    { key: 'time', value: formatDuration(plan.route.duration_min) },
-    ...(places === undefined ? [] : [{ key: 'places', value: String(places) }]),
+    stat('distance', formatDistance(plan.route.distance_m, i18n.language)),
+    stat('time', formatDuration(plan.route.duration_min)),
+    // A rough estimate for a 70 kg adult, so the value says "about" (DECISIONS.md section 13).
+    stat('kcal', t('planner.detour.kcalValue', { kcal: plan.route.kcal })),
+    ...(places === undefined ? [] : [stat('places', String(places))]),
   ]
 
   // The result hero (DESIGN.md section 5): tag, title, body, then a row of stats.
@@ -87,17 +95,11 @@ export function DetourCard({ plan, avoidStairs, places }: DetourCardProps) {
           components={stairsTag}
         />
       </p>
-      {/* A description list: each stat has a name (dt) and a value (dd). */}
-      <dl aria-label={t('planner.detour.statsLabel')} className="flex gap-6 pt-1">
-        {stats.map((stat) => (
-          <div key={stat.key}>
-            <dt className="text-sm text-muted-foreground">
-              {t(`planner.detour.stats.${stat.key}`)}
-            </dt>
-            <dd className="text-lg font-semibold tabular-nums">{stat.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <StatList
+        stats={stats}
+        label={t('planner.detour.statsLabel')}
+        className="pt-1 sm:flex sm:flex-wrap sm:gap-x-6"
+      />
     </section>
   )
 }

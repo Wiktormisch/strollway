@@ -27,6 +27,7 @@ export function makeTrip(overrides: Partial<TripIdea> = {}): TripIdea {
     ] as [number, number][],
     distance_m: 1200,
     duration_min: 21,
+    kcal: 77,
     stairs_m: 0,
     stairs_segments: [],
   }

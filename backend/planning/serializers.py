@@ -90,6 +90,7 @@ class RouteSerializer(serializers.Serializer):
     geometry = serializers.ListField(child=lat_lng(), help_text="[[lat, lng], ...]")
     distance_m = serializers.IntegerField()
     duration_min = serializers.IntegerField(help_text="At the family pace, computed in code.")
+    kcal = serializers.IntegerField(help_text="Rough estimate for a 70 kg adult (+5% stroller).")
     stairs_m = serializers.FloatField(allow_null=True, help_text="null = unknown (mock route).")
     stairs_segments = serializers.ListField(
         child=serializers.ListField(child=lat_lng()), help_text="Line parts with stairs, to draw."

@@ -20,6 +20,17 @@ def test_list_is_light_with_stops_count(api):
     assert item["stops_count"] == 2
     assert "geometry" not in item
     assert "stops" not in item
+    assert item["kcal"] > 0
+
+
+def test_kcal_uses_the_profile_pace_and_wheels(api):
+    # 4 km at 4 km/h is 1 h: 3.0 MET x 70 kg = 210 kcal; no stroller, so no +5%.
+    profile = make_profile(wheels="none", pace_kmh=4.0)
+    walk = make_walk(profile=profile, distance_m=4000)
+    assert api.get(f"{URL}{walk.id}/").json()["kcal"] == 210
+    # Without a profile the app assumes a stroller at 4 km/h: +5%.
+    walk = make_walk(distance_m=4000)
+    assert api.get(f"{URL}{walk.id}/").json()["kcal"] == round(210 * 1.05)
 
 
 def test_create(api):

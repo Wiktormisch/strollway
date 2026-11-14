@@ -5,14 +5,28 @@ import type { WalkListItem, WalkStatus } from '@/api/types'
 import { Card, CardContent } from '@/components/ui/card'
 import { formatDate, formatDistance, formatDuration } from '@/lib/format'
 import { cn } from '@/lib/utils'
+import { StatList, type Stat } from '@/components/common/StatList'
 
 export function WalkCard({ walk }: { walk: WalkListItem }) {
   const { t, i18n } = useTranslation()
-  const stats = [
-    { key: 'distance', value: formatDistance(walk.distance_m, i18n.language) },
-    { key: 'duration', value: formatDuration(walk.duration_min) },
-    { key: 'stairsAvoided', value: formatDistance(walk.stairs_avoided_m, i18n.language) },
-    { key: 'stops', value: String(walk.stops_count) },
+  const stats: Stat[] = [
+    {
+      kind: 'distance',
+      label: t('walks.card.distance'),
+      value: formatDistance(walk.distance_m, i18n.language),
+    },
+    { kind: 'time', label: t('walks.card.duration'), value: formatDuration(walk.duration_min) },
+    {
+      kind: 'kcal',
+      label: t('walks.card.kcal'),
+      value: t('planner.detour.kcalValue', { kcal: walk.kcal }),
+    },
+    {
+      kind: 'stairsAvoided',
+      label: t('walks.card.stairsAvoided'),
+      value: formatDistance(walk.stairs_avoided_m, i18n.language),
+    },
+    { kind: 'places', label: t('walks.card.stops'), value: String(walk.stops_count) },
   ]
   return (
     // The whole card is clickable, but only the name is a link: its ::after layer covers the
@@ -38,14 +52,7 @@ export function WalkCard({ walk }: { walk: WalkListItem }) {
           <StatusChip status={walk.status} />
         </div>
 
-        <dl className="grid grid-cols-2 gap-x-4 gap-y-3 border-t pt-4">
-          {stats.map((stat) => (
-            <div key={stat.key}>
-              <dt className="text-sm text-muted-foreground">{t(`walks.card.${stat.key}`)}</dt>
-              <dd className="text-base font-semibold">{stat.value}</dd>
-            </div>
-          ))}
-        </dl>
+        <StatList stats={stats} size="md" className="border-t pt-4" />
 
         {walk.status === 'done' && walk.rating !== null && (
           <p className="mt-auto flex items-center gap-1.5 text-sm font-medium">

@@ -492,6 +492,8 @@ export interface components {
             distance_m: number;
             /** @description At the family pace, computed in code. */
             duration_min: number;
+            /** @description Rough estimate for a 70 kg adult (+5% stroller). */
+            kcal: number;
             /**
              * Format: double
              * @description null = unknown (mock route).
@@ -715,6 +717,7 @@ export interface components {
             distance_m: number;
             /** Format: int64 */
             duration_min: number;
+            readonly kcal: number;
             /** Format: int64 */
             stairs_m?: number;
             /** Format: int64 */
@@ -743,6 +746,7 @@ export interface components {
             readonly avoid_stairs: boolean;
             readonly distance_m: number;
             readonly duration_min: number;
+            readonly kcal: number;
             readonly stairs_m: number;
             readonly stairs_avoided_m: number;
             readonly detour_m: number;
