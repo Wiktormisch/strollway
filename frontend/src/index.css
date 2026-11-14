@@ -20,6 +20,7 @@
   --color-cat-care: var(--cat-care);
   --color-ring: var(--ring);
   --color-input: var(--input);
+  --color-control-border: var(--control-border);
   --color-border: var(--border);
   --color-destructive: var(--destructive);
   --color-accent-foreground: var(--accent-foreground);
@@ -61,9 +62,12 @@
   --muted-foreground: #5f6b73;
   --accent: #efede7;
   --accent-foreground: #12334a;
-  --destructive: oklch(0.577 0.245 27.325);
+  /* Darker than the shadcn default: red text on the page background needs 4.5:1 (5.0:1 now). */
+  --destructive: oklch(0.55 0.22 27.325);
   --border: #e4e2dc;
   --input: #e4e2dc;
+  /* The edge of inputs, selects and text areas: 3:1 or more on card and background. */
+  --control-border: #86837a;
   --ring: #2d6a4f;
   --brand: #2d6a4f;
   --brand-foreground: #ffffff;
@@ -98,6 +102,7 @@
   --destructive: oklch(0.704 0.191 22.216);
   --border: #24394a;
   --input: #24394a;
+  --control-border: #66808f;
   --ring: #74c69d;
   --brand: #74c69d;
   --brand-foreground: #0e1e2a;
@@ -198,4 +203,22 @@
 .dark .leaflet-popup-tip {
   background: var(--popover);
   color: var(--popover-foreground);
+}
+
+/* The OpenStreetMap credit link: the Leaflet default colour is 2.55:1, so it is underlined.
+   `.leaflet-container` first: leaflet.css loads later and sets `text-decoration: none`. */
+.leaflet-container .leaflet-control-attribution a {
+  text-decoration: underline;
+}
+
+/* Less motion when the system asks for it: spinners, skeletons, dialogs and Leaflet zoom. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }

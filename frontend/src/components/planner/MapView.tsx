@@ -18,7 +18,7 @@ import { DEFAULT_MAP_CENTER, DEFAULT_MAP_ZOOM } from '@/constants/demoRoutes'
 import { mapLineStyles } from '@/constants/mapStyles'
 import { useMapColors } from '@/lib/cssColors'
 import { finishIcon, letterIcon, poiIcon } from '@/lib/mapIcons'
-import { fitPadding, planBounds } from '@/lib/planner'
+import { fitPadding, planBounds, prefersReducedMotion } from '@/lib/planner'
 import { PoiDetails } from './PoiDetails'
 
 interface MapViewProps {
@@ -158,7 +158,12 @@ function FitBounds({ points, fitKey, bottomInset, maxZoom = 18 }: FitBoundsProps
   const key = fitKey ?? JSON.stringify([points[0], points[points.length - 1], points.length])
   useEffect(() => {
     if (points.length > 0) {
-      map.fitBounds(latLngBounds(points), { ...fitPadding(bottomInset), maxZoom })
+      // No pan and zoom animation when the system asks for less motion (audit U7).
+      map.fitBounds(latLngBounds(points), {
+        ...fitPadding(bottomInset),
+        maxZoom,
+        animate: !prefersReducedMotion(),
+      })
     }
     // Fit only when the route changes, not on every render and not when the sheet is
     // opened or closed: that would move a map the user has just panned.

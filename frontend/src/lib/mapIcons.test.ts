@@ -36,4 +36,15 @@ describe('map icons', () => {
   it('draws the finish flag as SVG', () => {
     expect(html(finishIcon())).toMatch(/<svg[^>]*viewBox="0 0 16 16".*<rect/)
   })
+
+  it('hides the drawn letter or number from screen readers, so the title names the marker', () => {
+    for (const icon of [
+      poiIcon('cafe'),
+      letterIcon('A', 'red'),
+      stopIcon(1, 'cafe'),
+      finishIcon(),
+    ]) {
+      expect(html(icon)).toMatch(/^<span aria-hidden="true"/)
+    }
+  })
 })

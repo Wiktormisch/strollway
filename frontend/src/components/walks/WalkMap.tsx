@@ -1,6 +1,7 @@
 // A thin Leaflet wrapper for a saved walk: the route, A/B and numbered stops in category colours.
 // The planner map is built around a RoutePlan, so this one stays separate and simple.
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { latLngBounds } from 'leaflet'
 import { MapContainer, Marker, Polyline, TileLayer, useMap, useMapEvents } from 'react-leaflet'
 import 'leaflet/dist/leaflet.css'
@@ -8,6 +9,7 @@ import type { LatLng, LatLngTuple, Stop } from '@/api/types'
 import { mapLineStyles } from '@/constants/mapStyles'
 import { useMapColors } from '@/lib/cssColors'
 import { letterIcon, stopIcon } from '@/lib/mapIcons'
+import { prefersReducedMotion } from '@/lib/planner'
 
 export interface WalkMapProps {
   geometry: LatLngTuple[]
@@ -22,6 +24,7 @@ export interface WalkMapProps {
 }
 
 export function WalkMap(props: WalkMapProps) {
+  const { t } = useTranslation()
   const lines = mapLineStyles(useMapColors())
   return (
     <MapContainer
@@ -42,8 +45,15 @@ export function WalkMap(props: WalkMapProps) {
       <Marker
         position={[props.start.lat, props.start.lng]}
         icon={letterIcon('A', 'var(--brand)')}
+        title={t('planner.form.start')}
+        alt={t('planner.form.start')}
       />
-      <Marker position={[props.end.lat, props.end.lng]} icon={letterIcon('B', 'var(--primary)')} />
+      <Marker
+        position={[props.end.lat, props.end.lng]}
+        icon={letterIcon('B', 'var(--primary)')}
+        title={t('planner.form.end')}
+        alt={t('planner.form.end')}
+      />
       {props.stops.map((stop, index) => (
         <Marker
           key={stop.id}
@@ -57,6 +67,8 @@ export function WalkMap(props: WalkMapProps) {
         <Marker
           position={[props.draft.lat, props.draft.lng]}
           icon={letterIcon('+', 'var(--sage-500)')}
+          title={t('stops.newPoint')}
+          alt={t('stops.newPoint')}
         />
       )}
     </MapContainer>
@@ -72,7 +84,12 @@ function FitBounds({ points }: { points: LatLngTuple[] }) {
   const map = useMap()
   const key = JSON.stringify([points[0], points[points.length - 1], points.length])
   useEffect(() => {
-    if (points.length > 0) map.fitBounds(latLngBounds(points), { padding: [30, 30], maxZoom: 18 })
+    if (points.length > 0)
+      map.fitBounds(latLngBounds(points), {
+        padding: [30, 30],
+        maxZoom: 18,
+        animate: !prefersReducedMotion(),
+      })
     // Fit only when the route changes, not on every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [map, key])

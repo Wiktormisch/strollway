@@ -131,3 +131,11 @@ export function fitPadding(bottomInset: number): {
     paddingBottomRight: [MAP_FIT_GAP, MAP_FIT_GAP + Math.max(0, bottomInset)],
   }
 }
+
+/** True when the system asks for less motion. False when matchMedia is missing (tests). */
+export function prefersReducedMotion(): boolean {
+  return (
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
+}
