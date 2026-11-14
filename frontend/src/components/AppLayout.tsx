@@ -1,16 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import { NavLink, Outlet, useLocation, useMatch } from 'react-router-dom'
-import { Baby } from 'lucide-react'
+import { Footprints, Map as MapIcon, Users } from 'lucide-react'
 import { cn } from '@/lib/utils'
+import { BrandMark } from './BrandMark'
 import { ErrorBoundary } from './ErrorBoundary'
 import { LanguageSwitch } from './LanguageSwitch'
 import { ThemeSwitch } from './ThemeSwitch'
 import { TopBarMenu } from './TopBarMenu'
 
 const NAV_ITEMS = [
-  { to: '/', key: 'nav.planner', end: true },
-  { to: '/walks', key: 'nav.walks', end: false },
-  { to: '/profiles', key: 'nav.profiles', end: false },
+  { to: '/', key: 'nav.planner', end: true, icon: MapIcon },
+  { to: '/walks', key: 'nav.walks', end: false, icon: Footprints },
+  { to: '/profiles', key: 'nav.profiles', end: false, icon: Users },
 ] as const
 
 export function AppLayout() {
@@ -49,26 +50,29 @@ export function AppLayout() {
             aria-label={t('app.name')}
             className="flex size-11 shrink-0 items-center justify-center gap-2 rounded-full text-brand hover:bg-muted lg:w-auto lg:px-3"
           >
-            <Baby aria-hidden className="size-6" />
+            <BrandMark />
             <span className="hidden text-base font-semibold text-foreground lg:inline">
               {t('app.name')}
             </span>
           </NavLink>
-          {/* No sideways scrolling: three short links fit next to the logo and the menu. */}
+          {/* No sideways scrolling: on a phone the links show only the icon (the name stays
+              for screen readers); from `sm` up they show the icon and the name. */}
           <nav className="flex min-w-0 flex-1 gap-0.5">
-            {NAV_ITEMS.map((item) => (
+            {NAV_ITEMS.map(({ icon: Icon, ...item }) => (
               <NavLink
                 key={item.to}
                 to={item.to}
                 end={item.end}
+                title={t(item.key)}
                 className={({ isActive }) =>
                   cn(
-                    'flex h-11 min-w-0 items-center rounded-full px-2.5 text-sm whitespace-nowrap hover:bg-muted sm:px-4',
+                    'flex h-11 min-w-11 items-center justify-center gap-2 rounded-full px-3 text-sm whitespace-nowrap hover:bg-muted sm:px-4',
                     isActive && 'bg-brand-soft font-medium text-foreground hover:bg-brand-soft',
                   )
                 }
               >
-                <span className="truncate">{t(item.key)}</span>
+                <Icon aria-hidden className="size-5 shrink-0" />
+                <span className="sr-only truncate sm:not-sr-only">{t(item.key)}</span>
               </NavLink>
             ))}
           </nav>

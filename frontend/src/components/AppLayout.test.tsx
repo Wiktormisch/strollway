@@ -54,3 +54,14 @@ it('starts with a skip link that moves focus to the main content (audit U9)', as
   expect(skip).toHaveAttribute('href', '#content')
   expect(screen.getByRole('main')).toHaveAttribute('id', 'content')
 })
+
+it('gives every navigation link an icon and a name that works without the visible text', () => {
+  renderLayout('/')
+  const nav = screen.getByRole('navigation')
+  for (const name of ['Planner', 'My walks', 'Profiles']) {
+    const link = within(nav).getByRole('link', { name })
+    // On a phone only the icon is visible; the name stays for screen readers and as a tooltip.
+    expect(link.querySelector('svg')).toBeInTheDocument()
+    expect(link).toHaveAttribute('title', name)
+  }
+})
