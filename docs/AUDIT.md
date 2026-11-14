@@ -24,7 +24,7 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 |---|---|---|
 | 0 | Baseline: tests, linters, build, dependency audit | Done |
 | 1 | Documentation | Done |
-| 2 | Overpass and place data: diagnosis and alternatives | To do |
+| 2 | Overpass and place data: diagnosis and alternatives | Done |
 | 3a | Backend: `config/`, `walks/`, security, deploy readiness | To do |
 | 3b | Backend: `planning/` and `planning/llm/` | To do |
 | 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | To do |
@@ -117,6 +117,90 @@ README against `package.json`. These all match.
 - `.env.example` matches the code exactly.
 - `AGENTS.md` and `CLAUDE.md` are short, concrete and consistent with each other.
 - CI runs the same checks as the README lists.
+
+## Part 2: Overpass and place data
+
+Files read: `backend/planning/pois.py`, `services.py` (`_pois`), `trip_planner.py`
+(`_candidates`), `management/commands/record_fixtures.py`, `config/settings.py:140-141`, the four
+files in `planning/fixtures/`, `docs/DECISIONS.md` sections 1, 3, 7 and 10.
+
+### Live check (2026-11-14, about 13 requests, demo point in Chelm only)
+
+| Server | `/api/status` | Small query (playgrounds, 300 m) |
+|---|---|---|
+| `overpass-api.de` | no answer in 25 s | no answer in 25 s |
+| `overpass.private.coffee` | no answer in 25 s | no answer in 25 s |
+| `maps.mail.ru` | 200 after 19 s | no answer in 25 s; a second try: 504 at once |
+| `overpass.kumi.systems` | no answer in 25 s | no answer in 25 s |
+
+Control: `api.open-meteo.com`, `www.openstreetmap.org` and the static home page of
+`overpass-api.de` all answered in under 0.5 s. DNS, TCP and TLS to the API took under 0.15 s, then
+nothing. So the network is fine and the API itself does not answer, even for `/api/status`, which
+does no database work. This is the same picture as on 2026-11-11 (`DECISIONS.md:215`).
+
+### Diagnosis
+
+1. **The main cause is outside our code.** The public Overpass servers are overloaded. Our query
+   is not the reason: a trivial status call hangs too. No change to the query will make live
+   places reliable.
+2. **What the user sees today:**
+   - Trip ideas: the demo start works from `planning/fixtures/trip_demo.json` (268 elements).
+     Any other start gets 422 `places_unavailable` after up to 12 s.
+   - Route plans: the three demo pairs have `"overpass": null`, so **no place is ever shown on a
+     demo route**. Any other route waits up to 25 s, then shows "Load places again", which
+     usually fails again.
+3. **The code handles the failure correctly:** no sleep, no retry, no invented places, honest
+   status, only successful answers cached (`pois.py:108-135`). This part needs no fix.
+
+### Findings
+
+- **O1 [P1/S] `planning/fixtures/pair_*.json`** - the demo routes have no recorded places (see
+  diagnosis 2). The first thing a reviewer clicks shows an empty list. `record_fixtures` accepts
+  `--overpass-file` only with `--trip` (`record_fixtures.py:136`). Fix: allow
+  `--overpass-file` per pair (or record them when a server answers), export the three route
+  queries from Overpass Turbo in the browser, and record them.
+- **O2 [P1/S] 25 s wait on route plans** - `TIMEOUT_S = 25` (`pois.py:22`) holds a gunicorn worker
+  and the user for 25 s for an answer that almost never comes. Trip ideas already use 12 s. Fix:
+  use the same short timeout for both (10-12 s). The route itself is ready at once, so the user
+  loses nothing.
+- **O3 [P2/S] no short negative cache** - failed answers are not cached, so every "Load places
+  again" and every new request hits a server that has just failed. Fix: remember "Overpass down"
+  for about 60 s (one cache key) and return `unavailable` at once. This is kinder to the server
+  and faster for the user. It is not a sleep and not a retry, so it fits `DECISIONS.md:17`.
+- **O4 [P2/M] one server only** (`settings.py:141`) - `OVERPASS_URLS` with failover is already an
+  idea (`DECISIONS.md:218`). Today's check shows it does not help: all four servers failed
+  together. Worth it only with a total time budget (for example 12 s for all servers), and only
+  as a small extra. Do not spend a session on it.
+- **O5 [P3/S] query cost** - each query has 2 x 7 statements (`node` and `way` for every key,
+  `pois.py:96-101`) and value regexes. `nwr[...]` would halve the statements, and the dispatcher
+  admits queries that declare less memory more easily (a `[maxsize:...]` lower than the 512 MiB
+  default). Not verified on a working server; small gain, because the servers hang even for
+  `/api/status`.
+- **O6 [P3/S] cache key** - the key is the query hash with coordinates at 6 decimals
+  (`pois.py:79`), so two clicks a few metres apart never share a cache entry. For trip ideas the
+  start could be rounded to about 50 m before the query. Small gain; the radius is 300-1500 m.
+- **O7 [P2/S] `DECISIONS.md:186`, D7** - `indoor_play` is still unchecked: no server answered
+  today. Fix: the developer counts `nwr["leisure"="indoor_play"]` in Gdansk in Overpass Turbo (it
+  worked in the browser in stage 6) and writes the result to `DECISIONS.md`.
+
+### Alternatives for place data
+
+The app needs a few thousand places in one region (Tricity), read-only, refreshed rarely. Live
+queries to a shared public server are the wrong tool for that.
+
+| Option | What it is | Pros | Cons | Size |
+|---|---|---|---|---|
+| **A. Own place table from an OSM extract** (recommended) | A management command reads the Geofabrik `pomorskie` extract once, keeps only our tags, and saves them in a `Place` model in SQLite. `pois.py` reads places by bounding box, then filters by distance in code, as today. | Fast (milliseconds), works offline and in CI, no rate limits, same OSM data and licence (ODbL, attribution already needed). The parsers and rules stay the same. Removes the fixtures problem. | A new model, a migration and an import command; a parser dependency (for example `osmium`, ask first) or a one-time Overpass Turbo export. Data is as fresh as the last import (fine for parks and playgrounds). Only the imported region works. | L (one session) |
+| B. Self-hosted Overpass (Docker) | Run Overpass with the `pomorskie` extract next to the app. | The code does not change, only `OVERPASS_URL`. | A heavy service (several GB of disk, updates, memory) for a small portfolio deploy; free hosting will not run it. | L, plus running costs |
+| C. Server list with failover (O4) | Try 2-4 public servers in turn within one time budget. | Small change. | Today all servers failed together. It treats the symptom. | M |
+| D. Overture Maps places | Open dataset (GeoParquet), read with DuckDB. | Many POI, partly from other sources than OSM. | Licence and quality for Poland not checked; categories differ (no `playground`, `bench`); new heavy tools. | L, research first |
+| E. Google Places with the user's key | On demand, not stored. | Good coverage. | Terms forbid storing, costs money, needs a key, against "OSM only" (`DECISIONS.md:11`). | M, not recommended |
+
+**Recommendation:** first O1 and O2 (small, they fix what a reviewer sees), then option A as its
+own stage before the deploy (stage 8). Keep live Overpass as an optional provider
+(`POI_PROVIDER=overpass`) for regions outside the import. Option A changes a decision in
+`DECISIONS.md:11` (from "Overpass only" to "OSM data, imported"), so record it there first. It
+also unblocks feature idea 10 (place search): a local table can be searched by name.
 
 ## Feature ideas (input for part 5)
 
