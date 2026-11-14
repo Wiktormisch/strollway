@@ -469,3 +469,20 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
 - **`indoor_play` checked (closes D7 and audit O7):** 16 elements with `leisure=indoor_play` in
   the Tricity export. Added as a category (stop model, both tag tables, trip rules with 60 min and
   the wishes "sala zabaw" / "indoor play", icon and pl/en labels).
+
+## 12. Phase D: the profile as a template (2026-11-14)
+
+- **The profile is a template for both planner modes.** It sets the defaults; the user can still
+  change them in the planner.
+- **Children are optional (audit idea 5).** A profile can have 0-6 children. A profile without
+  children is only a pace and a way of moving.
+- **"Wheels" stays in the API, only the UI changes.** The field is shown as "How do you get
+  around?" with "On foot", "With a stroller" and "With a balance bike". Renaming the field would
+  need a migration and an API change and gives the user nothing.
+- **A stroller or a balance bike turns on "Avoid stairs" by default.** It is a default, not a
+  lock: the switch stays usable.
+- **Age picks the places** (rules in code, not the LLM): 0-1 park and cafe, 2-8 playground and
+  cafe, 9-12 playground or park and ice cream or cafe, 13-17 park and skatepark. A skatepark is a
+  new category (`leisure=pitch` + `sport=skateboard`) and needs a new Overpass Turbo export.
+- **Ideas 13 and 22:** idea 13 (at least one stop on a saved trip walk) is dropped. Idea 22
+  (recompute the time in the save dialog) moves to phase D, after the profile changes.

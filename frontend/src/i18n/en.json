@@ -329,6 +329,7 @@
     "editNamed": "Edit {{name}}",
     "deleteNamed": "Delete {{name}}",
     "ageChip": "{{age}} y.",
+    "noChildren": "No children",
     "empty": {
       "title": "No profiles yet.",
       "text": "Add a profile to plan walks at your family's pace.",
@@ -336,8 +337,8 @@
     },
     "wheels": {
       "none": "On foot",
-      "stroller": "Stroller",
-      "kid_bike": "Kid bike"
+      "stroller": "With a stroller",
+      "kid_bike": "With a balance bike"
     },
     "pace": {
       "relaxed": "Relaxed pace",
@@ -347,15 +348,14 @@
       "name": "Profile name",
       "namePlaceholder": "e.g. Weekend with a stroller",
       "ages": "Children's ages",
-      "agesHint": "From 1 to {{max}} children, ages 0-{{maxAge}}.",
+      "agesHint": "Optional. At most {{max}} children, ages 0-{{maxAge}}.",
       "age": "Child's age",
       "addAge": "Add age",
       "removeAge": "Remove age {{age}}",
-      "wheels": "Wheels",
+      "wheels": "How do you get around?",
       "pace": "Pace",
       "errors": {
         "nameRequired": "Give the profile a name.",
-        "noChildren": "Add at least one child's age.",
         "ageInvalid": "An age is a whole number from 0 to {{maxAge}}.",
         "tooMany": "At most {{max}} children."
       }
