@@ -18,16 +18,21 @@ export class ApiError extends Error {
   }
 }
 
+// Used when localStorage throws (blocked site data). It lives until the page reloads,
+// so all requests in this tab still share one client id (audit F5).
+let fallbackClientId: string | null = null
+
 /** A random id for this browser, kept in localStorage. It is not a login. */
 export function getClientId(): string {
   try {
     const saved = localStorage.getItem(CLIENT_ID_STORAGE_KEY)
     if (saved) return saved
-    const created = crypto.randomUUID()
+    const created = fallbackClientId ?? crypto.randomUUID()
     localStorage.setItem(CLIENT_ID_STORAGE_KEY, created)
     return created
   } catch {
-    return crypto.randomUUID()
+    fallbackClientId ??= crypto.randomUUID()
+    return fallbackClientId
   }
 }
 

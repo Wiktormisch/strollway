@@ -9,6 +9,17 @@ describe('getClientId', () => {
     expect(first).toMatch(UUID)
     expect(getClientId()).toBe(first)
   })
+
+  it('keeps one id when localStorage is blocked', () => {
+    vi.spyOn(Storage.prototype, 'getItem').mockImplementation(() => {
+      throw new DOMException('blocked', 'SecurityError')
+    })
+
+    const first = getClientId()
+
+    expect(first).toMatch(UUID)
+    expect(getClientId()).toBe(first)
+  })
 })
 
 describe('apiFetch', () => {
