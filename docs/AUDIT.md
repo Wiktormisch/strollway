@@ -56,6 +56,10 @@ Run on 2026-11-14 on `dev` at `a2b9275`.
 - **B2 [P2/S] dev tooling** - the other 8 warnings come from `minimatch` through `eslint` and
   `typescript-eslint`. This code never reaches the browser. Update these tools on purpose in a
   separate task; do not run `npm audit fix --force` (it jumps major versions).
+  Status (task 7): `shadcn` moved to `devDependencies`, so `npm audit --omit=dev` finds 0
+  vulnerabilities. `eslint` 10.15.0 uses a fixed `minimatch` 11. The 12 warnings left are in dev
+  tools only: `typescript-eslint` 8.72.2 (the latest) and `ts-morph` (inside `shadcn`) still ask
+  for `minimatch` ^10. Wait for an upstream fix; do not force it with `overrides`.
 - **B3 [P2/M] bundle size** - the whole app is one 1 MB chunk. On a phone during a walk this is
   slow on mobile data. Look at lazy loading of pages (`React.lazy`) and of Leaflet in part 4a.
 - **B4 [P2/S] `check --deploy`** - the warnings come from the local dev `.env`, so they are
