@@ -430,5 +430,21 @@
   "topBar": {
     "menu": "More options",
     "theme": "Theme"
+  },
+  "location": {
+    "use": "Use my location",
+    "locating": "Finding your location…",
+    "error": {
+      "unsupported": "Location needs a secure (https) page and a browser that supports it. Tap the map instead.",
+      "denied": "Location access is blocked. Allow it in the browser settings, or tap the map.",
+      "unavailable": "Your location is not available right now. Tap the map instead.",
+      "timeout": "Finding your location took too long. Try again or tap the map."
+    }
+  },
+  "mapsExport": {
+    "open": "Open in Google Maps",
+    "newTab": "(opens in a new tab)",
+    "warning": "Google plans the way between our points by itself, so it may choose a way with stairs. Check the route on our map.",
+    "stopsCut": "The link has only the first {{count}} stops (a limit of Google Maps on phones)."
   }
 }

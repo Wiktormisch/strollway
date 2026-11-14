@@ -13,6 +13,7 @@ import { HealthStatus } from '@/components/HealthStatus'
 import { DemoModeBanner, ErrorBanner } from '@/components/planner/Banners'
 import { DetourCard, DetourCardSkeleton } from '@/components/planner/DetourCard'
 import { MapView, type MapFocus } from '@/components/planner/MapView'
+import { MapsExport } from '@/components/planner/MapsExport'
 import { PlacesSection } from '@/components/planner/PlacesSection'
 import { PlannerSheet } from '@/components/planner/PlannerSheet'
 import { RouteForm } from '@/components/planner/RouteForm'
@@ -160,6 +161,10 @@ export function PlannerPage() {
                 changeTripStart(DEMO_TRIP_START)
                 focusOn([DEMO_TRIP_START])
               }}
+              onLocate={(point) => {
+                changeTripStart(point)
+                focusOn([point])
+              }}
               onSubmit={suggestTrip}
             />
             <ResultsDivider />
@@ -191,6 +196,8 @@ export function PlannerPage() {
                 <Button className="w-full" onClick={() => setSaveOpen(true)}>
                   {t('planner.save')}
                 </Button>
+                {/* The remaining stops only: a removed stop must not be in the link. */}
+                <MapsExport geometry={trip.route.geometry} stops={tripStops} />
                 <TransitStops stops={trip.transit_stops} />
               </>
             )}
@@ -217,6 +224,11 @@ export function PlannerPage() {
               onAvoidStairsChange={setAvoidStairs}
               onClear={(which) => setPoints({ ...points, [which]: null })}
               onUseMapCenter={(which) => setPoints({ ...points, [which]: mapCenter.current })}
+              onLocate={(point) => {
+                // The position comes later (async): read the current points, not this render's.
+                setPoints((current) => ({ ...current, start: point }))
+                focusOn([point])
+              }}
               onDemo={pickDemo}
               onPlan={plan}
             />
@@ -247,6 +259,7 @@ export function PlannerPage() {
                 <Button className="w-full" onClick={() => setSaveOpen(true)}>
                   {t('planner.save')}
                 </Button>
+                <MapsExport geometry={result.route.geometry} />
                 <PlacesSection
                   plan={result}
                   hidden={hidden}

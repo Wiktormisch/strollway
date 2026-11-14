@@ -430,5 +430,21 @@
   "topBar": {
     "menu": "Więcej opcji",
     "theme": "Motyw"
+  },
+  "location": {
+    "use": "Użyj mojej lokalizacji",
+    "locating": "Szukam Twojej lokalizacji…",
+    "error": {
+      "unsupported": "Lokalizacja działa tylko na bezpiecznej stronie (https) i w przeglądarce, która ją obsługuje. Kliknij mapę.",
+      "denied": "Dostęp do lokalizacji jest zablokowany. Zezwól na niego w ustawieniach przeglądarki albo kliknij mapę.",
+      "unavailable": "Twoja lokalizacja jest teraz niedostępna. Kliknij mapę.",
+      "timeout": "Szukanie lokalizacji trwało zbyt długo. Spróbuj ponownie albo kliknij mapę."
+    }
+  },
+  "mapsExport": {
+    "open": "Otwórz w Google Maps",
+    "newTab": "(otwiera się w nowej karcie)",
+    "warning": "Google sam wyznacza drogę między naszymi punktami, więc może wybrać drogę ze schodami. Sprawdź trasę na naszej mapie.",
+    "stopsCut": "Link zawiera tylko pierwsze przystanki (maks. {{count}}, limit Google Maps na telefonach)."
   }
 }

@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { DEMO_ROUTES, type DemoRoute } from '@/constants/demoRoutes'
 import { demoRouteOf } from '@/lib/planner'
+import { LocateButton } from './LocateButton'
 import { PointRow } from './PointRow'
 import { StairsIcon } from './StairsIcon'
 
@@ -19,6 +20,8 @@ interface RouteFormProps {
   onAvoidStairsChange: (value: boolean) => void
   onClear: (which: 'start' | 'end') => void
   onUseMapCenter: (which: 'start' | 'end') => void
+  /** "Use my location" sets point A. */
+  onLocate: (point: LatLng) => void
   onDemo: (route: DemoRoute) => void
   onPlan: () => void
 }
@@ -47,6 +50,7 @@ export function RouteForm(props: RouteFormProps) {
       <div className="space-y-2">
         {row('start')}
         {row('end')}
+        <LocateButton onLocate={props.onLocate} />
       </div>
 
       <div className="space-y-2">
