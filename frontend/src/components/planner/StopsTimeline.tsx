@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { Bot, Clock, ListChecks, TriangleAlert, X } from 'lucide-react'
+import { Bot, Clock, ListChecks, Map as MapIcon, TriangleAlert, X } from 'lucide-react'
 import type { TripEngine, TripStop } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { categoryIcon } from '@/constants/poiCategories'
@@ -26,7 +26,8 @@ export function StopsTimeline({ engine, stops, totals, onRemove }: StopsTimeline
   return (
     <section aria-labelledby="timeline-title" className="space-y-3">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 id="timeline-title" className="text-base font-semibold">
+        <h2 id="timeline-title" className="flex items-center gap-2 text-base font-semibold">
+          <MapIcon aria-hidden className="size-5 text-brand" />
           {t('trip.timeline.title')}
         </h2>
         <span

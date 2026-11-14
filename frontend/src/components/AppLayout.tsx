@@ -23,7 +23,9 @@ export function AppLayout() {
     <div
       className={cn(
         'flex flex-col bg-background text-foreground',
-        fullScreen ? 'relative h-svh' : 'min-h-svh',
+        // overflow-clip: the page itself never scrolls under the map. `hidden` is not enough,
+        // because focus or scrollIntoView can still scroll a hidden overflow.
+        fullScreen ? 'relative h-svh overflow-clip' : 'min-h-svh',
       )}
     >
       {/* A floating pill bar (DESIGN.md section 6). Over the map on the planner (to the right
