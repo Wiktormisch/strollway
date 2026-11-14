@@ -79,6 +79,7 @@ class Walk(models.Model):
 class Stop(models.Model):
     class Category(models.TextChoices):
         PLAYGROUND = "playground", "Playground"
+        INDOOR_PLAY = "indoor_play", "Indoor play"
         TOILETS = "toilets", "Toilets"
         CAFE = "cafe", "Cafe"
         RESTAURANT = "restaurant", "Restaurant"

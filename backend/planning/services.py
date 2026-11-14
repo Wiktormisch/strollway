@@ -1,11 +1,12 @@
 """POST /api/route-plans/: route comparison + places, with all fallbacks.
 
 Fallback order for routing: live ORS -> recorded fixture (demo pairs only) -> straight line.
-Fallback for places: live Overpass -> fixture (demo pairs only) -> empty list.
+Places: fixture (demo pairs with recorded places) -> POI_PROVIDER (db table, live Overpass
+or mock). A point outside the imported area gives pois_status "outside_area".
 NoRoute and NoRoutablePoint are real answers and reach the view (422).
 """
 
-from planning import fixtures, pois, routing
+from planning import fixtures, places, pois, routing
 
 SOURCE_ORS = "ors"
 SOURCE_FIXTURE = "fixture"
@@ -64,7 +65,7 @@ def fixture_fetch(fixture):
 
 
 def _pois(comparison, start, end, speed, fixture):
-    """Recorded places for a demo pair, live places for any other route. Never invented.
+    """Recorded places for a demo pair, else the configured provider. Never invented.
 
     A demo pair with recorded places never calls Overpass: the public servers are often
     down (docs/AUDIT.md, part 2), and the demo must answer at once. The places are parsed
@@ -75,7 +76,10 @@ def _pois(comparison, start, end, speed, fixture):
     recorded = fixture.get("overpass") if fixture else None
     if recorded is not None:
         return pois.parse_overpass(recorded, geometry, start, end, speed)
-    if pois.is_enabled():
+    provider = pois.provider()
+    if provider == "db":
+        return places.find_pois(geometry, start, end, speed, keep=_keep_indexes(comparison))
+    if provider == "overpass":
         return pois.find_pois(geometry, start, end, speed, keep=_keep_indexes(comparison))
     return pois.PoiResult([], [], pois.STATUS_OK)
 

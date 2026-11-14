@@ -98,7 +98,10 @@ class RoutePlanResponseSerializer(serializers.Serializer):
     baseline = RouteSerializer(help_text="The shortest route, for comparison.")
     detour_m = serializers.IntegerField(allow_null=True)
     extra_min = serializers.IntegerField(allow_null=True)
-    pois_status = serializers.ChoiceField(choices=["ok", "unavailable"])
+    pois_status = serializers.ChoiceField(
+        choices=["ok", "unavailable", "outside_area"],
+        help_text="outside_area = no place data for this area (the data covers the Tricity).",
+    )
     pois = PoiSerializer(many=True)
     transit_stops = TransitStopSerializer(many=True)
 
@@ -178,6 +181,12 @@ class TripIdeaResponseSerializer(serializers.Serializer):
 
 class TripIdeaErrorSerializer(serializers.Serializer):
     code = serializers.ChoiceField(
-        choices=["no_places_nearby", "places_unavailable", "no_route", "no_routable_point"]
+        choices=[
+            "no_places_nearby",
+            "places_unavailable",
+            "outside_area",
+            "no_route",
+            "no_routable_point",
+        ]
     )
     detail = serializers.CharField()

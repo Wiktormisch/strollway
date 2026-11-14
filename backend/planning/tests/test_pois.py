@@ -33,7 +33,7 @@ def test_query_is_one_combined_request_with_node_and_way():
     assert query.startswith("[out:json][timeout:10];")
     assert query.rstrip().endswith("out center tags;")
     assert 'node["amenity"~"^(bench|cafe|drinking_water|fast_food|restaurant|toilets)$"]' in query
-    assert 'way["leisure"~"^(park|playground)$"](around:150,' in query
+    assert 'way["leisure"~"^(indoor_play|park|playground)$"](around:150,' in query
     assert 'node["highway"~"^(bus_stop)$"](around:400,54.350000,18.600000)' in query
     assert "relation" not in query
 

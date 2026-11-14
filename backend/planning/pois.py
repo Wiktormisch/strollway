@@ -37,10 +37,13 @@ USER_AGENT = "StrollWay/0.1 (portfolio project)"
 
 STATUS_OK = "ok"
 STATUS_UNAVAILABLE = "unavailable"
+# The `db` provider has no data for this point (the import covers the Tricity only).
+STATUS_OUTSIDE_AREA = "outside_area"
 
 # (OSM key, OSM value) -> our category. The categories match walks.Stop.Category.
 CATEGORY_BY_TAG = {
     ("leisure", "playground"): "playground",
+    ("leisure", "indoor_play"): "indoor_play",
     ("amenity", "toilets"): "toilets",
     ("amenity", "cafe"): "cafe",
     ("amenity", "restaurant"): "restaurant",
@@ -71,8 +74,17 @@ def make_client(timeout=TIMEOUT_S):
     return httpx.Client(timeout=timeout)
 
 
+def provider():
+    """db (default, our Place table) | overpass (live) | mock (no places).
+
+    "auto" is the old default from before the Place table; it still means live Overpass.
+    """
+    name = settings.POI_PROVIDER
+    return "overpass" if name == "auto" else name
+
+
 def is_enabled():
-    return settings.POI_PROVIDER != "mock"
+    return provider() != "mock"
 
 
 # --- Query ----------------------------------------------------------------------------
@@ -291,6 +303,7 @@ MAX_CANDIDATES = 40
 # No benches here: they are not a goal of a trip. Ice cream counts as a cafe ("lody").
 TRIP_CATEGORY_BY_TAG = {
     ("leisure", "playground"): "playground",
+    ("leisure", "indoor_play"): "indoor_play",
     ("amenity", "cafe"): "cafe",
     ("amenity", "ice_cream"): "cafe",
     ("amenity", "restaurant"): "restaurant",

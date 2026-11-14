@@ -118,6 +118,23 @@ describe('PlannerPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('says the place data covers the Tricity only, without a reload button', async () => {
+    mockApi(makePlan({ pois_status: 'outside_area', pois: [] }))
+    const user = userEvent.setup()
+    renderWithProviders(<PlannerPage />)
+
+    expect(
+      screen.getByText(/Place data \(OpenStreetMap\) covers the Tricity only/),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Tiny detour' }))
+    expect(
+      await screen.findByText(
+        'We have place data for the Tricity only. This route is outside that area.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Load places again' })).not.toBeInTheDocument()
+  })
+
   it('offers to load places again when the places service is down', async () => {
     let answerReload: (plan: RoutePlan) => void = () => {}
     const reload = new Promise<RoutePlan>((resolve) => {

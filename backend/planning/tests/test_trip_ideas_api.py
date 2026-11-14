@@ -1,8 +1,8 @@
 import pytest
 from django.urls import reverse
 
-from planning import pois
-from planning.tests.factories import START, candidate
+from planning import places, pois
+from planning.tests.factories import START, candidate, node
 from walks.models import FamilyProfile
 
 URL = reverse("trip-ideas")
@@ -138,3 +138,15 @@ def test_throttle_ignores_a_forged_forwarded_for_header():
         for forged in ["1.1.1.1", "2.2.2.2"]
     }
     assert idents == {"203.0.113.7"}
+
+
+@pytest.mark.django_db
+def test_start_outside_the_place_data_is_422_outside_area(client, settings):
+    settings.POI_PROVIDER = "db"
+    corners = [node(1, 54.27, 18.43, amenity="bench"), node(2, 54.62, 18.80, amenity="bench")]
+    places.replace_places(places.parse_export({"elements": corners}), "test.json")
+
+    response = post(client, body(start={"lat": 52.2297, "lng": 21.0122}))  # Warsaw
+
+    assert response.status_code == 422
+    assert response.json()["code"] == "outside_area"

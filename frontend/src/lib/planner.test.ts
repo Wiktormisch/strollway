@@ -97,6 +97,7 @@ describe('planErrorKey', () => {
     expect(planErrorKey(new ApiError(422, 'x', { code: 'no_routable_point' }))).toBe(
       'noRoutablePoint',
     )
+    expect(planErrorKey(new ApiError(422, 'x', { code: 'outside_area' }))).toBe('outsideArea')
     expect(planErrorKey(new ApiError(400, 'x', { end: ['Too far.'] }))).toBe('invalid')
     expect(planErrorKey(new ApiError(429, 'x'))).toBe('tooManyRequests')
     expect(planErrorKey(new ApiError(0, 'x'))).toBe('network')

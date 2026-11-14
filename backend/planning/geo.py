@@ -101,3 +101,23 @@ def offset_m(origin, point):
     north = math.radians(point[0] - origin[0]) * EARTH_RADIUS_M
     east = math.radians(point[1] - origin[1]) * EARTH_RADIUS_M * math.cos(math.radians(origin[0]))
     return east, north
+
+
+def distance_to_polyline_m(polyline, point):
+    """Shortest distance from `point` to the line (to any segment, not only a vertex).
+
+    Uses the flat-earth offset around `point`, which is fine for the few hundred metres
+    we compare with. A single-point line gives the distance to that point.
+    """
+    flat = [offset_m(point, vertex) for vertex in polyline]
+    if len(flat) == 1:
+        return math.hypot(*flat[0])
+    return min(_distance_to_origin(a, b) for a, b in zip(flat, flat[1:], strict=False))
+
+
+def _distance_to_origin(a, b):
+    """Distance from (0, 0) to the segment a-b, in flat coordinates."""
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    length_sq = dx * dx + dy * dy
+    t = 0.0 if length_sq == 0 else max(0.0, min(1.0, -(a[0] * dx + a[1] * dy) / length_sq))
+    return math.hypot(a[0] + t * dx, a[1] + t * dy)

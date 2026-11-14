@@ -12,7 +12,7 @@ from dataclasses import dataclass
 from planning import geo
 
 # Categories with opening hours worth checking, and helpers that are not a goal alone.
-HAS_HOURS = {"cafe", "restaurant", "museum", "zoo", "shop"}
+HAS_HOURS = {"cafe", "restaurant", "museum", "zoo", "shop", "indoor_play"}
 AMENITIES = {"toilets", "water"}
 
 # A plan may be this much over max_minutes (the same rule as in trip_planner).
@@ -25,6 +25,7 @@ MAX_STOPS = 4
 # Minutes at a stop by category (inside the 5-60 range that LLM answers must keep too).
 STOP_MINUTES = {
     "playground": 30,
+    "indoor_play": 60,
     "cafe": 20,
     "restaurant": 30,
     "toilets": 5,
@@ -39,6 +40,7 @@ STOP_MINUTES = {
 LABELS = {
     "pl": {
         "playground": "plac zabaw",
+        "indoor_play": "sala zabaw",
         "cafe": "kawiarnia",
         "ice_cream": "lody",
         "restaurant": "restauracja",
@@ -53,6 +55,7 @@ LABELS = {
     },
     "en": {
         "playground": "playground",
+        "indoor_play": "indoor play",
         "cafe": "cafe",
         "ice_cream": "ice cream",
         "restaurant": "restaurant",
@@ -100,6 +103,10 @@ KEYWORDS = [
     (
         ("plac zabaw", "placu zabaw", "playground", "huśtawk", "zjeżdżal", "swing"),
         Want("playground", "playground"),
+    ),
+    (
+        ("sala zabaw", "sali zabaw", "salę zabaw", "salą zabaw", "indoor play", "soft play"),
+        Want("indoor_play", "indoor_play"),
     ),
     (
         ("lody", "lodów", "lodziar", "ice cream", "ice-cream", "gelato"),

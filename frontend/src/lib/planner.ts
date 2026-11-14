@@ -72,6 +72,7 @@ export type PlanErrorKey =
   | 'noRoutablePoint'
   | 'noPlacesNearby'
   | 'placesUnavailable'
+  | 'outsideArea'
   | 'invalid'
   | 'tooManyRequests'
   | 'network'
@@ -82,6 +83,7 @@ const ERROR_CODE_KEYS: Record<RoutePlanErrorCode | TripIdeaErrorCode, PlanErrorK
   no_routable_point: 'noRoutablePoint',
   no_places_nearby: 'noPlacesNearby',
   places_unavailable: 'placesUnavailable',
+  outside_area: 'outsideArea',
 }
 
 /** Maps a failed route-plans or trip-ideas request to an i18n key under `planner.errors`. */

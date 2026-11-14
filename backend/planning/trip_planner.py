@@ -11,7 +11,7 @@ from datetime import date
 from django.conf import settings
 from django.core.cache import cache
 
-from planning import fixtures, geo, pois, routing, services, trip_rules, weather
+from planning import fixtures, geo, places, pois, routing, services, trip_rules, weather
 from planning.llm import factory, prompt, validation
 from planning.llm.base import LLMError
 
@@ -48,6 +48,12 @@ class PlacesUnavailable(TripError):
     code = "places_unavailable"
 
 
+class OutsideArea(TripError):
+    """The start is outside the imported place data (the Tricity)."""
+
+    code = "outside_area"
+
+
 def active_engine():
     """The engine a trip tries first (for GET /api/health/). Builds no client."""
     names = factory.backend_names()
@@ -60,6 +66,8 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
     speed = services.speed_m_per_min(profile)
     fixture = fixtures.load_trip_fixture(start)
     found = _candidates(start, pois.trip_radius_m(speed, max_minutes), fixture)
+    if found.status == pois.STATUS_OUTSIDE_AREA:
+        raise OutsideArea()
     if found.status != pois.STATUS_OK:
         raise PlacesUnavailable()
     if not found.pois:
@@ -95,11 +103,14 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
 
 
 def _candidates(start, radius_m, fixture):
-    """Recorded places at the demo start (no Overpass call), live places anywhere else."""
+    """Recorded places at the demo start, else the configured provider (db or Overpass)."""
     recorded = fixture.get("overpass") if fixture else None
     if recorded is not None:
         return pois.parse_candidates(recorded, start, radius_m)
-    if pois.is_enabled():
+    provider = pois.provider()
+    if provider == "db":
+        return places.find_candidates(start, radius_m)
+    if provider == "overpass":
         return pois.find_candidates(start, radius_m)
     return pois.PoiResult([], [], pois.STATUS_UNAVAILABLE)
 

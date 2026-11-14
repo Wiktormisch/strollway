@@ -30,6 +30,7 @@ const MAX_NOTE_LENGTH = 200
 const MAX_NAME_LENGTH = 120
 const CATEGORIES: StopCategory[] = [
   'playground',
+  'indoor_play',
   'toilets',
   'cafe',
   'restaurant',
