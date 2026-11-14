@@ -17,6 +17,10 @@ export type LatLng = Schemas['PointRequest']
 
 export type PlaceSearchResult = Schemas['PlaceSearchResult']
 
+export type BestTime = Schemas['BestTimeResponse']
+
+export type BestTimeWindow = Schemas['BestTimeWindow']
+
 export type RoutePlanRequest = Schemas['RoutePlanRequestRequest']
 
 export type RouteGeometry = Omit<Schemas['Route'], 'geometry' | 'stairs_segments'> & {

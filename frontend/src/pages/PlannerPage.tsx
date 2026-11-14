@@ -5,6 +5,7 @@ import { fetchRoutePlan, useRoutePlan, useTripIdea } from '@/api/planning'
 import { toast } from 'sonner'
 import { usePatchProfile, useProfiles } from '@/api/profiles'
 import type { LatLng, RoutePlanRequest, TripIdeaRequest } from '@/api/types'
+import { BestTimeCard, WeatherCredit } from '@/components/planner/BestTimeCard'
 import { StopsTimeline } from '@/components/planner/StopsTimeline'
 import { PaceSlider } from '@/components/common/PaceSlider'
 import { TRIP_FORM_ID, TripIdeaForm } from '@/components/planner/TripIdeaForm'
@@ -250,6 +251,7 @@ export function PlannerPage() {
               onSearchPick={(point) => changeTripStart(point, true)}
               onSubmit={suggestTrip}
             />
+            <BestTimeCard start={tripStart} />
             <ResultsDivider />
             <div aria-live="polite" className="space-y-4">
               {tripIdea.isPending && <DetourCardSkeleton />}
@@ -268,6 +270,7 @@ export function PlannerPage() {
               <>
                 <DemoModeBanner source={trip.source} />
                 <WeatherChip weather={trip.weather} />
+                {trip.weather && <WeatherCredit className="-mt-2 text-center" />}
                 <StopsTimeline
                   engine={trip.engine}
                   stops={tripStops}
@@ -320,6 +323,7 @@ export function PlannerPage() {
               onDemo={pickDemo}
               onPlan={plan}
             />
+            <BestTimeCard start={points.start} />
 
             <ResultsDivider />
             {/* Only the short status is a live region, so screen readers skip the lists. */}

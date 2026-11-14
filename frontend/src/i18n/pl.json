@@ -149,7 +149,20 @@
       "details": "Szczegóły"
     },
     "results": "Twój spacer",
-    "dataArea": "Dane o miejscach (OpenStreetMap) obejmują tylko Trójmiasto. Publiczne API Overpass jest często przeciążone, więc korzystamy z własnego importu."
+    "dataArea": "Dane o miejscach (OpenStreetMap) obejmują tylko Trójmiasto. Publiczne API Overpass jest często przeciążone, więc korzystamy z własnego importu.",
+    "bestTime": {
+      "title": "Najlepszy czas na spacer",
+      "unavailable": "Prognoza jest teraz niedostępna. Spróbuj później.",
+      "none": "Brak dobrych godzin w najbliższych 3 dniach: cały czas deszcz, wiatr albo burza.",
+      "today": "Dziś",
+      "tomorrow": "Jutro",
+      "labels": {
+        "great": "Świetnie",
+        "good": "Dobrze",
+        "ok": "Może być"
+      },
+      "credit": "Dane pogodowe:"
+    }
   },
   "poi": {
     "title": "Miejsca po drodze",
