@@ -34,7 +34,7 @@ def build_route_plan(start, end, avoid_stairs=True, profile=None):
     fixture = fixtures.load_fixture(pair)
 
     comparison, source = _route(start, end, avoid_stairs, fixture)
-    poi_result = _pois(comparison, start, end, speed, fixture, source)
+    poi_result = _pois(comparison, start, end, speed, fixture)
     return _serialize(comparison, source, poi_result, speed)
 
 
@@ -63,19 +63,21 @@ def fixture_fetch(fixture):
     return fetch
 
 
-def _pois(comparison, start, end, speed, fixture, source):
-    """Live places first. Recorded places only for a fixture route. Never invented places.
+def _pois(comparison, start, end, speed, fixture):
+    """Recorded places for a demo pair, live places for any other route. Never invented.
 
+    A demo pair with recorded places never calls Overpass: the public servers are often
+    down (docs/AUDIT.md, part 2), and the demo must answer at once. The places are parsed
+    against the route we return, so this works for a live ORS route of the pair too.
     For a mock (straight) line the live places are still real OSM data near the line.
     """
     geometry = comparison.route.geometry
-    recorded = fixture.get("overpass") if fixture and source == SOURCE_FIXTURE else None
-    result = pois.PoiResult([], [], pois.STATUS_OK)
+    recorded = fixture.get("overpass") if fixture else None
+    if recorded is not None:
+        return pois.parse_overpass(recorded, geometry, start, end, speed)
     if pois.is_enabled():
-        result = pois.find_pois(geometry, start, end, speed, keep=_keep_indexes(comparison))
-    if recorded is not None and (result.status != pois.STATUS_OK or not pois.is_enabled()):
-        result = pois.parse_overpass(recorded, geometry, start, end, speed)
-    return result
+        return pois.find_pois(geometry, start, end, speed, keep=_keep_indexes(comparison))
+    return pois.PoiResult([], [], pois.STATUS_OK)
 
 
 def _keep_indexes(comparison):
