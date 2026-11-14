@@ -25,11 +25,11 @@ Format: `ID [P?/size] where - problem. Why it matters. Proposed fix.`
 | 0 | Baseline: tests, linters, build, dependency audit | Done |
 | 1 | Documentation | Done |
 | 2 | Overpass and place data: diagnosis and alternatives | Done |
-| 3a | Backend: `config/`, `walks/`, security, deploy readiness | To do |
-| 3b | Backend: `planning/` and `planning/llm/` | To do |
-| 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | To do |
-| 4b | Frontend: UI/UX, accessibility, i18n, mobile | To do |
-| 5 | Cross-cutting checks and the prioritized backlog | To do |
+| 3a | Backend: `config/`, `walks/`, security, deploy readiness | Done |
+| 3b | Backend: `planning/` and `planning/llm/` | Done |
+| 4a | Frontend: architecture, TanStack Query, TypeScript, tests, bundle | Done |
+| 4b | Frontend: UI/UX, accessibility, i18n, mobile | Done |
+| 5 | Cross-cutting checks and the prioritized backlog | Done |
 
 ## Part 0: Baseline
 
@@ -201,6 +201,428 @@ own stage before the deploy (stage 8). Keep live Overpass as an optional provide
 (`POI_PROVIDER=overpass`) for regions outside the import. Option A changes a decision in
 `DECISIONS.md:11` (from "Overpass only" to "OSM data, imported"), so record it there first. It
 also unblocks feature idea 10 (place search): a local table can be searched by name.
+
+## Part 3a: Backend core, security and deploy readiness
+
+Run on 2026-11-14 on `dev` at `9656488` (after the fixes for O1 and O2).
+
+Files read: `config/settings.py`, `config/urls.py`, `walks/` (`models.py`, `serializers.py`,
+`views.py`, `scoping.py`, `urls.py`, `demo_data.py`, `seed_demo`), `requirements*.txt`,
+`backend/.env.example`, `docs/PLAN.md` D.10 and "Stage 8". The deploy target is a small VPS with
+Docker Compose (Django on gunicorn, nginx, cloudflared).
+
+### Findings
+
+- **S1 [P1/M] `config/settings.py`** - there are no production security settings, and none of
+  them can be turned on by an environment variable: `SECURE_PROXY_SSL_HEADER`,
+  `SECURE_SSL_REDIRECT`, HSTS, `SESSION_COOKIE_SECURE`, `CSRF_COOKIE_SECURE`,
+  `CSRF_TRUSTED_ORIGINS`. This confirms B4. Checked: with `DEBUG=0`, a strong random key and a
+  real host, `check --deploy` still gives W004, W008, W012 and W016. Stage 8 already plans this. Fix there, with the planned
+  production settings test.
+- **S2 [P1/S] write endpoints have no rate limit** - only `route-plans` and `trip-ideas` are
+  throttled (`planning/views.py:103`, `:210`). `/api/walks/`, `/api/stops/`, `/api/profiles/`
+  and `/api/demo-data/` accept any number of writes, and every random UUID is a new client.
+  Checked: 150 walk POSTs in a row all gave 201, and 30 `demo-data` POSTs with new UUIDs created
+  60 more walks. One walk at the limits (5,000 points, 20 stops, full texts) is 138 kB of JSON.
+  A simple script could fill the disk of the VPS with SQLite rows. Fix: a per-IP throttle for unsafe methods (for example
+  `120/hour`), and optionally a limit of walks per client (for example 200).
+- **S3 [P2/S] the shared `demo` client can be changed by anyone** - a request without
+  `X-Client-Id` uses the `demo` client (`walks/scoping.py:32-33`). On a public deploy, Swagger
+  "Try it out" can rename, delete or add walks for every visitor who looks at the demo data.
+  `seed_demo` matches items by name (`walks/demo_data.py:96-105`). Checked: a PATCH without a
+  header renamed a demo walk (200); after `seed_demo` the renamed walk stayed and a new copy was
+  added next to it (2 demo walks became 3). Fix: make `demo` read-only (only safe methods; writes without a
+  header give 400 with a clear message).
+- **S4 [P2/S] fixed paths for the database and the cache** - `db.sqlite3` and `.cache/` live in
+  `BASE_DIR` (`settings.py:80`, `:131`). In a container these must be on a volume, not next to the
+  code. Fix: `SQLITE_PATH` and `CACHE_DIR` variables with the current values as defaults. Do this in
+  stage 8.
+- **S5 [P3/S] no `LOGGING` setting** - Django configures only its own `django` loggers. For our
+  loggers (`planning.*`) Python prints only WARNING and higher, with no time and no logger name.
+  Checked: `info()` printed nothing, `warning()` printed the bare message. In `docker logs`, "Overpass unavailable" or an invalid LLM answer has no
+  context. Fix: a small `LOGGING` dict (console, level from `LOG_LEVEL`, a format with the time and
+  the logger).
+- **S6 [P3/S] `settings.py:124`, `:149`** - `int(os.getenv(...))` fails with a bare `ValueError`
+  when the variable is present but empty (`LLM_DAILY_LIMIT=`). Fix: an `env_int` helper next to
+  `env_list` with a clear message.
+- **S7 [P3/S] `/admin/` is on** - nobody uses it (there is no superuser and no admin task in the
+  plan), but on a public deploy it is a login page open to guessing. Fix: turn it on only with
+  `DEBUG=1` or an `ADMIN_ENABLED` variable. It also removes one reason for `collectstatic`.
+- **W1 [P2/S] `walks/serializers.py:83-96`** - `/api/stops/` does not check what the nested
+  create checks (`:200-206`): there is no limit of stops per walk, and two stops can have the same
+  `order`. Checked: 25 stops with `order: 1` on one walk all gave 201; the nested create with the
+  same order twice gives 400. Fix: the same two checks in `StopSerializer.validate`.
+- **W2 [P3/S] no pagination** - the list endpoints return all rows. Fine with the limit from S2;
+  without it, a client with thousands of walks gets one large answer.
+- **W3 [P3/S] `walks/serializers.py:42`** - a profile needs 1-6 child ages. Feature idea 5 ("a
+  child is not required") needs 0-6 here; the planner rules must then handle an empty list (check
+  in part 3b).
+- **W4 [P3/M] `walks/models.py:192-194`** - the pace has two values (`relaxed`, `normal`). Feature
+  idea 3 (a pace slider) needs a model change and a migration, and the speeds in
+  `planning/services.py` must follow.
+
+### What is good
+
+- Scoping by client is careful. A foreign object gives 404, not 403. A foreign profile or walk in
+  a payload gives "not found", with no hint that it exists. UUIDs are normalized, and a bad
+  header gives 400 before any lookup.
+- All validation is in the serializers, with clear limits (geometry 2-5,000 points, 20 nested
+  stops, text lengths, ranges for coordinates, `bool` is not accepted as a number).
+- No N+1 queries: the list uses a light serializer with `Count("stops")`, the detail uses
+  `prefetch_related`. A walk and its stops are created in one transaction with `bulk_create`.
+- `SECRET_KEY` is required when `DEBUG` is off. CORS is an explicit list with explicit headers.
+  `NUM_PROXIES` is documented, and forged `X-Forwarded-For` is ignored (#20).
+- `/api/health/` exists, and `seed_demo` is idempotent and works offline.
+- 66 tests in `walks/` and 5 in `tests/` (CORS, health).
+
+## Part 3b: Backend planning and LLM
+
+Run on 2026-11-14 on `dev` at `9656488`. `pois.py` and the place flow in `services.py` were
+covered in part 2.
+
+Files read: `planning/llm/` (all 7 modules), `trip_planner.py`, `trip_rules.py` (outline and
+defaults), `opening_hours.py`, `routing.py` (fetch and comparison), `weather.py`, `views.py`,
+`serializers.py`, and the test names in `planning/tests/` (174 tests). `anthropic_api.py` was
+checked against the `claude-api` skill and against the installed SDK (`anthropic==2.8.0`).
+
+### Findings
+
+- **L1 [P2/S] `trip_planner.py:107-111`** - the LLM time budget (`LLM_CHAIN_BUDGET_S = 60`) is
+  checked only *before* each backend. A call that has started is not limited. Worst case from
+  the timeouts in the code: Anthropic 30 s x 2 tries (`max_retries=1`) = 60 s, `claude_cli`
+  60 s, NVIDIA 60 s. With two backends, the LLM part alone can take about 120 s. A trip also
+  waits for Overpass (12 s, not for the demo start), weather (5 s) and up to 3 route attempts with
+  2 ORS calls of 10 s each (60 s). Stage 8 plans gunicorn with a 120 s timeout, so in the worst
+  case the worker is killed and the user gets a 502 instead of the rules answer. This needs every
+  service to be slow at once, so it is rare. Fix: give each backend the time that is left as its
+  timeout, and one deadline for the whole request. There is no test for `LLM_CHAIN_BUDGET_S`
+  yet; add one.
+- **L2 [P2/S] `llm/anthropic_api.py:34-42`** - no `effort` is set. On `claude-opus-5-5` thinking
+  is always on, the default effort is `medium`, and thinking counts toward
+  `max_tokens = 4000`. If thinking uses most of it, the answer stops with `max_tokens`: we pay
+  for the call and then use the rules anyway. The `claude-api` skill says to set effort
+  explicitly on this model and not to set `max_tokens` too low. Fix: set
+  `output_config.effort` (picking 1-4 stops from a list is a simple task; try `low` and compare
+  with `medium` on a few demo requests), raise `max_tokens` (for example 8,000), and log
+  `usage.output_tokens`. Not measured here, because every call costs money.
+- **L3 [P3/S] `llm/validation.py:21-33`** - one text that is a little too long (a `reason` of 161
+  characters, a `summary` of 301) rejects the whole answer, and the trip falls back to the rules.
+  The call is still paid. Fix: cut too-long texts in code (at a word), and reject only real
+  errors (unknown, repeated or closed place, minutes out of range, wrong types).
+- **L4 [P3/S] `trip_planner.py:81-83`, `:259-261`** - when code drops stops to fit the time
+  limit, the LLM `summary` stays as it was. It can name a dropped stop, while a tip says the same
+  stop was skipped. Fix: add the dropped stops to `unmet_wishes`, or show a short note in the UI
+  that the summary is the plan before trimming.
+- **L5 [P3/S] `tests/test_llm_backends.py:223`** - the Anthropic test checks `max_tokens` and
+  the JSON format, but not `betas` and `fallbacks="default"`. A refactor could drop the refusal
+  fallback without a failing test.
+- **P1 [P3/S] `opening_hours.py`** - checked on the recorded OSM data: 6 of 51 unique values (12 %)
+  are not supported and become "unknown". Four of them could be supported with small changes:
+  `PH` inside a day list (`Mo-Sa 07:00-15:00; Su,PH off`) and a comma between rules
+  (`Mo-Sa 10:00-24:00, Su 11:00-23:00`). The other two use months (`May-Sep ...`). "Unknown" is
+  handled honestly (the place may be chosen and shows no "open" label), so the impact is small.
+  Option: a maintained parser library instead of our own (new dependency, ask first).
+- **W3 follow-up** - `trip_rules.default_wants([])` already works with no children (it picks a
+  cafe), so feature idea 5 needs only the serializer change from W3.
+
+### Checked and correct
+
+- `anthropic_api.py` matches the current API: model `claude-opus-5-5`, JSON through
+  `output_config.format` (`json_schema`), the `server-side-fallback-2026-07-01` beta with
+  `fallbacks="default"` (the scalar form needs exactly this beta), and every `stop_reason` other
+  than `end_turn` (including `refusal` and `max_tokens`) becomes `LLMError`. SDK 2.8.0 accepts
+  `betas`, `fallbacks` and `output_config` on `beta.messages.create`, and knows the beta name.
+- Privacy: the payload is a white list of fields with no coordinates, weather is only
+  temperature, rain chance and wind, and the logs never hold the prompt or the wishes. Tests check
+  both (`test_the_llm_payload_has_no_coordinates`, `test_logs_never_hold_the_wishes_or_the_prompt`).
+
+### What is good
+
+- The split from `AGENTS.md` is real: code does routes, distances, times, opening hours and
+  filtering. The LLM only picks and orders places from candidates the backend found, and its
+  answer is validated (unknown, repeated or closed places are rejected).
+- Every failure has a way out: the next backend, then the rule-based planner, which returns the
+  same shape. A crash in one backend is caught (`trip_planner.py:128`) and costs nothing more than
+  the fallback.
+- Costs are guarded twice: `LLM_DAILY_LIMIT` counts every attempt, and `trip-ideas` has a per-IP
+  limit.
+- `claude_cli` is careful: an argument list without a shell, batch files refused, `--safe-mode`,
+  an empty temporary working directory, the prompt through stdin.
+- The system prompt treats wishes and place names as data (a prompt-injection rule), and the
+  client cannot send its own candidate list (`serializers.py:116-117`).
+- Upstream failures never give 500. Domain errors are 422 with a stable `code`.
+
+## Part 4a: Frontend architecture, data, types, tests and bundle
+
+Run on 2026-11-14 on `dev` at `9656488`.
+
+Files read: `package.json`, `vite.config.ts`, `tsconfig.app.json`, `main.tsx`, `App.tsx`,
+`src/api/` (all modules), `lib/mapIcons.tsx`, the map helpers in `MapView.tsx` and `WalkMap.tsx`,
+and the list of test files (130 tests in 33 files).
+
+Checks run: `npm run build`; a second build with `react-dom/server` replaced by an empty stub
+(config in a temporary folder, the repo was not changed); a TypeScript probe file compiled with
+the default options; a search for files with no test.
+
+### Findings
+
+- **F1 [P2/S] `src/lib/mapIcons.tsx:4`, `:22`, `:48`** - `react-dom/server`
+  (`renderToStaticMarkup`) is used only to turn the map marker icons into SVG text, but it brings
+  the whole server renderer into the browser bundle. Measured: without it the main chunk goes from
+  1,011 kB to 809 kB (311 kB to 250 kB gzip), so it is **20 % of the bundle**. Fix: build the SVG
+  text without `react-dom/server` (for example from the icon's SVG node data, or render once into a
+  detached element with `createRoot` and `flushSync` and read `innerHTML`).
+- **F2 [P2/M] B3 follow-up: no code splitting** - there is no `React.lazy` or `import()`; every
+  page is in one chunk. The planner (the home page) needs Leaflet anyway, so the biggest win is
+  F1. After F1: lazy-load `WalksPage`, `WalkDetailPage`, `ProfilesPage` and `NotFoundPage`, and
+  consider a separate vendor chunk so the browser keeps it between deploys. Measure after each
+  step.
+- **F3 [P2/S] no error boundary** - there is no `ErrorBoundary` and no router `errorElement`, so
+  an exception while rendering gives a blank page. API answers are cast to their types without a
+  check (`src/api/client.ts:70`, `body as T`), so an unexpected shape after a backend change can
+  do exactly that. Fix: one error boundary around the routes in `AppLayout` with a short message
+  and a reload button. Feature idea 18 (types from OpenAPI) lowers the risk of drift.
+- **F4 [P2/M] `src/components/walks/StopEditor.tsx`** - the largest untested component (361
+  lines: add, edit and delete stops, with form validation). No test renders it, not even the
+  `WalkDetailPage` tests. Other components without their own test file (`SaveWalkDialog`,
+  `RouteForm`, `PlacesSection`, `TripSummary`, `WalkCard`) are covered through the page tests.
+- **F5 [P3/S] `src/api/client.ts:29-31`** - when `localStorage` throws (blocked site data),
+  `getClientId` makes a new UUID on *every* call. Each request is then a new client, so a walk
+  saved a moment ago is not in the list. Fix: keep the id in a module variable as the fallback.
+  The test covers only the normal path.
+- **F6 [P3/S] `src/api/planning.ts:14`** - the comment says "the backend ends the LLM call after
+  60 s". This is not guaranteed (see L1). Fix it together with L1, or add a client timeout
+  (`AbortSignal.timeout`, about 90 s) with a clear message.
+- **F7 [P3/S] map helpers** - `FitBounds` is written twice (`MapView.tsx:129`, `WalkMap.tsx:71`),
+  with the same `eslint-disable` and the same key logic. Move it (and the click handler) to one
+  shared file.
+- **F8 [P3/S] `tsconfig.app.json`** - there is no `"strict": true`. Checked: TypeScript 6 turns
+  strict mode on by default (the probe gave `noImplicitAny` and `strictNullChecks` errors), so the
+  code is strict today. Writing it explicitly helps readers and keeps it on if a default changes.
+- **B1 follow-up** - `shadcn` is still needed at build time (`src/index.css:3` imports
+  `shadcn/tailwind.css`), so moving it to `devDependencies` is right; the frontend build stage in
+  stage 8 must install dev dependencies.
+
+Checked and not a problem: the `cn` package is the official one from the `shadcn-ui` repository
+(a replacement for `clsx` + `tailwind-merge`).
+
+### What is good
+
+- API calls go only through `src/api/`, with one `ApiError` type and the `X-Client-Id` header set
+  in one place.
+- TanStack Query is used with care: query key factories, invalidation by prefix, `setQueryData`
+  after create, and retry rules that fit each call (a 404 walk is not retried, route plans are
+  not retried, trip ideas are mutations, and a map click never sends a request).
+- Strict TypeScript with very few casts (mostly Radix `Select` strings into a union type) and only
+  two `eslint-disable` lines, both with a reason.
+- 130 tests. Page tests use a fake map (`src/test/FakeMapView.tsx`) instead of Leaflet, which keeps
+  them fast and stable.
+
+## Part 4b: Frontend UI/UX, accessibility, i18n and mobile
+
+Run on 2026-11-14 on `dev` at `9656488`, first as a static review (code, tokens, translations),
+then on the running app with the new `npm run visual-check` (Playwright with the installed Edge
+and axe-core, branch `chore/visual-checks`).
+
+Live run: 6 screens (planner empty, planner with the "Big detour" demo route, planner with the
+demo trip, walks list, walk detail, profiles) x phone 390 x 844 and desktop 1280 x 800 x light
+and dark x `pl` and `en` = 48 screenshots, each with an axe scan; plus the accessibility tree and
+the Tab order (first 30 stops) per page. The backend ran with every external service in mock
+mode (`ROUTING_PROVIDER`, `POI_PROVIDER`, `WEATHER_PROVIDER`, `LLM_BACKEND`), and the browser
+blocked every other host, so map tiles are grey and nothing left the machine. Demo data was
+created for one random test client in the local database.
+
+Static checks: a script that compares the `pl` and `en` key sets; a search for hard-coded texts
+and labels in JSX; WCAG contrast ratios computed from the colour tokens in `src/index.css`; a
+search for `aria-*`, live regions, reduced motion, touch sizes and HTML built from strings.
+
+### axe results
+
+In the first full run, 28 of 48 screens had no violations and two rules failed on the other 20.
+In that run the route and trip screens were caught while still loading (the script now waits for
+the API answer); a second run of those screens with the result shown found only the inactive tab
+label. All problems were checked by hand:
+
+| Problem | Where | Ratio | Needed |
+|---|---|---|---|
+| Inactive tab label (`text-foreground/60` on `muted`) | planner tabs, light theme | 3.65:1 | 4.5:1 |
+| "Delete walk" text (`destructive` on the page background) | walk detail, light theme | 4.41:1 | 4.5:1 |
+| OpenStreetMap link in the attribution (Leaflet default style) | every map | 2.55:1 to the text around it | 3:1 |
+
+axe also flagged the "Plan route" / "Planning…" button (white on a faded green, 2.38:1) in the
+loading state, but the button is `disabled` then, and WCAG does not ask for contrast on disabled
+controls. Not a finding.
+
+### Findings
+
+- **U1 [P2/S] input borders: 1.30:1** - inputs, selects and text areas have a transparent
+  background, so their border is the only thing that shows where the field is. The border uses
+  `--input` = `#E4E2DC`: 1.30:1 on a card and 1.20:1 on the page background (dark theme: 1.24:1).
+  WCAG 2.2 (1.4.11) asks for 3:1 for the edge of a control. On a phone in the sun this matters
+  even more. The contrast table in `docs/DESIGN.md` shows "-" for `border`, so it was not checked.
+  axe does not test this rule (it checks text contrast only), so this stays a computed result.
+  Fix: a darker `--input` token only for form controls (keep `--border` for lines), at least 3:1
+  on `card` and `background`, and add it to the table in `DESIGN.md`.
+- **U2 [P2/S] on a phone the result hides under the panel** - seen in the screenshots: after a
+  demo route or a demo trip, the map fits the route to the whole screen (`FitBounds`,
+  `padding: [40, 40]`, `MapView.tsx:129-138`), but the bottom panel covers about 65 % of it. Only
+  one place marker (route) or stop 1 (trip) is visible above the panel; the route line and the
+  other markers are under it. Fix: on small screens, pass the panel height as bottom padding to
+  `fitBounds` (`paddingBottomRight`), or fold the panel to its peek height when a result arrives.
+  This is close to feature idea 6 (demo click centres the map).
+- **U3 [P2/M] choosing points needs a mouse or touch** - points A and B and the trip start can be
+  set only by clicking the map or with a demo button (`RouteForm.tsx:53-58`). The Tab order
+  confirms it: the map is one focus stop, and there is no other way to set a point. A keyboard or
+  screen reader user can only try the demos. Fix: feature ideas 8 (use my location) and 10/15
+  (place search) both add a way that works with the keyboard. Until then, say it in the README.
+- **U4 [P3/S] text contrast misses (axe)** - the inactive tab label (3.65:1,
+  `src/components/ui/tabs.tsx`, `text-foreground/60`) and the "Delete walk" text (4.41:1,
+  `WalkDetailPage.tsx:184`). Fix: `text-muted-foreground` for the inactive tab (4.67:1 on
+  `muted`) and a slightly darker `destructive` for text in the light theme. The Leaflet
+  attribution link (2.55:1) is a library default; an underline in `index.css` fixes it.
+- **U5 [P3/S] map markers have names like "A", "B", "1"** - in the accessibility tree the
+  markers on the planner and on the walk detail page are buttons named only by their letter or
+  number. The `title` given to stop markers (`WalkMap.tsx:52-53`) is not used, because the text
+  inside the marker wins. A screen reader says "button 1" instead of "Stop 1: playground". Fix: an
+  `aria-label` in the marker HTML (`lib/mapIcons.tsx`), or `keyboard: false` for markers that only
+  repeat the list next to the map.
+- **U6 [P3/S] touch targets under 44 px** - `docs/DESIGN.md:79` says at least 44 x 44 px, but
+  `size="sm"` and `size="icon-sm"` are 36 px (`button.tsx:29`, `:33`). They are used for the demo
+  buttons (`RouteForm.tsx:56`, `TripIdeaForm.tsx:68`, `:81`), "Load places again"
+  (`PlacesSection.tsx:28`) and "remove stop" (`StopsTimeline.tsx:100`). They pass the WCAG minimum
+  (24 px) but not our own rule. Fix: 44 px on touch screens (for example a `pointer: coarse`
+  variant).
+- **U7 [P3/S] no reduced motion** - there is no `prefers-reduced-motion` rule. The spinner, the
+  skeleton pulse, the dialog zoom and the map `fitBounds` animation always run. Fix: Tailwind
+  `motion-safe:` variants or one global rule, and `fitBounds(..., { animate: false })` when the
+  user asks for less motion.
+- **U8 [P3/S] the wait hint promises 10-20 s** - while a trip is planned, the form shows "Model AI
+  może potrzebować 10-20 sekund. Poczekaj chwilę." (seen in a screenshot; the static review missed
+  it). The real wait can be up to about 60 s (L1), and there is no way to cancel. Fix: "up to a
+  minute" in both languages, and optionally a cancel button that aborts the request.
+- **U9 [P3/S] no "skip to content" link** - on every page the first 7 Tab stops are the top bar
+  (logo, 3 links, theme, 2 languages) before the content. Fix: a visually hidden "Skip to
+  content" link as the first element.
+
+### Checked and good
+
+- i18n: 276 keys in both `pl.json` and `en.json`, the same key set, and no hard-coded user-facing
+  text in components (only the standard OpenStreetMap attribution). Texts with numbers avoid
+  Polish plural forms ("Przystanki do zapisania: {{count}}"). `<html lang>` follows the chosen
+  language (`src/i18n/index.ts:43-45`). The screenshots looked at show no cut or overflowing `pl`
+  labels.
+- Every icon-only button has an `aria-label` that names the object (for example "remove stop:
+  {{name}}"). Form controls have names in the accessibility tree (for example
+  `switch "Avoid stairs"`), and axe found no missing names, labels or roles.
+- Landmarks: `navigation`, `main`, a `region` per panel with an `h1`. The Tab order follows the
+  screen: top bar, tabs, points, demos, profile, switch, map.
+- Results use `aria-live="polite"`, errors use `role="alert"`, skeletons use `role="status"`.
+- The privacy hint under the wishes field is there (`AGENTS.md` rule 5).
+- Other text contrast passes AA: `muted-foreground` 5.06:1 on the background, 4.67:1 on `muted`,
+  5.47:1 on a card; white on `brand` 6.39:1; the dark theme passes everywhere except the
+  attribution link. `sage-500` (3.83:1) is used only for icons, as `DESIGN.md` says.
+- Mobile: inputs use 16 px text on phones (`text-base md:text-sm`), so iOS does not zoom in;
+  inputs and main buttons are 44 px high; full-height layouts and dialogs use `svh` / `dvh`.
+- No XSS path: HTML strings for Leaflet markers hold only internal values (colours from a constant
+  map, letters, numbers). LLM and OSM texts are rendered as React text.
+
+### Still not checked
+
+- A real phone (touch, sun, slow network) and the map with real tiles.
+- Most of the 48 screenshots were not looked at one by one (axe and the text outputs cover them);
+  four phone screenshots of the planner were reviewed by eye.
+- Focus after a dialog closes and after a new result (the Tab script starts from the top of the
+  page only).
+- A screen reader run (NVDA on Windows) through the planner and the walk detail page.
+- A comparison with the Figma frames, if the developer wants to spend MCP calls on it.
+
+## Part 5: Cross-cutting checks and the backlog
+
+Run on 2026-11-14 on `docs/audit-backend-core`.
+
+### Cross-cutting checks
+
+| Check | Result |
+|---|---|
+| Secrets in the whole git history (Anthropic, NVIDIA and AWS key patterns, private keys, `ORS_API_KEY=` with a value) | None found |
+| Tracked `.env`, database, cache or key files | None (only the two `.env.example` files) |
+| Tracked files over 300 kB | None |
+| Personal data in fixtures and seed data | None: demo points are public places, profiles have only ages |
+| `LICENSE` file | Missing (X2) |
+| Data attribution | OpenStreetMap is credited on the map; ORS and Open-Meteo are not credited anywhere (X1) |
+
+- **X1 [P2/S] data attribution** - the map shows "© OpenStreetMap contributors", but the routes
+  (openrouteservice by HeiGIT) and the weather (Open-Meteo) are not credited in the app or the
+  README, and the committed fixtures hold OSM and ORS data.
+  - Open-Meteo (checked by the developer on 2026-11-14): the free tier is for non-commercial use,
+    the data is CC BY 4.0, and the UI must show "Weather data by Open-Meteo.com" with a link to
+    `https://open-meteo.com`, for example below the weather line or in a footer. Our code already
+    follows the other rules: no API key, only the three fields we show
+    (`planning/weather.py:18`), and a timeout or a 429 gives "no weather", not an error. One
+    difference: the cache keeps an answer for 60 min (`weather.py:17`); the developer's notes say
+    15-30 min. The API host stays `api.open-meteo.com` (`open-meteo.com` is the project site).
+  - openrouteservice: not checked yet. Read the current ORS terms for the required credit.
+  - Fix: the Open-Meteo credit next to the weather in the trip result, a "Data sources" line in
+    the README (and later on the "How it works" page, feature idea 19), and the cache at 30 min.
+- **X2 [P3/S] no licence** - without a `LICENSE` file the code is "all rights reserved". For a
+  portfolio this is a choice, not a bug. If the repo should be open, add MIT for the code and say
+  that the fixtures contain OSM data under ODbL.
+
+### Already fixed during the audit
+
+- O1 and O2: recorded places for the demo routes, 12 s Overpass timeout, demo points never call
+  Overpass (#27).
+- Tooling for part 4b: `npm run visual-check` (branch `chore/visual-checks`, not merged yet).
+
+### Backlog: tasks in the proposed order
+
+Each task is one branch from `dev` and one PR. "Findings" are the ids from parts 0-4.
+
+| # | Task (branch) | Findings | Why now | Size |
+|---|---|---|---|---|
+| 1 | `fix/api-write-limits` | S2, W1, S3 | P1 before any public deploy: anyone can fill the disk or change the shared demo data | S-M |
+| 2 | `fix/mobile-route-in-view` | U2 (+ feature idea 6) | The first thing a reviewer sees on a phone is a result hidden under the panel | S |
+| 3 | `perf/map-icons-without-server-renderer` | F1, then F2 / B3 | 20 % of the bundle for a few SVG icons; then lazy pages | S, then M |
+| 4 | `fix/a11y-contrast-and-names` | U1, U4, U5, U6, U9, U7 | Small CSS and label changes; check with `npm run visual-check`; update the table in `DESIGN.md` | M |
+| 5 | `fix/llm-time-budget` | L1, L2, L5, F6, U8 | A worst case over the gunicorn timeout; effort and token cap on the paid backend. L2 needs a few paid calls to measure: ask first | S-M |
+| 6 | `fix/frontend-resilience` | F3, F5 | A blank page on a render error; lost data when storage is blocked | S |
+| 7 | `chore/frontend-deps` | B1, B2 | Fewer audit warnings in the production tree | S |
+| 8 | `test/stop-editor` | F4 | The largest component without a test | M |
+| 9 | `chore/deploy` (stage 8) | S1, S4, S5, S6, S7, B4 | Already planned; add the gunicorn timeout vs L1 and the dev install for B1 | L |
+| 10 | Own place table (decision first) | Part 2, option A; makes O3-O6 mostly moot | Live places work only for the demo today. Changes `DECISIONS.md:11`, needs a new dependency or a manual export | L |
+| 11 | `docs/readme` (stage 9) | D1, D2, D3, D4, D5, D6, D8, D9, X1, X2, U3 note, O7 / D7 | The README is the first file a reviewer reads. Do it last, so it describes the final app. O7 needs a count from the developer in Overpass Turbo | M |
+| 12 | Clean-up (several small PRs) | B5, B6, B7, W2, L3, L4, P1, F7, F8, O3-O6 (only if live Overpass stays) | P3: worth it, not urgent | S each |
+
+Order notes:
+- 1 and 2 first: one protects the deploy, the other fixes the first impression on a phone.
+- 3, 4 and 5 are independent and can be done in any order.
+- 10 is a product decision. If it is accepted, do it before 11, so the README does not describe
+  live Overpass that is about to go.
+
+### Feature ideas: what each one needs
+
+| Idea | Depends on / touches | Size |
+|---|---|---|
+| 1 Calorie estimate | Nothing; a fixed formula in the backend | S |
+| 2 Best time for a walk (3-day forecast) | `planning/weather.py`; X1 (Open-Meteo credit) | M |
+| 3 Pace slider | W4 (model and migration); speeds in `services.py` | M |
+| 4 Saved planner settings | Best after 3; a profile field | M |
+| 5 A child is not required | W3 (serializer only; the rules already work with no children) | S |
+| 6 Demo click centres the map | Do it with task 2 (U2) | S |
+| 7 "Trip idea" as the first tab | `PlannerPage.tsx` tabs; tests that click tabs | S |
+| 8 Use my location | D9 (a short scope decision); helps U3 | S-M |
+| 9 Export to Google Maps | D9; a directions link with the stops, no Google data stored | S |
+| 10 / 15 Place search | A geocoder (Nominatim has its own usage policy) or the own place table (task 10); fixes U3 | M-L |
+| 11 Free time limit (slider + number) | Frontend only; the API takes 15-180 min already | S |
+| 12 Keep the old trip, ask before replacing | Frontend only | S |
+| 13 At least one stop on a saved trip | Frontend check (and a serializer rule) | S |
+| 14 Recalculate the route after removing a stop | A new endpoint or an extra field in `trip-ideas`; L1 budget rules apply | M |
+| 16 Reorder stops by drag and drop | A drag library (ask first) or buttons up/down; with 14 | M |
+| 17 "Strict" wheelchair profile | ORS profile and extra request parameters | M |
+| 18 TypeScript types from OpenAPI | A generator (ask first); lowers the F3 risk | M |
+| 19 "How it works" page | A good place for X1 and the U3 note | S |
+| 20 / 21 More Overpass servers, other sources | Covered by task 10 (part 2) | - |
+| 22 Recompute the time in the save dialog | Frontend, `walkPayload.ts` | S |
 
 ## Feature ideas (input for part 5)
 
