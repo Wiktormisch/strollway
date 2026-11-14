@@ -603,6 +603,31 @@ Order notes:
 - 10 is a product decision. If it is accepted, do it before 11, so the README does not describe
   live Overpass that is about to go.
 
+Status: tasks 1-8 are done and merged into `dev` (PRs #30-#37). Tasks 9-12 and the feature ideas
+follow the updated order below.
+
+### Updated order (after tasks 1-8)
+
+Three rules: decisions before code (nothing built gets thrown away), foundations before the
+features that use them, and work in the same files back to back. Each item is still one branch
+from `dev` and one PR, unless it says otherwise.
+
+| Phase | Items | Why here |
+|---|---|---|
+| A. Decisions (one session, no code, entries in `DECISIONS.md`) | Task 10 (own place table: yes or no); D9 scope for ideas 8 and 9; idea 18 (new dependency: yes or no); idea 16 (drag library or up/down buttons) | These answers decide what the later phases build. Without them, work may be thrown away |
+| B. Foundations | Idea 18 (if accepted), then task 10 (if accepted; otherwise do O3-O6 as clean-up) | Typed API before the API changes in C-F. Ideas 14 and 15 are then built on the final place source |
+| C. Quick frontend wins (two branches) | Planner: ideas 7, 11, 12. Save dialog: ideas 13, 22 | Small (S), frontend only, each group touches the same files |
+| D. Profile and model (migrations together) | Ideas 5 (W3), then 3 (W4), then 4; W2 on the way | 4 saves settings that include the pace from 3 |
+| E. Route editing | Idea 14 (L1 budget rules apply), then 16, then 17; L3, L4 on the way | 16 reorders stops and needs the recalculation from 14 |
+| F. Extras (independent, by value) | Idea 1 (after 3: calories depend on the pace); 15 (after task 10); 8 and 9; 2 (with the X1 credit) | No other work depends on them |
+| G. Closing | Rest of task 12; idea 19 ("How it works", X1, U3 note); task 9 (deploy, stage 8); task 11 (README, stage 9) | Deploy and README describe the final app, so they come last. The README can link the live demo |
+
+Notes:
+- Task 12 items are done together with the feature that touches the same file. Only what is left
+  goes into phase G.
+- Task 9 still needs the gunicorn timeout vs L1 and a frontend build that installs dev
+  dependencies (B1 follow-up).
+
 ### Feature ideas: what each one needs
 
 | Idea | Depends on / touches | Size |
