@@ -515,3 +515,18 @@ Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", 
   time, so the walk is never saved with the time of the wrong profile. If the request fails,
   the planned time is saved and a hint says so. A trip keeps the hint only: a new trip would be
   a paid LLM call.
+
+## 13. Phase F: extras (2026-11-14)
+
+Decided with the developer before the code. Order: calories (idea 1), place search (idea 15),
+best time for a walk (idea 2 with the X1 credit). Each is its own branch from `dev`.
+
+- **Calories (idea 1).** Fixed formula in `planning/calories.py`, no LLM:
+  `kcal = MET x 70 kg x hours`, MET interpolated from the pace (Compendium of Physical
+  Activities, level walking). A fixed adult weight of 70 kg, so the app stores no body data.
+  A stroller adds 5% (a stroller profile, or no profile, because the app assumes a stroller).
+  Only the walking part counts, not the time at stops. `route.kcal` is in both `route-plans`
+  and `trip-ideas`; the UI shows "about N kcal", because it is a rough estimate.
+- **Place search (idea 15).** Searches our own `Place` table only, no outside geocoder. It sets
+  the start point only.
+- **Best time for a walk (idea 2).** Its own card in the planner, for the chosen start point.
