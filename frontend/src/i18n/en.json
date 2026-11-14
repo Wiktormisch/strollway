@@ -33,6 +33,9 @@
     "notFound": {
       "title": "Page not found",
       "back": "Go to the planner"
+    },
+    "howItWorks": {
+      "title": "How it works"
     }
   },
   "errors": {
@@ -464,7 +467,8 @@
   },
   "topBar": {
     "menu": "More options",
-    "theme": "Theme"
+    "theme": "Theme",
+    "howItWorks": "How it works"
   },
   "placeSearch": {
     "label": "Search for a start place",
@@ -494,5 +498,40 @@
     "slow": "Slow",
     "fast": "Fast",
     "strollerLimit": "With a stroller, at most {{max}}."
+  },
+  "howItWorks": {
+    "intro": "StrollWay plans walks without stairs for families with a stroller and suggests short family trips with stops on the way.",
+    "route": {
+      "title": "A route without stairs",
+      "text": "For every walk we ask openrouteservice for two walking routes: the shortest one and one that avoids stairs. You see both on the map, and the stairs on the shortest route are marked, so you can decide if the detour is worth it."
+    },
+    "ai": {
+      "title": "What is code and what is AI",
+      "text": "Distances, walking times, opening hours and the choice of candidate places are done in code. AI only picks and orders stops from those candidates and writes short texts. Every AI answer is checked; when it is wrong, simple rules plan the trip instead. Only your short \"wishes\" text is sent to the AI, never your location."
+    },
+    "area": {
+      "title": "Where it works",
+      "text": "Routes work in most places, but the list of places (playgrounds, cafes, toilets and more) covers only the Tricity: Gdańsk, Gdynia and Sopot. Outside the Tricity a route has no places next to it."
+    },
+    "keyboard": {
+      "title": "Without a mouse",
+      "text": "You do not need to tap the map to choose a start. Use the place search or the \"Use my location\" button; both work with a keyboard and a screen reader. The end point (B) of a route still needs the map or a demo route."
+    },
+    "sources": {
+      "title": "Data sources",
+      "licences": "Map and place data from OpenStreetMap are available under the ODbL. Routes from openrouteservice are licensed under CC BY-SA 4.0. Weather data from Open-Meteo is licensed under CC BY 4.0.",
+      "routes": {
+        "what": "Routes",
+        "credit": "© openrouteservice by HeiGIT | Data from OpenStreetMap"
+      },
+      "map": {
+        "what": "Map and places",
+        "credit": "© OpenStreetMap contributors"
+      },
+      "weather": {
+        "what": "Weather",
+        "credit": "Weather data by Open-Meteo.com"
+      }
+    }
   }
 }

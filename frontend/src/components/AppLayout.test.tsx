@@ -65,3 +65,18 @@ it('gives every navigation link an icon and a name that works without the visibl
     expect(link).toHaveAttribute('title', name)
   }
 })
+
+it('links to the "How it works" page from the phone menu and the desktop bar', async () => {
+  const user = userEvent.setup()
+  renderLayout('/walks')
+
+  // Desktop: an icon link next to the theme and language switches.
+  const links = screen.getAllByRole('link', { name: 'How it works' })
+  expect(links[0]).toHaveAttribute('href', '/how-it-works')
+
+  // Phone: a link inside "More options"; following it closes the menu.
+  await user.click(screen.getByRole('button', { name: 'More options' }))
+  const menu = screen.getByRole('dialog', { name: 'More options' })
+  await user.click(within(menu).getByRole('link', { name: 'How it works' }))
+  expect(screen.queryByRole('dialog', { name: 'More options' })).not.toBeInTheDocument()
+})
