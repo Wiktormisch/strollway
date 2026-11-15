@@ -3,7 +3,7 @@
 StrollWay plans walks without stairs for families with a stroller or a balance bike, and
 suggests short family trips with stops on the way.
 
-**Live demo:** _coming soon_ <!-- TODO(stage 8): add the link after the deploy -->
+**Live demo:** https://strollway.wiktormischker.dev/
 
 ![The planner: a route that avoids 16 m of stairs, compared with the shortest route](docs/screenshots/planner-route-desktop.png)
 
@@ -27,6 +27,17 @@ suggests short family trips with stops on the way.
   English.
 
 ## See it in action
+
+### Video tutorial (3 min, in Polish, with subtitles)
+
+Both main features in one short video: a stair-free route and a trip idea from the AI.
+Download it from the [v1.0.0 release](https://github.com/Wiktormisch/strollway/releases/tag/v1.0.0)
+(MP4, with a separate `.srt` subtitle file).
+
+[![Video tutorial: "Spacer bez schodów i wycieczka z AI" (a stair-free walk and a trip with AI)](docs/demo/video-thumbnail.jpg)](https://github.com/Wiktormisch/strollway/releases/tag/v1.0.0)
+
+The narration is my own voice. The app was recorded with Playwright, edited with Remotion,
+and the subtitles were made with whisper.cpp. AI agents helped to plan and assemble it.
 
 ### A stair-free route in one click
 
@@ -256,8 +267,8 @@ and [`CLAUDE.md`](CLAUDE.md):
 | A person approves what ships         | Merges and deploys are done by the developer                                                             |
 
 Decisions and verified facts are logged in [`docs/DECISIONS.md`](docs/DECISIONS.md). Stage
-logs are in [`docs/stages/`](docs/stages/). A longer write-up, `docs/AI_USAGE.md`, is being
-finished.
+logs are in [`docs/stages/`](docs/stages/). The full story of how AI tools were used, with real
+examples, is in [`docs/AI_USAGE.md`](docs/AI_USAGE.md).
 
 ## Tests and CI
 
