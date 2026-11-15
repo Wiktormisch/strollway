@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import { X } from 'lucide-react'
+import { Crosshair, X } from 'lucide-react'
 import type { LatLng } from '@/api/types'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -24,8 +24,8 @@ export function PointRow({ badge, name, point, demoName, onChange, onClear }: Po
   const value = point ? (demoName ?? t('planner.point.onMap')) : t('planner.point.notSet')
 
   return (
-    <div className="rounded-lg border bg-card p-2 pl-3">
-      <div className="flex items-center gap-3">
+    <div className={cn('rounded-lg border bg-card p-2 pl-3', !point && 'border-dashed')}>
+      <div className="flex items-center gap-1">
         <span
           aria-hidden
           className={cn(
@@ -35,14 +35,21 @@ export function PointRow({ badge, name, point, demoName, onChange, onClear }: Po
         >
           {badge}
         </span>
-        <div className="min-w-0 flex-1">
+        <div className="ml-2 min-w-0 flex-1">
           <p className="text-sm text-muted-foreground">{name}</p>
           <p className={cn('truncate font-medium', !point && 'text-muted-foreground')}>{value}</p>
         </div>
-        {/* The visible word is "Change"; the hidden part names the point for screen readers. */}
-        <Button type="button" variant="ghost" className="px-3 text-brand" onClick={onChange}>
-          {t('planner.point.change')}
-          <span className="sr-only">: {name}</span>
+        {/* An icon, not a word: this sets the point to the map centre (the map shows a crosshair). */}
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="text-brand"
+          aria-label={t('planner.point.useCenter', { point: name })}
+          title={t('planner.point.useCenter', { point: name })}
+          onClick={onChange}
+        >
+          <Crosshair aria-hidden />
         </Button>
         {point && (
           <Button
@@ -59,8 +66,8 @@ export function PointRow({ badge, name, point, demoName, onChange, onClear }: Po
       </div>
       {point && (
         // <details> opens and closes with the keyboard and needs no state.
-        <details className="mt-1 ml-10 text-sm text-muted-foreground">
-          <summary className="cursor-pointer rounded-sm py-1 hover:text-foreground">
+        <details className="mt-0.5 pl-10 text-sm text-muted-foreground">
+          <summary className="w-fit cursor-pointer rounded-sm py-0.5 hover:text-foreground">
             {t('planner.point.details')}
           </summary>
           <p className="tabular-nums">

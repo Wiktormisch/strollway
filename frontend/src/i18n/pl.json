@@ -58,7 +58,7 @@
       "expand": "Pokaż panel"
     },
     "form": {
-      "hint": "Dotknij mapy: pierwsze dotknięcie ustawia A, drugie B. Albo przesuń mapę i wybierz „Zmień”.",
+      "hint": "Dotknij mapy: pierwsze dotknięcie ustawia A, drugie B. Albo przesuń mapę i dotknij celownika.",
       "start": "Start",
       "end": "Cel",
       "clear": "Usuń: {{point}}",
@@ -148,7 +148,7 @@
     "point": {
       "onMap": "Punkt na mapie",
       "notSet": "Nie wybrano",
-      "change": "Zmień",
+      "useCenter": "Ustaw na środek mapy: {{point}}",
       "details": "Szczegóły"
     },
     "results": "Twój spacer",
@@ -400,7 +400,7 @@
   "trip": {
     "empty": "Ustaw start na mapie (albo wypróbuj start demo), napisz, na co masz ochotę, i kliknij „Zaproponuj wycieczkę”.",
     "form": {
-      "hint": "Dotknij mapy, aby ustawić start, albo przesuń mapę i wybierz „Zmień”. Wycieczka zaczyna się i kończy w tym miejscu.",
+      "hint": "Dotknij mapy, aby ustawić start, albo przesuń mapę i dotknij celownika. Wycieczka zaczyna się i kończy w tym miejscu.",
       "start": "Start",
       "demoStart": "Wypróbuj start demo",
       "minutes": "Limit czasu",
@@ -409,10 +409,19 @@
       "minutesField": "Limit czasu w minutach",
       "minutesRange": "Od {{min}} do {{max}} min.",
       "roundTrip": "Wróć do startu",
-      "wishes": "Wasze życzenia (opcjonalnie)",
+      "wishes": "Na co macie ochotę?",
+      "wishesIntro": "Napiszcie lub wybierzcie – AI ułoży z tego plan wycieczki.",
+      "wishesChipsLabel": "Szybkie pomysły",
+      "wishesChips": {
+        "playground": "plac zabaw",
+        "coffee": "kawa",
+        "sweets": "lody",
+        "park": "park",
+        "shortWalk": "mało chodzenia"
+      },
       "wishesCount": "{{count}} / {{max}}",
-      "wishesPlaceholder": "np. plac zabaw, potem kawa, na koniec pizza; nie chcemy dużo chodzić",
-      "privacy": "Nie wpisuj danych osobowych. Ten tekst jest wysyłany do modelu AI.",
+      "wishesPlaceholder": "Opcjonalnie, np. plac zabaw, potem kawa, na koniec pizza; nie chcemy dużo chodzić",
+      "privacy": "Bez danych osobowych – ten tekst trafia do AI.",
       "submit": "Zaproponuj wycieczkę",
       "planning": "Planuję wycieczkę…",
       "planningHint": "Model AI może potrzebować do minuty. Poczekaj chwilę.",

@@ -48,7 +48,7 @@ describe('PointRow', () => {
   it('calls the change and clear actions', async () => {
     const user = userEvent.setup()
     const { onChange, onClear } = renderRow()
-    await user.click(screen.getByRole('button', { name: 'Change: Start' }))
+    await user.click(screen.getByRole('button', { name: 'Set to the map centre: Start' }))
     await user.click(screen.getByRole('button', { name: 'Clear Start' }))
     expect(onChange).toHaveBeenCalledOnce()
     expect(onClear).toHaveBeenCalledOnce()

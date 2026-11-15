@@ -3,6 +3,7 @@ import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import { renderWithProviders } from '@/test/render'
+import { appendWish } from '@/lib/trip'
 import { TripIdeaForm } from './TripIdeaForm'
 
 const START = { lat: 54.3385, lng: 18.62 }
@@ -62,7 +63,7 @@ describe('TripIdeaForm', () => {
     await user.clear(minutes)
     await user.type(minutes, '45')
     await user.click(screen.getByRole('switch', { name: 'Come back to the start' }))
-    await user.type(screen.getByLabelText('Your wishes (optional)'), '  coffee, then pizza ')
+    await user.type(screen.getByLabelText('What would you like?'), '  coffee, then pizza ')
     await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
 
     expect(onSubmit).toHaveBeenCalledWith({
@@ -122,14 +123,23 @@ describe('TripIdeaForm', () => {
 
   it('keeps wishes at 200 characters, shows the counter and the privacy hint', () => {
     renderForm()
-    const field = screen.getByLabelText('Your wishes (optional)')
+    const field = screen.getByLabelText('What would you like?')
     expect(field).toHaveAttribute('maxLength', '200')
-    expect(field).toHaveAccessibleDescription(/Do not enter personal data/)
+    expect(field).toHaveAccessibleDescription(/No personal data/)
 
     // A paste can bypass maxLength in jsdom, so the handler cuts it too.
     fireEvent.change(field, { target: { value: 'a'.repeat(250) } })
     expect(field).toHaveValue('a'.repeat(200))
     expect(screen.getByText('200 / 200')).toHaveClass('text-destructive')
+  })
+
+  it('adds a quick idea chip to the wishes with a comma', async () => {
+    renderForm()
+    const user = userEvent.setup()
+    const field = screen.getByLabelText('What would you like?')
+    await user.type(field, 'pizza')
+    await user.click(screen.getByRole('button', { name: 'coffee' }))
+    expect(field).toHaveValue('pizza, coffee')
   })
 
   it('cannot be sent without a start or while planning', () => {
@@ -141,5 +151,15 @@ describe('TripIdeaForm', () => {
     renderForm({ planning: true })
     expect(screen.getByRole('button', { name: 'Planning the trip…' })).toBeDisabled()
     expect(screen.getByRole('status')).toHaveTextContent(/up to a minute/)
+  })
+})
+
+describe('appendWish', () => {
+  it('starts a new text, adds with a comma, and keeps the limit', () => {
+    expect(appendWish('  ', 'park')).toBe('park')
+    expect(appendWish('kawa ', 'park')).toBe('kawa, park')
+    expect(appendWish('kawa, Park', 'park')).toBe('kawa, Park')
+    const full = 'a'.repeat(198)
+    expect(appendWish(full, 'park')).toBe(full)
   })
 })
