@@ -1,0 +1,9 @@
+node_modules/
+dist/
+coverage/
+visual-check/
+.vite/
+*.tsbuildinfo
+.env
+.env.*
+*.md

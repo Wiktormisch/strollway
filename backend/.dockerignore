@@ -1,0 +1,17 @@
+# Keep the image small and free of secrets and local state.
+.env
+.env.*
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.ruff_cache/
+.cache/
+*.sqlite3
+staticfiles/
+tests/
+*/tests/
+conftest.py
+requirements-dev.txt
+*.md

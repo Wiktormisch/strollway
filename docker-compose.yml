@@ -1,0 +1,54 @@
+# StrollWay production stack. See docs/DEPLOY.md.
+#   Local:  docker compose up --build              -> http://localhost:8080
+#   Server: docker compose --profile tunnel up -d --build
+services:
+  web:
+    build: ./backend
+    env_file:
+      # Written by hand on the server from .env.production.example. Never committed.
+      - path: .env
+        required: false
+    environment:
+      DEBUG: "0"
+      VAR_DIR: /app/var
+      DRF_NUM_PROXIES: "1"
+    volumes:
+      # A directory, not a single file: SQLite needs its helper files next to the database.
+      - ./data:/app/var
+    restart: unless-stopped
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://localhost:8000/api/health/', timeout=5)",
+        ]
+      interval: 30s
+      timeout: 10s
+      start_period: 60s
+      retries: 3
+
+  nginx:
+    build:
+      context: ./frontend
+      dockerfile: ../deploy/nginx/Dockerfile
+      additional_contexts:
+        nginx_conf: ./deploy/nginx
+    depends_on:
+      web:
+        condition: service_healthy
+    ports:
+      # Only on localhost: the public way in is the Cloudflare tunnel.
+      - "127.0.0.1:${NGINX_PORT:-8080}:80"
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:2026.11.0
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:-}
+    depends_on:
+      - nginx
+    restart: unless-stopped
+    profiles: ["tunnel"]

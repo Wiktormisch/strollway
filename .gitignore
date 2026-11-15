@@ -2,6 +2,7 @@
 .env
 .env.*
 !.env.example
+!.env.production.example
 
 # Python
 __pycache__/
@@ -46,3 +47,6 @@ Thumbs.db
 
 # Raw Overpass exports; only the gzipped copy is committed.
 backend/data/*.json
+
+# Docker volume: production SQLite and file cache
+/data/
