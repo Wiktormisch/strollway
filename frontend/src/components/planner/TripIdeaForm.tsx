@@ -1,6 +1,6 @@
 import { useId, useState, type FormEvent } from 'react'
 import { useTranslation } from 'react-i18next'
-import { Clock, Loader2, Play, Repeat, Save, Sparkles } from 'lucide-react'
+import { Clock, Loader2, Play, Plus, Repeat, Save, ShieldCheck, Sparkles } from 'lucide-react'
 import type { FamilyProfile, LatLng, TripIdeaRequest } from '@/api/types'
 import { PaceSlider } from '@/components/common/PaceSlider'
 import { Button } from '@/components/ui/button'
@@ -20,12 +20,19 @@ import {
   MAX_TRIP_MINUTES,
   MAX_WISHES_LENGTH,
   MIN_TRIP_MINUTES,
+  appendWish,
   TRIP_MINUTES_STEP,
 } from '@/lib/trip'
 import { cn } from '@/lib/utils'
 
 /** Lets the button on the map (phone, folded panel) submit this form. */
 export const TRIP_FORM_ID = 'trip-idea-form'
+
+/** Quick ideas for the wishes; the texts are in i18n under trip.form.wishesChips. */
+const WISH_CHIPS = ['playground', 'coffee', 'sweets', 'park', 'shortWalk'] as const
+
+/** Show the character counter only when the text gets near the limit. */
+const COUNTER_FROM = 150
 
 interface TripIdeaFormProps {
   start: LatLng | null
@@ -77,6 +84,11 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
     props.onMinutesChange(next)
   }
   const [wishes, setWishes] = useState('')
+  const chips = WISH_CHIPS.map((key) => t(`trip.form.wishesChips.${key}`))
+
+  function addChip(chip: string) {
+    setWishes((current) => appendWish(current, chip))
+  }
 
   function submit(event: FormEvent) {
     event.preventDefault()
@@ -204,22 +216,37 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
         )}
       </FormSection>
 
-      <FormSection>
+      {/* The AI card: the key feature, so wishes and the main button form one block. */}
+      <div className="space-y-3 rounded-xl border border-brand/30 bg-brand-soft/40 p-4">
+        <div className="space-y-1">
+          <Label
+            htmlFor={`${ids}-wishes`}
+            className="flex items-center gap-2 text-base font-semibold"
+          >
+            <Sparkles aria-hidden className="size-4 text-brand" />
+            {t('trip.form.wishes')}
+          </Label>
+          <p className="text-sm text-muted-foreground">{t('trip.form.wishesIntro')}</p>
+        </div>
+
+        <ul aria-label={t('trip.form.wishesChipsLabel')} className="flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <li key={chip}>
+              <Button
+                type="button"
+                variant="outline"
+                size="sm"
+                className="h-8 rounded-full bg-card px-3"
+                onClick={() => addChip(chip)}
+              >
+                <Plus aria-hidden className="size-3.5" />
+                {chip}
+              </Button>
+            </li>
+          ))}
+        </ul>
+
         <div className="space-y-1.5">
-          <div className="flex items-baseline justify-between">
-            <Label htmlFor={`${ids}-wishes`}>{t('trip.form.wishes')}</Label>
-            <span
-              className={cn(
-                'text-xs',
-                wishes.length >= MAX_WISHES_LENGTH
-                  ? 'font-medium text-destructive'
-                  : 'text-muted-foreground',
-              )}
-              aria-live="polite"
-            >
-              {t('trip.form.wishesCount', { count: wishes.length, max: MAX_WISHES_LENGTH })}
-            </span>
-          </div>
           <Textarea
             id={`${ids}-wishes`}
             value={wishes}
@@ -227,28 +254,54 @@ export function TripIdeaForm(props: TripIdeaFormProps) {
             maxLength={MAX_WISHES_LENGTH}
             placeholder={t('trip.form.wishesPlaceholder')}
             aria-describedby={`${ids}-wishes-hint`}
+            className="bg-card"
             // maxLength stops typing; slice also cuts a longer pasted text.
             onChange={(event) => setWishes(event.target.value.slice(0, MAX_WISHES_LENGTH))}
           />
-          <p id={`${ids}-wishes-hint`} className="text-xs text-stairs-text">
-            {t('trip.form.privacy')}
-          </p>
+          <div className="flex items-start justify-between gap-3">
+            <p
+              id={`${ids}-wishes-hint`}
+              className="flex items-start gap-1.5 text-xs text-muted-foreground"
+            >
+              <ShieldCheck aria-hidden className="mt-px size-3.5 shrink-0" />
+              {t('trip.form.privacy')}
+            </p>
+            {/* The counter shows only near the limit, so it does not add noise. */}
+            {wishes.length >= COUNTER_FROM && (
+              <span
+                className={cn(
+                  'shrink-0 text-xs tabular-nums',
+                  wishes.length >= MAX_WISHES_LENGTH
+                    ? 'font-medium text-destructive'
+                    : 'text-muted-foreground',
+                )}
+                aria-live="polite"
+              >
+                {t('trip.form.wishesCount', { count: wishes.length, max: MAX_WISHES_LENGTH })}
+              </span>
+            )}
+          </div>
         </div>
-      </FormSection>
 
-      <Button type="submit" className="w-full" disabled={!props.start || props.planning}>
-        {props.planning ? (
-          <>
-            <Loader2 aria-hidden className="animate-spin" />
-            {t('trip.form.planning')}
-          </>
-        ) : (
-          <>
-            <Sparkles aria-hidden />
-            {t('trip.form.submit')}
-          </>
-        )}
-      </Button>
+        <Button
+          type="submit"
+          size="lg"
+          className="w-full"
+          disabled={!props.start || props.planning}
+        >
+          {props.planning ? (
+            <>
+              <Loader2 aria-hidden className="animate-spin" />
+              {t('trip.form.planning')}
+            </>
+          ) : (
+            <>
+              <Sparkles aria-hidden />
+              {t('trip.form.submit')}
+            </>
+          )}
+        </Button>
+      </div>
       {props.planning && (
         <p role="status" className="text-center text-xs text-muted-foreground">
           {t('trip.form.planningHint')}

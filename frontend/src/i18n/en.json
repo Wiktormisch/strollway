@@ -58,7 +58,7 @@
       "expand": "Show the panel"
     },
     "form": {
-      "hint": "Tap the map: the first tap sets A, the second B. Or move the map and tap \"Change\".",
+      "hint": "Tap the map: the first tap sets A, the second B. Or move the map and tap the crosshair.",
       "start": "Start",
       "end": "End",
       "clear": "Clear {{point}}",
@@ -148,7 +148,7 @@
     "point": {
       "onMap": "Point on the map",
       "notSet": "Not set",
-      "change": "Change",
+      "useCenter": "Set to the map centre: {{point}}",
       "details": "Details"
     },
     "results": "Your walk",
@@ -400,7 +400,7 @@
   "trip": {
     "empty": "Set a start on the map (or try the demo start), say what you would like, and press \"Suggest a trip\".",
     "form": {
-      "hint": "Tap the map to set the start, or move the map and tap \"Change\". The trip starts and ends there.",
+      "hint": "Tap the map to set the start, or move the map and tap the crosshair. The trip starts and ends there.",
       "start": "Start",
       "demoStart": "Try the demo start",
       "minutes": "Time limit",
@@ -409,10 +409,19 @@
       "minutesField": "Time limit in minutes",
       "minutesRange": "From {{min}} to {{max}} min.",
       "roundTrip": "Come back to the start",
-      "wishes": "Your wishes (optional)",
+      "wishes": "What would you like?",
+      "wishesIntro": "Write or pick – AI will plan the trip from it.",
+      "wishesChipsLabel": "Quick ideas",
+      "wishesChips": {
+        "playground": "playground",
+        "coffee": "coffee",
+        "sweets": "dessert",
+        "park": "park",
+        "shortWalk": "little walking"
+      },
       "wishesCount": "{{count}} / {{max}}",
-      "wishesPlaceholder": "e.g. playground, then coffee, finally pizza; we do not want to walk much",
-      "privacy": "Do not enter personal data. This text is sent to the AI model.",
+      "wishesPlaceholder": "Optional, e.g. playground, then coffee, finally pizza; we do not want to walk much",
+      "privacy": "No personal data – this text is sent to AI.",
       "submit": "Suggest a trip",
       "planning": "Planning the trip…",
       "planningHint": "The AI model can take up to a minute. Please wait.",

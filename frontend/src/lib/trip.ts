@@ -70,3 +70,15 @@ export function tripTotals(trip: TripIdea, stops: TripStop[]): TripTotals {
     edited,
   }
 }
+
+/**
+ * Adds a quick idea to the wishes, with a comma, and never goes over the limit.
+ * An idea that is already in the list (any letter case) is not added again.
+ */
+export function appendWish(wishes: string, chip: string): string {
+  const base = wishes.trim()
+  const parts = base.split(',').map((part) => part.trim().toLowerCase())
+  if (parts.includes(chip.toLowerCase())) return wishes
+  const next = base ? `${base}, ${chip}` : chip
+  return next.length <= MAX_WISHES_LENGTH ? next : wishes
+}
