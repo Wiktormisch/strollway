@@ -32,13 +32,18 @@ Notes:
 
 ## 1. Cloudflare tunnel (once)
 
-1. Cloudflare dashboard -> Zero Trust -> Networks -> Tunnels -> **Create a tunnel**.
+1. Cloudflare dashboard -> **Networking** -> **Tunnels** -> **Create a tunnel**. (In the old
+   dashboard this was Zero Trust -> Networks -> Tunnels. If you cannot find it, search for
+   "Tunnels" at the top of the dashboard.)
 2. Type: **Cloudflared**. Name: `strollway`.
-3. On the "Install connector" page choose **Docker** and copy only the token (the long string
-   after `--token`). You do not run the shown command; Compose runs cloudflared.
-4. **Public hostname**: subdomain `strollway`, domain `wiktormischker.dev`, path empty,
-   service type `HTTP`, URL `nginx:80`.
-5. Save. The tunnel shows "Healthy" only after step 3 below.
+3. Choose **Docker** and copy only the token (the long string after `--token`). You do not run
+   the shown command; Compose runs cloudflared.
+4. Keep this page open. **Continue** stays disabled until the tunnel connects, so do sections
+   2 and 3 below first, then come back.
+5. When the tunnel is connected, click **Continue** -> **Add a route** ->
+   **Published application**: subdomain `strollway`, domain `wiktormischker.dev`, path empty,
+   service URL `http://nginx:80`. Keep the default additional settings and click
+   **Add route**. The DNS record is created for you.
 
 In SSL/TLS -> Edge Certificates, keep **Always Use HTTPS** on. Django does not redirect HTTP
 itself (`SECURE_SSL_REDIRECT=False`), because Cloudflare already does it.
@@ -59,6 +64,15 @@ Get the code (only `main` is deployed):
 ```bash
 git clone https://github.com/<your-user>/strollway.git
 cd strollway
+```
+
+Give the `data/` folder to the container user. Django runs as `app` (uid 1000) inside the
+container, and the bind mount keeps the owner from the host. Without this, `web` stops at once
+with `PermissionError: ... '/app/var/.cache'`:
+
+```bash
+mkdir -p data
+chown -R 1000:1000 data          # use sudo if you are not root
 ```
 
 Write `.env`:
@@ -84,6 +98,14 @@ NVIDIA_API_KEY=
 `localhost` in `ALLOWED_HOSTS` is needed by the container health check. Set a monthly
 spending limit in the Anthropic console.
 
+nginx uses host port `8080` by default. If another stack already uses it (`ss -tlnp | grep 8080`
+shows a line), pick a free port. The tunnel does not need this port; it talks to `nginx:80`
+inside the Docker network.
+
+```bash
+NGINX_PORT=8081
+```
+
 ## 3. Build and start
 
 ```bash
@@ -97,6 +119,17 @@ Check:
 - `https://strollway.wiktormischker.dev/` - the app
 - `https://strollway.wiktormischker.dev/api/health/` - JSON
 - `https://strollway.wiktormischker.dev/api/docs/` - Swagger
+
+Troubleshooting:
+
+- `dependency failed to start: container strollway-web-1 is unhealthy`: read
+  `docker compose logs --tail 50 web`. After you fix the cause, run
+  `docker compose --profile tunnel down` and then `up -d` again. Without `down`, Compose
+  reuses the old "unhealthy" container and fails at once.
+- `Bind for 0.0.0.0:8080 failed: port is already allocated`: set `NGINX_PORT` (see section 2).
+- `curl http://127.0.0.1:8081/api/health/` returns `Bad Request (400)`: this is expected,
+  because `127.0.0.1` is not in `ALLOWED_HOSTS`. Send the real host instead:
+  `curl -H "Host: strollway.wiktormischker.dev" http://127.0.0.1:8081/api/health/`.
 
 ## 4. Update after a merge to `main`
 
