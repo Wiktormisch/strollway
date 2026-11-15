@@ -5,8 +5,6 @@ suggests short family trips with stops on the way.
 
 **Live demo:** _coming soon_ <!-- TODO(stage 8): add the link after the deploy -->
 
-<!-- TODO(next session): embed the demo video here (docs/demo.mp4). -->
-
 ![The planner: a route that avoids 16 m of stairs, compared with the shortest route](docs/screenshots/planner-route-desktop.png)
 
 ## What it does
@@ -28,9 +26,49 @@ suggests short family trips with stops on the way.
 - **"How it works" page** in the app: the same limits and data credits as below, in Polish and
   English.
 
-| Saved walk on a phone                                                                                                                               |                                                                                                                         |
-| --------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| <img src="docs/screenshots/walk-detail-mobile.png" alt="A saved walk: distance, time, calories, stairs avoided and the route on a map" width="260"> | Each saved walk keeps its route, stats (distance, walking time, a calorie estimate, stairs avoided) and numbered stops. |
+## See it in action
+
+### A stair-free route in one click
+
+The app asks for the shortest route and a route without stairs, then shows both. Here the
+shortest way has 16 m of stairs (red on the map); the stroller-friendly way is 288 m and
+4 minutes longer. The card under the map says what the detour costs, so you can decide.
+
+![Choosing the "Big detour" demo route: the map shows the shortest route with 16 m of stairs and a stair-free route that is 288 m and 4 minutes longer](docs/demo/route.gif)
+
+### A trip idea from one sentence
+
+Pick a start, write what the family wants ("playground, then coffee") and press
+**Suggest a trip**. You get a round trip with stops, arrival times and walking times. Only
+the wishes text goes to the AI; the stops come from OpenStreetMap and code checks every
+answer. This recording runs in demo mode, so the rule-based planner picks the stops (the
+label "Planned by rules" says so).
+
+![Setting the demo start, typing "playground, then coffee" and pressing "Suggest a trip": a round trip with a playground and an ice cream shop appears on the map and in a timeline](docs/demo/trip.gif)
+
+### Your walks, on a phone
+
+<table>
+  <tr>
+    <td width="360">
+      <img src="docs/demo/walks.gif" width="340" alt="On a phone screen: opening the saved walk &quot;Oliwa: playground and coffee&quot; and scrolling through its distance, map, five-star rating, two stops and notes">
+    </td>
+    <td>
+      <p>Save a planned route or trip and it stays in <b>My walks</b>. Each walk keeps:</p>
+      <ul>
+        <li>distance, walking time, a calorie estimate and the stairs you avoided,</li>
+        <li>the route on a map with numbered stops,</li>
+        <li>a status (planned or done) and a rating from 1 to 5,</li>
+        <li>stops with planned minutes and a note for each,</li>
+        <li>your own notes, for example "flat paths, good for a nap".</li>
+      </ul>
+      <p>Family profiles set the walking pace and the trip defaults. Walks belong to your
+      browser; there are no accounts.</p>
+    </td>
+  </tr>
+</table>
+
+To record the GIFs again, follow [docs/demo/README.md](docs/demo/README.md).
 
 ## Quick start (no API keys needed)
 

@@ -1,0 +1,11 @@
+goto /
+wait 1500
+click "text=Try the demo start"
+wait 1000
+type textarea "playground, then coffee"
+wait 1200
+click "text=Suggest a trip"
+wait-for "text=Your trip"
+wait 1500
+hover "text=Your trip"
+wait 4000
