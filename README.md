@@ -38,7 +38,7 @@ shortest way has 16 m of stairs (red on the map); the stroller-friendly way is 2
 
 ### A trip idea from one sentence
 
-Pick a start, write what the family wants ("playground, then coffee") and press
+Pick a start, write what the family wants ("playground, then coffee") or tap a quick idea, and press
 **Suggest a trip**. You get a round trip with stops, arrival times and walking times. Only
 the wishes text goes to the AI; the stops come from OpenStreetMap and code checks every
 answer. This recording runs in demo mode, so the rule-based planner picks the stops (the
@@ -216,7 +216,7 @@ and [`CLAUDE.md`](CLAUDE.md):
 
 | Rule                                 | Where to see it                                                                                          |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------- |
-| A human reads every diff             | Feature and fix work goes through PRs into `dev`, merged by the developer                                |
+| Commit only when asked               | [`.claude/settings.json`](.claude/settings.json) asks before every `git commit` and `git push`           |
 | No production credentials for agents | [`.claude/settings.json`](.claude/settings.json) blocks reading `.env`; only `.env.example` is committed |
 | Plan before code                     | [`docs/PLAN.md`](docs/PLAN.md), [`docs/AUDIT.md`](docs/AUDIT.md)                                         |
 | No shortcuts to `main`               | `feat/*`, `fix/*`, `docs/*` branches -> `dev` -> `main`                                                  |
