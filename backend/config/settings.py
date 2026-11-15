@@ -28,6 +28,10 @@ if not SECRET_KEY:
     SECRET_KEY = "dev-only-insecure-key"
 
 ALLOWED_HOSTS = env_list("ALLOWED_HOSTS", "localhost,127.0.0.1")
+CSRF_TRUSTED_ORIGINS = env_list("CSRF_TRUSTED_ORIGINS")
+
+# Writable files (SQLite and the file cache). In Docker this is a mounted directory volume.
+VAR_DIR = Path(os.getenv("VAR_DIR") or BASE_DIR)
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -47,6 +51,8 @@ MIDDLEWARE = [
     # CorsMiddleware must be as high as possible, before CommonMiddleware.
     "corsheaders.middleware.CorsMiddleware",
     "django.middleware.security.SecurityMiddleware",
+    # WhiteNoise serves static files (admin, DRF) from Django, so nginx needs no shared volume.
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -77,7 +83,9 @@ WSGI_APPLICATION = "config.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
-        "NAME": BASE_DIR / "db.sqlite3",
+        "NAME": VAR_DIR / "db.sqlite3",
+        # Two gunicorn workers can write at once: wait for the lock instead of failing.
+        "OPTIONS": {"timeout": 20},
     }
 }
 
@@ -95,6 +103,31 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
+STORAGES = {
+    "default": {"BACKEND": "django.core.files.storage.FileSystemStorage"},
+    "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
+}
+if DEBUG:
+    # The manifest exists only after collectstatic; local dev and tests do not run it.
+    STORAGES["staticfiles"] = {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"}
+
+# Production security. TLS ends at Cloudflare; nginx forwards X-Forwarded-Proto from it.
+if not DEBUG:
+    SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    SECURE_REFERRER_POLICY = "same-origin"
+    X_FRAME_OPTIONS = "DENY"
+    SECURE_HSTS_SECONDS = int(os.getenv("SECURE_HSTS_SECONDS", "31536000"))
+    # Covers only *.strollway.<domain>, not the other sites on the parent domain.
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    # Preload is a permanent browser list entry for the whole domain: not for a demo app.
+    SECURE_HSTS_PRELOAD = False
+    # Cloudflare redirects HTTP to HTTPS. A redirect here would loop on local
+    # "docker compose up" over plain http, so it stays off (check --deploy W008 is silenced).
+    SECURE_SSL_REDIRECT = False
+    SILENCED_SYSTEM_CHECKS = ["security.W008", "security.W021"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
@@ -141,7 +174,7 @@ REST_FRAMEWORK = {
 CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.filebased.FileBasedCache",
-        "LOCATION": BASE_DIR / ".cache",
+        "LOCATION": VAR_DIR / ".cache",
         "TIMEOUT": 24 * 60 * 60,
     }
 }

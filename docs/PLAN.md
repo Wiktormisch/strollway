@@ -576,7 +576,7 @@ Internet -> Cloudflare (TLS) -> tunnel -> cloudflared -> nginx:80 -+-> /        
   - nginx forwards the `X-Forwarded-Proto` it received from Cloudflare (in nginx `$scheme` is always `http`, because the tunnel ends TLS earlier). Django sets `SECURE_PROXY_SSL_HEADER`.
   - Throttling counts by the real client IP: nginx passes `CF-Connecting-IP` as `X-Forwarded-For`, and DRF has `NUM_PROXIES` set.
   - `seed_demo` runs at start next to `migrate` (it is idempotent).
-- **[TO VERIFY] server memory:** three more containers are added. On the server: `free -m` and `docker stats --no-stream`. If free RAM is below about 300 MB, use the variant with a shared tunnel and 1 gunicorn worker.
+- **Server memory (measured locally, 2026-11-15):** `web` about 170 MB with 2 workers, `nginx` about 12 MB; cloudflared adds about 20-40 MB (an estimate, not measured: the tunnel did not run locally). **[TO VERIFY] on the server:** `free -m` and `docker stats --no-stream`. If free RAM is below about 300 MB, use the variant with a shared tunnel and 1 gunicorn worker.
 - One origin, so CORS is not needed in production; it stays configured explicitly for local mode.
 - Production variables: `DEBUG=0`, an own `SECRET_KEY`, `ALLOWED_HOSTS`, `CSRF_TRUSTED_ORIGINS`, `LLM_BACKEND=anthropic`, `LLM_FALLBACKS=nvidia`, `ORS_API_KEY`.
 - Throttling is on (D.4), a spending limit is set in the Anthropic console.
@@ -1147,7 +1147,7 @@ diff, list anything unfinished, propose Conventional Commit message(s). Then sto
   checked by hand; before / after screenshots in each PR; tests, lint and build pass; tests that
   check changed texts are updated.
 
-### Stage 8: Deploy (optional)
+### Stage 8: Deploy (optional) - DONE (the server deploy is done by the developer, see `docs/DEPLOY.md`)
 
 - **Goal:** a working demo at `strollway.wiktormischker.dev`.
 - **Depends on:** stage 7 merged, the second `dev` -> `main` PR done. Do it only when there is time left after stage 7.
@@ -1173,7 +1173,7 @@ Build:
   for local runs nginx publishes a port on localhost.
 - backend/Dockerfile (python slim image, requirements, gunicorn). "web" runs migrate, collectstatic and
   seed_demo, then gunicorn with 2 workers and a 120 s timeout.
-- deploy/nginx/Dockerfile: multi-stage - build the frontend with Node (VITE_API_URL=/api), then copy
+- deploy/nginx/Dockerfile: multi-stage - build the frontend with Node (VITE_API_URL empty: the client already adds /api/), then copy
   dist into nginx:alpine. deploy/nginx/nginx.conf: "/" serves the SPA with try_files fallback to
   index.html; "/api/" proxies to web:8000 WITHOUT stripping the prefix; "/static/" serves Django static
   files (shared volume or whitenoise - pick one and say why). Forward the X-Forwarded-Proto header

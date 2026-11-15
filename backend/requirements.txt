@@ -5,3 +5,5 @@ drf-spectacular==0.30.0
 python-dotenv==1.2.4
 httpx==0.28.1
 anthropic==2.8.0
+gunicorn==27.0.1
+whitenoise==6.12.0
