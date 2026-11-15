@@ -11,15 +11,19 @@ from datetime import date
 from django.conf import settings
 from django.core.cache import cache
 
-from planning import fixtures, geo, pois, routing, services, trip_rules, weather
+from planning import fixtures, geo, places, pois, routing, services, trip_rules, weather
 from planning.llm import factory, prompt, validation
 from planning.llm.base import LLMError
 
 logger = logging.getLogger(__name__)
 
 ENGINE_RULES = "rules"
-# No new backend is tried after this many seconds; the rules answer at once.
-LLM_CHAIN_BUDGET_S = 60
+# The LLM chain must finish this many seconds after the request starts. Each backend gets
+# only the time that is left as its timeout. With up to 60 s of ORS calls after it, a request
+# stays under the 120 s gunicorn timeout planned in stage 8.
+LLM_CHAIN_BUDGET_S = 50
+# A backend is not started with less time than this; the rules answer instead.
+MIN_LLM_CALL_S = 5
 DAILY_COUNTER_TIMEOUT_S = 25 * 60 * 60
 LIMIT_TOLERANCE = trip_rules.LIMIT_TOLERANCE  # 10% over the limit is still fine
 MAX_REROUTES = 2
@@ -44,17 +48,29 @@ class PlacesUnavailable(TripError):
     code = "places_unavailable"
 
 
+class OutsideArea(TripError):
+    """The start is outside the imported place data (the Tricity)."""
+
+    code = "outside_area"
+
+
 def active_engine():
     """The engine a trip tries first (for GET /api/health/). Builds no client."""
     names = factory.backend_names()
     return names[0] if names else ENGINE_RULES
 
 
-def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="", profile=None):
+def build_trip_idea(
+    start, max_minutes, round_trip=True, language="pl", wishes="", profile=None, pace_kmh=None
+):
     """The full answer of the endpoint, as a dict (docs/PLAN.md D.4 + D.6)."""
-    speed = services.speed_m_per_min(profile)
+    llm_deadline = time.monotonic() + LLM_CHAIN_BUDGET_S
+    pace_kmh = services.pace_kmh_for(profile, pace_kmh)
+    speed = services.speed_m_per_min(profile, pace_kmh)
     fixture = fixtures.load_trip_fixture(start)
     found = _candidates(start, pois.trip_radius_m(speed, max_minutes), fixture)
+    if found.status == pois.STATUS_OUTSIDE_AREA:
+        raise OutsideArea()
     if found.status != pois.STATUS_OK:
         raise PlacesUnavailable()
     if not found.pois:
@@ -69,8 +85,10 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
         "wishes": (wishes or "")[:200],
         "children_ages": list(profile.children_ages) if profile else [],
         "speed": speed,
+        "pace_kmh": pace_kmh,
         "weather": weather.current_weather(start),
         "profile": profile,
+        "llm_deadline": llm_deadline,
     }
     answer, engine = _plan_answer(candidates, context)
     if not answer["stops"]:
@@ -89,14 +107,16 @@ def build_trip_idea(start, max_minutes, round_trip=True, language="pl", wishes="
 
 
 def _candidates(start, radius_m, fixture):
-    """Live places first; the recorded demo places when live data cannot be used."""
-    result = pois.PoiResult([], [], pois.STATUS_UNAVAILABLE)
-    if pois.is_enabled():
-        result = pois.find_candidates(start, radius_m)
+    """Recorded places at the demo start, else the configured provider (db or Overpass)."""
     recorded = fixture.get("overpass") if fixture else None
-    if result.status != pois.STATUS_OK and recorded is not None:
-        result = pois.parse_candidates(recorded, start, radius_m)
-    return result
+    if recorded is not None:
+        return pois.parse_candidates(recorded, start, radius_m)
+    provider = pois.provider()
+    if provider == "db":
+        return places.find_candidates(start, radius_m)
+    if provider == "overpass":
+        return pois.find_candidates(start, radius_m)
+    return pois.PoiResult([], [], pois.STATUS_UNAVAILABLE)
 
 
 def _plan_answer(candidates, context):
@@ -105,24 +125,27 @@ def _plan_answer(candidates, context):
     if chain:
         payload = prompt.build_payload(candidates, context)
         user = prompt.user_message(payload)
-        started = time.monotonic()
+        deadline = context.get("llm_deadline") or time.monotonic() + LLM_CHAIN_BUDGET_S
         for client in chain:
-            if time.monotonic() - started > LLM_CHAIN_BUDGET_S:
+            left = deadline - time.monotonic()
+            if left < MIN_LLM_CALL_S:
                 logger.warning("LLM chain out of time; using the rules")
                 break
             if not _take_daily_llm_call():
                 logger.warning("Daily LLM limit reached; using the rules")
                 break
-            answer = _ask(client, user, candidates)
+            answer = _ask(client, user, candidates, left)
             if answer is not None:
                 return answer, client.name
     return _rules_answer(candidates, context), ENGINE_RULES
 
 
-def _ask(client, user, candidates):
+def _ask(client, user, candidates, timeout_s):
     """A validated answer from one backend, or None. Logs never hold the prompt or wishes."""
     try:
-        raw = client.complete_json(prompt.SYSTEM_PROMPT, user, prompt.OUTPUT_SCHEMA)
+        raw = client.complete_json(
+            prompt.SYSTEM_PROMPT, user, prompt.OUTPUT_SCHEMA, timeout_s=timeout_s
+        )
     except LLMError as exc:
         logger.warning("LLM backend %s failed: %s", client.name, exc)
         return None
@@ -264,8 +287,10 @@ def _serialize(comparison, source, stops, dropped, answer, engine, found, contex
         "engine": engine,
         "source": source,
         "step_free_available": comparison.step_free_available,
-        "route": services.route_dict(route, speed),
-        "baseline": services.route_dict(comparison.baseline, speed),
+        "route": services.route_dict(route, speed, services.has_stroller(context["profile"])),
+        "baseline": services.route_dict(
+            comparison.baseline, speed, services.has_stroller(context["profile"])
+        ),
         "detour_m": None if detour is None else round(detour),
         "extra_min": None if detour is None else round(detour / speed),
         "summary": answer["summary"],

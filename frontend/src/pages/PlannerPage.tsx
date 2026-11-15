@@ -2,19 +2,24 @@ import { useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQueryClient } from '@tanstack/react-query'
 import { fetchRoutePlan, useRoutePlan, useTripIdea } from '@/api/planning'
-import { useProfiles } from '@/api/profiles'
+import { toast } from 'sonner'
+import { usePatchProfile, useProfiles } from '@/api/profiles'
 import type { LatLng, RoutePlanRequest, TripIdeaRequest } from '@/api/types'
+import { BestTimeCard, WeatherCredit } from '@/components/planner/BestTimeCard'
 import { StopsTimeline } from '@/components/planner/StopsTimeline'
+import { PaceSlider } from '@/components/common/PaceSlider'
 import { TRIP_FORM_ID, TripIdeaForm } from '@/components/planner/TripIdeaForm'
 import { TripSummary, WeatherChip } from '@/components/planner/TripSummary'
-import { DEMO_TRIP_START, remainingStops, tripTotals } from '@/lib/trip'
+import { DEFAULT_TRIP_MINUTES, DEMO_TRIP_START, remainingStops, tripTotals } from '@/lib/trip'
 import { buildTripWalkPayload, buildWalkPayload } from '@/lib/walkPayload'
 import { HealthStatus } from '@/components/HealthStatus'
 import { DemoModeBanner, ErrorBanner } from '@/components/planner/Banners'
 import { DetourCard, DetourCardSkeleton } from '@/components/planner/DetourCard'
-import { MapView } from '@/components/planner/MapView'
+import { MapView, type MapFocus } from '@/components/planner/MapView'
+import { MapsExport } from '@/components/planner/MapsExport'
 import { PlacesSection } from '@/components/planner/PlacesSection'
 import { PlannerSheet } from '@/components/planner/PlannerSheet'
+import { ReplaceTripDialog } from '@/components/planner/ReplaceTripDialog'
 import { RouteForm } from '@/components/planner/RouteForm'
 import { LegendChip } from '@/components/planner/LegendChip'
 import { TransitStops } from '@/components/planner/TransitStops'
@@ -26,7 +31,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { DEFAULT_MAP_CENTER, type DemoRoute } from '@/constants/demoRoutes'
 import { usePoiLabel } from '@/lib/poiLabel'
 import { nextPoints, visiblePois, type PlannerPoints } from '@/lib/planner'
+import { paceMax, profilePace } from '@/lib/pace'
 import { usePageTitle } from '@/lib/usePageTitle'
+import { useSheetInset } from '@/lib/useSheetInset'
 
 export function PlannerPage() {
   const { t } = useTranslation()
@@ -38,12 +45,68 @@ export function PlannerPage() {
   const [avoidStairs, setAvoidStairs] = useState(true)
   const [hidden, setHidden] = useState<ReadonlySet<string>>(new Set())
   const [sheetOpen, setSheetOpen] = useState(true)
+  const sheetRef = useRef<HTMLElement>(null)
+  const sheetInset = useSheetInset(sheetRef)
+  // A demo click shows its points at once (audit idea 6); the id makes a repeated click count.
+  const [focus, setFocus] = useState<MapFocus | null>(null)
+  function focusOn(points: LatLng[]) {
+    setFocus((previous) => ({
+      id: (previous?.id ?? 0) + 1,
+      points: points.map((point) => [point.lat, point.lng]),
+    }))
+  }
   const [profileId, setProfileId] = useState<number | null>(null)
+  // The pace starts from the profile; the slider changes it for this plan only (audit idea 3).
+  const [pace, setPace] = useState(profilePace(undefined))
   const [saveOpen, setSaveOpen] = useState(false)
   const profiles = useProfiles()
+  const selectedProfile = profiles.data?.find((item) => item.id === profileId)
+  const maxPace = paceMax(selectedProfile?.wheels)
+
+  /** Both tabs share the profile. A new profile also resets the pace slider. */
+  function selectProfile(next: number | null) {
+    setProfileId(next)
+    const profile = profiles.data?.find((item) => item.id === next)
+    setPace(profilePace(profile))
+    // Saved trip settings (audit idea 4). No profile keeps what the user set.
+    if (profile) {
+      setTripMinutes(profile.trip_minutes)
+      setRoundTrip(profile.round_trip)
+    }
+  }
+
+  // Trip settings live here, so a profile can set them and the user can save them back.
+  const [tripMinutes, setTripMinutes] = useState(DEFAULT_TRIP_MINUTES)
+  const [roundTrip, setRoundTrip] = useState(true)
+  const updateProfile = usePatchProfile()
+  const settingsChanged =
+    selectedProfile !== undefined &&
+    (selectedProfile.pace_kmh !== pace ||
+      selectedProfile.trip_minutes !== tripMinutes ||
+      selectedProfile.round_trip !== roundTrip)
+
+  function saveSettings() {
+    if (!selectedProfile) return
+    const { name } = selectedProfile
+    updateProfile.mutate(
+      {
+        id: selectedProfile.id,
+        input: {
+          pace_kmh: pace,
+          trip_minutes: tripMinutes,
+          round_trip: roundTrip,
+        },
+      },
+      {
+        onSuccess: () => toast.success(t('trip.form.settingsSaved', { name })),
+        onError: () => toast.error(t('trip.form.settingsFailed')),
+      },
+    )
+  }
   // A ref, not state: the map centre changes often and nothing needs to re-render for it.
   const mapCenter = useRef<LatLng>(DEFAULT_MAP_CENTER)
-  const [mode, setMode] = useState<Mode>('route')
+  // The trip idea is the main feature, so it opens first (audit idea 7).
+  const [mode, setMode] = useState<Mode>('trip')
 
   // Trip idea mode. The result lives in the mutation; `sent` keeps the request it answers.
   const tripIdea = useTripIdea()
@@ -61,10 +124,19 @@ export function PlannerPage() {
     tripIdea.mutate(request)
   }
 
-  /** A new start makes the old result wrong, so it is hidden. */
-  function changeTripStart(start: LatLng | null) {
+  // A new start makes the old result wrong. With a trip on screen we ask first (audit idea 12),
+  // so the choice waits here until the user answers.
+  const [pendingStart, setPendingStart] = useState<StartChange | null>(null)
+
+  function changeTripStart(start: LatLng | null, focus = false) {
+    if (trip) setPendingStart({ start, focus })
+    else applyTripStart({ start, focus })
+  }
+
+  function applyTripStart({ start, focus }: StartChange) {
     setTripStart(start)
     tripIdea.reset()
+    if (focus && start) focusOn([start])
   }
 
   function removeStop(poiId: string) {
@@ -75,7 +147,11 @@ export function PlannerPage() {
   // So a changed input hides an old result, and going back shows it again with no request.
   const request: RoutePlanRequest | null =
     points.start && points.end
-      ? withProfile({ start: points.start, end: points.end, avoid_stairs: avoidStairs }, profileId)
+      ? withProfile(
+          { start: points.start, end: points.end, avoid_stairs: avoidStairs },
+          profileId,
+          pace,
+        )
       : null
   // Consts, so TypeScript keeps them non-null inside the save callback below.
   const routeStart = points.start
@@ -104,31 +180,51 @@ export function PlannerPage() {
 
   function pickDemo(route: DemoRoute) {
     setPoints({ start: route.start, end: route.end })
+    focusOn([route.start, route.end])
     fetchRoutePlan(
       queryClient,
-      withProfile({ start: route.start, end: route.end, avoid_stairs: avoidStairs }, profileId),
+      withProfile(
+        { start: route.start, end: route.end, avoid_stairs: avoidStairs },
+        profileId,
+        pace,
+      ),
     )
   }
 
-  /** The profile changes the pace, so a route on the map is planned again right away. */
+  /**
+   * The profile changes the pace, so a route on the map is planned again right away.
+   * It also sets "Avoid stairs": on for a stroller or a balance bike, off on foot. It is only
+   * a default; the switch stays usable (DECISIONS.md section 12).
+   */
   function changeProfile(next: number | null) {
-    setProfileId(next)
+    selectProfile(next)
+    const profile = profiles.data?.find((item) => item.id === next)
+    const nextAvoidStairs = profile ? profile.wheels !== 'none' : avoidStairs
+    setAvoidStairs(nextAvoidStairs)
     if (points.start && points.end) {
       fetchRoutePlan(
         queryClient,
-        withProfile({ start: points.start, end: points.end, avoid_stairs: avoidStairs }, next),
+        withProfile(
+          { start: points.start, end: points.end, avoid_stairs: nextAvoidStairs },
+          next,
+          profilePace(profile),
+        ),
       )
     }
   }
 
   return (
     <div className="relative h-full md:flex">
-      <PlannerSheet open={sheetOpen} onToggle={() => setSheetOpen((open) => !open)}>
+      <PlannerSheet
+        open={sheetOpen}
+        onToggle={() => setSheetOpen((open) => !open)}
+        sheetRef={sheetRef}
+      >
         {/* Controlled tabs: the map outside the panel must know the mode too. */}
         <Tabs value={mode} onValueChange={(value) => setMode(value as Mode)}>
           <TabsList className="mb-3 w-full">
-            <TabsTrigger value="route">{t('planner.tabs.route')}</TabsTrigger>
             <TabsTrigger value="trip">{t('planner.tabs.trip')}</TabsTrigger>
+            <TabsTrigger value="route">{t('planner.tabs.route')}</TabsTrigger>
           </TabsList>
 
           <TabsContent value="trip" className="space-y-4">
@@ -137,12 +233,25 @@ export function PlannerPage() {
               profiles={profiles.data ?? []}
               profileId={profileId}
               planning={tripIdea.isPending}
-              onProfileChange={setProfileId}
+              onProfileChange={selectProfile}
+              pace={pace}
+              maxPace={maxPace}
+              onPaceChange={setPace}
+              minutes={tripMinutes}
+              onMinutesChange={setTripMinutes}
+              roundTrip={roundTrip}
+              onRoundTripChange={setRoundTrip}
+              canSaveSettings={settingsChanged}
+              savingSettings={updateProfile.isPending}
+              onSaveSettings={saveSettings}
               onClearStart={() => changeTripStart(null)}
               onUseMapCenter={() => changeTripStart(mapCenter.current)}
-              onDemoStart={() => changeTripStart(DEMO_TRIP_START)}
+              onDemoStart={() => changeTripStart(DEMO_TRIP_START, true)}
+              onLocate={(point) => changeTripStart(point, true)}
+              onSearchPick={(point) => changeTripStart(point, true)}
               onSubmit={suggestTrip}
             />
+            <BestTimeCard start={tripStart} />
             <ResultsDivider />
             <div aria-live="polite" className="space-y-4">
               {tripIdea.isPending && <DetourCardSkeleton />}
@@ -161,6 +270,7 @@ export function PlannerPage() {
               <>
                 <DemoModeBanner source={trip.source} />
                 <WeatherChip weather={trip.weather} />
+                {trip.weather && <WeatherCredit className="-mt-2 text-center" />}
                 <StopsTimeline
                   engine={trip.engine}
                   stops={tripStops}
@@ -172,6 +282,8 @@ export function PlannerPage() {
                 <Button className="w-full" onClick={() => setSaveOpen(true)}>
                   {t('planner.save')}
                 </Button>
+                {/* The remaining stops only: a removed stop must not be in the link. */}
+                <MapsExport geometry={trip.route.geometry} stops={tripStops} />
                 <TransitStops stops={trip.transit_stops} />
               </>
             )}
@@ -193,14 +305,25 @@ export function PlannerPage() {
                     disabled={!profiles.data}
                     onChange={changeProfile}
                   />
+                  <PaceSlider id="planner-pace" value={pace} max={maxPace} onChange={setPace} />
                 </div>
               }
               onAvoidStairsChange={setAvoidStairs}
               onClear={(which) => setPoints({ ...points, [which]: null })}
               onUseMapCenter={(which) => setPoints({ ...points, [which]: mapCenter.current })}
+              onLocate={(point) => {
+                // The position comes later (async): read the current points, not this render's.
+                setPoints((current) => ({ ...current, start: point }))
+                focusOn([point])
+              }}
+              onSearchPick={(point) => {
+                setPoints((current) => ({ ...current, start: point }))
+                focusOn([point])
+              }}
               onDemo={pickDemo}
               onPlan={plan}
             />
+            <BestTimeCard start={points.start} />
 
             <ResultsDivider />
             {/* Only the short status is a live region, so screen readers skip the lists. */}
@@ -228,6 +351,7 @@ export function PlannerPage() {
                 <Button className="w-full" onClick={() => setSaveOpen(true)}>
                   {t('planner.save')}
                 </Button>
+                <MapsExport geometry={result.route.geometry} />
                 <PlacesSection
                   plan={result}
                   hidden={hidden}
@@ -253,9 +377,18 @@ export function PlannerPage() {
           pois={result.pois}
           profiles={profiles.data ?? []}
           profileId={profileId}
-          buildPayload={(values) =>
+          routeRequestFor={(id) =>
+            id === profileId
+              ? request
+              : withProfile(
+                  { start: request.start, end: request.end, avoid_stairs: request.avoid_stairs },
+                  id,
+                  profilePace(profiles.data?.find((item) => item.id === id)),
+                )
+          }
+          buildPayload={(values, plan) =>
             buildWalkPayload({
-              plan: result,
+              plan: plan ?? result,
               start: routeStart,
               end: routeEnd,
               avoidStairs: request.avoid_stairs,
@@ -288,10 +421,19 @@ export function PlannerPage() {
         />
       )}
 
+      <ReplaceTripDialog
+        open={pendingStart !== null}
+        onConfirm={() => {
+          if (pendingStart) applyTripStart(pendingStart)
+          setPendingStart(null)
+        }}
+        onCancel={() => setPendingStart(null)}
+      />
+
       {/* Phone only: with the panel folded, the next step is a button on the map. */}
       {!sheetOpen && mode === 'trip' && tripStart && (
         <Button
-          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-float md:hidden"
           disabled={tripIdea.isPending}
           // Without a result it submits the folded form (the `form` attribute), so the
           // request has the same limit and wishes as the panel shows.
@@ -308,7 +450,7 @@ export function PlannerPage() {
       )}
       {!sheetOpen && mode === 'route' && request && (
         <Button
-          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-lg md:hidden"
+          className="absolute bottom-24 left-1/2 z-10 -translate-x-1/2 shadow-float md:hidden"
           disabled={fetching}
           onClick={result ? () => setSaveOpen(true) : plan}
         >
@@ -347,6 +489,8 @@ export function PlannerPage() {
           onCenterChange={(center) => {
             mapCenter.current = center
           }}
+          bottomInset={sheetInset}
+          focus={focus}
         />
       </div>
     </div>
@@ -354,6 +498,12 @@ export function PlannerPage() {
 }
 
 type Mode = 'route' | 'trip'
+
+/** A trip start the user picked; `focus` also moves the map to it (demo start, my location). */
+interface StartChange {
+  start: LatLng | null
+  focus: boolean
+}
 
 /** A clear break between the form and the result (developer feedback, session 3). */
 function ResultsDivider() {
@@ -370,6 +520,12 @@ function ResultsDivider() {
 }
 
 /** profile_id is sent only when a profile is chosen. */
-function withProfile(request: RoutePlanRequest, profileId: number | null): RoutePlanRequest {
-  return profileId === null ? request : { ...request, profile_id: profileId }
+/** Adds the profile (if any) and the pace. The pace is always sent, so it wins on the server. */
+function withProfile(
+  request: RoutePlanRequest,
+  profileId: number | null,
+  pace: number,
+): RoutePlanRequest {
+  const withPace = { ...request, pace_kmh: pace }
+  return profileId === null ? withPace : { ...withPace, profile_id: profileId }
 }

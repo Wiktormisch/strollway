@@ -111,9 +111,54 @@ def test_bad_overpass_file_is_a_clear_error(ors, tmp_fixtures, tmp_path, content
         call_command("record_fixtures", trip=True, overpass_file=str(exported))
 
 
-def test_overpass_file_needs_trip(ors, tmp_path):
-    with pytest.raises(CommandError):
+def test_overpass_file_needs_trip_or_one_pair(ors, tmp_path):
+    with pytest.raises(CommandError, match="one --pair"):
         call_command("record_fixtures", overpass_file=str(tmp_path / "x.json"))
+    with pytest.raises(CommandError, match="one --pair"):
+        call_command("record_fixtures", pair=[1, 2], overpass_file=str(tmp_path / "x.json"))
+
+
+def _saved_pair(tmp_fixtures):
+    ors = {"normal": {"status": 200, "body": load("ors_pair3_normal.json")},
+           "avoid": {"status": 200, "body": load("ors_pair3_avoid.json")}}  # fmt: skip
+    data = {"pair": 3, "name": "Tiny detour", "start": [0, 0], "end": [0, 0], "ors": ors,
+            "overpass": None}  # fmt: skip
+    (tmp_fixtures / "pair_3.json").write_text(json.dumps(data), encoding="utf-8")
+    return data
+
+
+def test_pair_places_can_come_from_a_file(overpass, tmp_fixtures, tmp_path, settings):
+    settings.ORS_API_KEY = ""  # only the places change, so no ORS key is needed
+    before = _saved_pair(tmp_fixtures)
+    cafe = {"type": "node", "id": 7, "lat": 54.41, "lon": 18.56, "tags": {"amenity": "cafe"}}
+    exported = tmp_path / "export.json"
+    exported.write_text(json.dumps({"version": 0.6, "elements": [cafe]}), encoding="utf-8")
+
+    call_command("record_fixtures", pair=[3], overpass_file=str(exported))
+
+    data = json.loads((tmp_fixtures / "pair_3.json").read_text(encoding="utf-8"))
+    assert data["overpass"] == {"elements": [cafe]}
+    assert data["ors"] == before["ors"]  # routes are kept as they were
+    assert overpass.requests == []
+
+
+def test_pair_places_need_a_recorded_pair(tmp_fixtures, tmp_path):
+    exported = tmp_path / "export.json"
+    exported.write_text('{"elements": []}', encoding="utf-8")
+
+    with pytest.raises(CommandError, match="Record the pair first"):
+        call_command("record_fixtures", pair=[3], overpass_file=str(exported))
+
+
+def test_bad_pair_overpass_file_keeps_the_fixture(tmp_fixtures, tmp_path):
+    _saved_pair(tmp_fixtures)
+    before = (tmp_fixtures / "pair_3.json").read_bytes()
+    exported = tmp_path / "export.json"
+    exported.write_text('{"type": "FeatureCollection"}', encoding="utf-8")
+
+    with pytest.raises(CommandError, match="GeoJSON"):
+        call_command("record_fixtures", pair=[3], overpass_file=str(exported))
+    assert (tmp_fixtures / "pair_3.json").read_bytes() == before
 
 
 def test_trip_recording_stops_on_a_temporary_ors_error(ors, overpass, tmp_fixtures, monkeypatch):

@@ -227,7 +227,14 @@ def test_anthropic_forces_json_and_caps_tokens(sdk):
     assert answer == ANSWER
     assert sent["model"] == "claude-opus-5-5"
     assert sent["max_tokens"] == anthropic_api.MAX_OUTPUT_TOKENS
-    assert sent["output_config"] == {"format": {"type": "json_schema", "schema": SCHEMA}}
+    assert sent["output_config"] == {
+        "effort": anthropic_api.EFFORT,
+        "format": {"type": "json_schema", "schema": SCHEMA},
+    }
+    # The server-side fallback answers when the main model declines.
+    assert sent["betas"] == [anthropic_api.FALLBACK_BETA]
+    assert sent["fallbacks"] == "default"
+    assert sent["timeout"] == anthropic_api.TIMEOUT_S
     assert sent["system"] == "SYSTEM"
     assert sent["messages"] == [{"role": "user", "content": "USER"}]
 
@@ -245,6 +252,28 @@ def test_anthropic_failures_raise_llm_error(sdk, value):
     sdk.result["value"] = value
     with pytest.raises(LLMError):
         sdk.client.complete_json("S", "U", SCHEMA)
+
+
+def test_anthropic_uses_the_time_left_and_never_retries(sdk):
+    sdk.client.complete_json("S", "U", SCHEMA, timeout_s=12)
+
+    assert sdk.calls[0]["timeout"] == 12
+    assert sdk.client.client.max_retries == 0
+
+
+def test_cli_and_nvidia_use_the_time_left(cli, nim, monkeypatch):
+    cli.result["value"] = done(json.dumps({"structured_output": ANSWER}))
+    claude_cli.ClaudeCliClient().complete_json("S", "U", SCHEMA, timeout_s=7)
+    assert cli.calls[0]["timeout"] == 7
+
+    timeouts = []
+    real_client = nim.client
+    monkeypatch.setattr(
+        nvidia, "make_client", lambda timeout: timeouts.append(timeout) or real_client()
+    )
+    nim.add(body=completion(json.dumps(ANSWER)))
+    nvidia.NvidiaClient("key", "m").complete_json("S", "U", SCHEMA, timeout_s=9)
+    assert timeouts == [9]
 
 
 def test_anthropic_needs_a_key():

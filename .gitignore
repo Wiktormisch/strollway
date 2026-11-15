@@ -26,6 +26,7 @@ node_modules/
 dist/
 build/
 coverage/
+visual-check/
 *.tsbuildinfo
 .vite/
 npm-debug.log*
@@ -42,3 +43,6 @@ Thumbs.db
 
 # Django file cache (external API results)
 .cache/
+
+# Raw Overpass exports; only the gzipped copy is committed.
+backend/data/*.json

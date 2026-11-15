@@ -56,6 +56,7 @@ def test_live_route_matches_contract(api, ors):
     assert body["route"]["stairs_m"] == 0
     # Stroller pace, 4 km/h: 833 m -> 12.5 min.
     assert body["route"]["duration_min"] == 12
+    assert body["route"]["kcal"] == 46  # 3.0 MET x 70 kg x 0.21 h, +5% stroller
     assert body["route"]["geometry"][0][0] == pytest.approx(54.41, abs=0.01)  # [lat, lng]
     assert body["baseline"]["stairs_segments"]
     assert (body["pois_status"], body["pois"], body["transit_stops"]) == ("ok", [], [])
@@ -103,13 +104,14 @@ def test_avoid_stairs_false(api, ors):
 @pytest.mark.django_db
 def test_profile_pace_changes_duration(api, ors):
     profile = FamilyProfile.objects.create(
-        client_id=CLIENT_A, name="Slow", children_ages=[2], wheels="none", pace="relaxed"
+        client_id=CLIENT_A, name="Slow", children_ages=[2], wheels="none", pace_kmh=3.5
     )
     ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_avoid.json"))
 
     body = post(api, payload(profile_id=profile.id)).json()
 
     assert body["route"]["duration_min"] == round(833 / (3500 / 60))
+    assert body["route"]["kcal"] == 48  # slower pace takes longer; no stroller bonus
 
 
 # --- Fallbacks -------------------------------------------------------------------------
@@ -181,18 +183,35 @@ def test_overpass_failure_still_returns_route(api, ors, overpass):
 
 
 @pytest.mark.django_db
-def test_fixture_places_used_when_overpass_fails(api, overpass, monkeypatch):
+def _with_recorded_cafe(monkeypatch):
     fixture = fixtures.load_fixture(fixtures.DEMO_PAIRS[2])
     cafe = {"type": "node", "id": 7, "lat": 54.41, "lon": 18.57, "tags": {"amenity": "cafe"}}
     fixture["overpass"] = {"elements": [cafe]}
     monkeypatch.setattr(fixtures, "load_fixture", lambda pair: fixture)
-    overpass.add(status=429, body={})
+
+
+@pytest.mark.django_db
+def test_demo_pair_uses_recorded_places_without_overpass(api, overpass, monkeypatch):
+    _with_recorded_cafe(monkeypatch)
 
     body = post(api, payload()).json()
 
     assert body["source"] == "fixture"
     assert body["pois_status"] == "ok"
     assert [p["poi_id"] for p in body["pois"]] == ["node/7"]
+    assert overpass.requests == []  # the demo answers at once
+
+
+@pytest.mark.django_db
+def test_demo_pair_with_a_live_route_still_uses_recorded_places(api, ors, overpass, monkeypatch):
+    _with_recorded_cafe(monkeypatch)
+    ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_avoid.json"))
+
+    body = post(api, payload()).json()
+
+    assert body["source"] == "ors"
+    assert [p["poi_id"] for p in body["pois"]] == ["node/7"]
+    assert overpass.requests == []
 
 
 @pytest.mark.django_db
@@ -248,3 +267,62 @@ def test_throttle_limits_requests(api, monkeypatch):
 
 def test_get_is_not_allowed(api):
     assert api.get(URL).status_code == 405
+
+
+# --- Place table (POI_PROVIDER=db) ------------------------------------------------------
+
+
+def _import_fake_places(*elements):
+    from planning import places
+    from planning.tests.factories import node
+
+    corners = [
+        node(900001, 54.27, 18.43, amenity="bench"),
+        node(900002, 54.62, 18.80, amenity="bench"),
+    ]
+    places.replace_places(places.parse_export({"elements": [*elements, *corners]}), "test.json")
+
+
+@pytest.mark.django_db
+def test_demo_pair_without_recorded_places_reads_the_place_table(api, settings):
+    from planning.tests.factories import node
+
+    settings.POI_PROVIDER = "db"
+    _import_fake_places(node(1, PAIR_3_START[0], PAIR_3_START[1] + 0.0003, leisure="playground"))
+
+    data = post(api, payload()).json()
+
+    assert data["pois_status"] == "ok"
+    assert [p["poi_id"] for p in data["pois"]] == ["node/1"]
+
+
+@pytest.mark.django_db
+def test_route_outside_the_place_data_is_outside_area(api, settings):
+    settings.POI_PROVIDER = "db"
+    _import_fake_places()
+
+    response = post(api, payload(OTHER_START, OTHER_END))
+
+    assert response.status_code == 200
+    assert response.json()["pois_status"] == "outside_area"
+    assert response.json()["pois"] == []
+
+
+@pytest.mark.django_db
+def test_request_pace_wins_over_profile(api, ors):
+    profile = FamilyProfile.objects.create(
+        client_id=CLIENT_A, name="Slow", children_ages=[], wheels="none", pace_kmh=3.0
+    )
+    ors.add(body=load("ors_pair3_normal.json")).add(body=load("ors_pair3_avoid.json"))
+
+    body = post(api, payload(profile_id=profile.id, pace_kmh=5.0)).json()
+
+    assert body["route"]["duration_min"] == round(833 / (5000 / 60))
+
+
+@pytest.mark.django_db
+@pytest.mark.parametrize("pace", [2.0, 6.0, 3.2])
+def test_request_pace_outside_range_or_step_is_rejected(api, pace):
+    response = post(api, payload(pace_kmh=pace))
+
+    assert response.status_code == 400

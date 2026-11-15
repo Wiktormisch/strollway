@@ -10,7 +10,8 @@ StrollWay plans stair-free walks for families with a stroller and suggests short
 - `docs/PLAN.md`: the project plan. `docs/DECISIONS.md`: decision log.
 
 ## The six rules (non-negotiable)
-1. **A human reads every diff.** Never commit on your own. Finish, show the diff, wait.
+1. **Commit only when asked.** Never commit, push or open a PR on your own. Finish, report
+   what changed, and wait for the developer's OK.
 2. **No production credentials for agents.** Never read, print or create `.env` files with real
    values. Use `.env.example`. If you need to know whether a key is set, ask.
 3. **Plan before code.** For anything bigger than a small edit, show a short plan and wait for OK.
@@ -50,6 +51,11 @@ Frontend, from `frontend/`:
 - `npm run test`
 - `npm run lint`
 - `npm run build`
+
+After any API change (serializers, views, schema settings), regenerate both files and commit them:
+1. From `backend/`: `python manage.py spectacular --file openapi.yml --validate --fail-on-warn`
+2. From `frontend/`: `npm run gen:api` (writes `src/api/schema.d.ts`; never edit it by hand)
+A pytest test and a CI step fail when either file is out of date.
 
 ## Tests
 - Every behavior change comes with a test in the same commit. A bug fix includes a regression test.

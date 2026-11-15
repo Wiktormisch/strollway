@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { fireEvent, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import type { RoutePlan } from '@/api/types'
@@ -15,7 +15,14 @@ function mockApi(...answers: RouteAnswer[]) {
   vi.spyOn(globalThis, 'fetch').mockImplementation((input, init) => {
     const url = String(input)
     if (url.includes('/api/health/')) return Promise.resolve(Response.json({ status: 'ok' }))
-    if (url.includes('/api/profiles/')) return Promise.resolve(Response.json([makeProfile()]))
+    if (url.includes('/api/profiles/')) {
+      return Promise.resolve(
+        Response.json([
+          makeProfile(),
+          makeProfile({ id: 4, name: 'Fake on foot', wheels: 'none' }),
+        ]),
+      )
+    }
     routeCalls.push(JSON.parse(String(init?.body)))
     const answer = answers.shift()
     if (!answer) return Promise.reject(new TypeError('no more answers'))
@@ -28,11 +35,31 @@ function mockApi(...answers: RouteAnswer[]) {
   return routeCalls
 }
 
+/** The trip idea tab opens first (audit idea 7), so these tests switch to the route tab. */
+async function renderOnRouteTab(user: ReturnType<typeof userEvent.setup>) {
+  renderWithProviders(<PlannerPage />)
+  await user.click(screen.getByRole('tab', { name: 'Route A → B' }))
+}
+
 describe('PlannerPage', () => {
+  it('shows the demo points on the map at once, again on each click (audit idea 6)', async () => {
+    mockApi(makePlan(), makePlan())
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    expect(screen.getByText('map focus: none')).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    expect(
+      screen.getByText('map focus: 1 [[54.347791,18.618119],[54.34874,18.618458]]'),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    expect(screen.getByText(/^map focus: 2 /)).toBeInTheDocument()
+  })
+
   it('plans a demo route and shows the comparison, places and stops', async () => {
     const calls = mockApi(makePlan({ source: 'fixture' }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     expect(screen.getByText(/Set a start and an end/)).toBeInTheDocument()
     expect(screen.queryByRole('list', { name: 'Map legend' })).not.toBeInTheDocument()
@@ -44,6 +71,8 @@ describe('PlannerPage', () => {
         start: { lat: 54.347791, lng: 18.618119 },
         end: { lat: 54.34874, lng: 18.618458 },
         avoid_stairs: true,
+        // No profile: the stroller pace, like the backend default.
+        pace_kmh: 4,
       },
     ])
     expect(screen.getByText(/Demo mode: a recorded route/)).toBeInTheDocument()
@@ -71,7 +100,7 @@ describe('PlannerPage', () => {
   it('sets points by map clicks, sends the switch value and clears a point', async () => {
     const calls = mockApi(makePlan({ step_free_available: null, detour_m: null }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     const plan = screen.getByRole('button', { name: 'Plan route' })
     expect(plan).toBeDisabled()
@@ -92,7 +121,7 @@ describe('PlannerPage', () => {
   it('shows its own message for 422 no_route and retries', async () => {
     mockApi({ status: 422, body: { code: 'no_route', detail: 'x' } }, makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'No stair-free route' }))
     const alert = await screen.findByRole('alert')
@@ -104,6 +133,23 @@ describe('PlannerPage', () => {
     ).toBeInTheDocument()
   })
 
+  it('says the place data covers the Tricity only, without a reload button', async () => {
+    mockApi(makePlan({ pois_status: 'outside_area', pois: [] }))
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    expect(
+      screen.getByText(/Place data \(OpenStreetMap\) covers the Tricity only/),
+    ).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Tiny detour' }))
+    expect(
+      await screen.findByText(
+        'We have place data for the Tricity only. This route is outside that area.',
+      ),
+    ).toBeInTheDocument()
+    expect(screen.queryByRole('button', { name: 'Load places again' })).not.toBeInTheDocument()
+  })
+
   it('offers to load places again when the places service is down', async () => {
     let answerReload: (plan: RoutePlan) => void = () => {}
     const reload = new Promise<RoutePlan>((resolve) => {
@@ -111,7 +157,7 @@ describe('PlannerPage', () => {
     })
     const calls = mockApi(makePlan({ pois_status: 'unavailable', pois: [] }), reload)
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'Tiny detour' }))
     expect(await screen.findByText('The places service did not answer.')).toBeInTheDocument()
@@ -135,7 +181,7 @@ describe('PlannerPage', () => {
   it('reuses a computed route when the same input comes back', async () => {
     const calls = mockApi(makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'Big detour' }))
     expect(
@@ -160,7 +206,7 @@ describe('PlannerPage', () => {
   it('plans from a button on the map when the panel is folded', async () => {
     const calls = mockApi(makePlan())
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     const toggle = screen.getByRole('button', { name: 'Hide the panel' })
     expect(toggle).toHaveAttribute('aria-expanded', 'true')
@@ -187,10 +233,79 @@ describe('PlannerPage', () => {
     expect(screen.getByRole('dialog', { name: 'Save walk' })).toBeInTheDocument()
   })
 
+  it('recomputes the time in the save dialog for another profile (audit idea 22)', async () => {
+    const slower = makePlan({ route: { ...makePlan().route, duration_min: 14 } })
+    const calls = mockApi(makePlan(), slower)
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getAllByRole('button', { name: 'Save walk' })[0])
+    const dialog = screen.getByRole('dialog', { name: 'Save walk' })
+    // The planned profile: the cached plan answers, nothing is sent.
+    expect(within(dialog).getByText(/Walking time for this profile/)).toBeInTheDocument()
+    expect(calls).toHaveLength(1)
+
+    await user.click(within(dialog).getByRole('combobox', { name: 'Family profile' }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+
+    expect(
+      await within(dialog).findByText('Walking time for this profile: 14 min.'),
+    ).toBeInTheDocument()
+    expect(calls).toHaveLength(2)
+    expect(calls[1]).toMatchObject({ profile_id: 4, pace_kmh: 3.5 })
+  })
+
+  it('blocks "Save" while the new time loads (audit idea 22)', async () => {
+    let answer: (plan: RoutePlan) => void = () => {}
+    const pending = new Promise<RoutePlan>((resolve) => (answer = resolve))
+    mockApi(makePlan(), pending)
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getAllByRole('button', { name: 'Save walk' })[0])
+    const dialog = screen.getByRole('dialog', { name: 'Save walk' })
+    await user.click(within(dialog).getByRole('combobox', { name: 'Family profile' }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+
+    expect(await within(dialog).findByText('Recomputing the walking time…')).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: 'Save walk' })).toBeDisabled()
+
+    answer(makePlan({ route: { ...makePlan().route, duration_min: 14 } }))
+    expect(
+      await within(dialog).findByText('Walking time for this profile: 14 min.'),
+    ).toBeInTheDocument()
+    expect(within(dialog).getByRole('button', { name: 'Save walk' })).toBeEnabled()
+  })
+
+  it('keeps the planned time when recomputing fails (audit idea 22)', async () => {
+    mockApi(makePlan(), { status: 500, body: { detail: 'fake failure' } })
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getAllByRole('button', { name: 'Save walk' })[0])
+    const dialog = screen.getByRole('dialog', { name: 'Save walk' })
+    await user.click(within(dialog).getByRole('combobox', { name: 'Family profile' }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+
+    expect(
+      await within(dialog).findByText(
+        'Could not recompute the time. The planned time will be saved.',
+      ),
+    ).toBeInTheDocument()
+    // Saving is still possible, with the time from the plan.
+    expect(within(dialog).getByRole('button', { name: 'Save walk' })).toBeEnabled()
+  })
+
   it('sends profile_id after choosing a profile and plans again', async () => {
     const calls = mockApi(makePlan(), makePlan({ route: { ...makePlan().route, duration_min: 9 } }))
     const user = userEvent.setup()
-    renderWithProviders(<PlannerPage />)
+    await renderOnRouteTab(user)
 
     await user.click(screen.getByRole('button', { name: 'Big detour' }))
     await screen.findByText('map route: drawn')
@@ -201,6 +316,45 @@ describe('PlannerPage', () => {
 
     expect(await screen.findByText(/9 min/)).toBeInTheDocument()
     expect(calls).toHaveLength(2)
-    expect(calls[1]).toMatchObject({ avoid_stairs: true, profile_id: 3 })
+    // The pace slider takes the profile pace.
+    expect(calls[1]).toMatchObject({ avoid_stairs: true, profile_id: 3, pace_kmh: 3.5 })
+  })
+
+  it('sends the pace from the slider and caps it for a stroller profile (audit idea 3)', async () => {
+    const calls = mockApi(makePlan(), makePlan(), makePlan())
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+
+    await user.click(screen.getByRole('button', { name: 'Big detour' }))
+    await screen.findByText('map route: drawn')
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+    await screen.findByText('map route: drawn')
+
+    const slider = screen.getByRole('slider', { name: 'Pace' })
+    expect(slider).toHaveAttribute('max', '4') // the profile has a stroller
+    fireEvent.change(slider, { target: { value: '3' } })
+    await user.click(screen.getAllByRole('button', { name: 'Plan route' })[0])
+
+    expect(await screen.findByText('map route: drawn')).toBeInTheDocument()
+    expect(calls.at(-1)).toMatchObject({ profile_id: 3, pace_kmh: 3 })
+  })
+
+  it('sets "Avoid stairs" from the way of moving, and the switch stays usable', async () => {
+    mockApi()
+    const user = userEvent.setup()
+    await renderOnRouteTab(user)
+    const stairs = screen.getByRole('switch', { name: 'Avoid stairs' })
+
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake on foot' }))
+    expect(stairs).not.toBeChecked()
+
+    await user.click(stairs)
+    expect(stairs).toBeChecked()
+
+    await user.click(screen.getByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+    expect(stairs).toBeChecked()
   })
 })

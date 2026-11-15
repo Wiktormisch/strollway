@@ -1,23 +1,52 @@
+import { useState } from 'react'
 import { fireEvent, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import { renderWithProviders } from '@/test/render'
+import { appendWish } from '@/lib/trip'
 import { TripIdeaForm } from './TripIdeaForm'
 
 const START = { lat: 54.3385, lng: 18.62 }
 
-function renderForm(overrides: Partial<Parameters<typeof TripIdeaForm>[0]> = {}) {
+type FormProps = Parameters<typeof TripIdeaForm>[0]
+
+/** The page owns the limit and "come back"; this harness plays the page in tests. */
+function Harness(
+  props: Omit<FormProps, 'minutes' | 'onMinutesChange' | 'roundTrip' | 'onRoundTripChange'>,
+) {
+  const [minutes, setMinutes] = useState(60)
+  const [roundTrip, setRoundTrip] = useState(true)
+  return (
+    <TripIdeaForm
+      {...props}
+      minutes={minutes}
+      onMinutesChange={setMinutes}
+      roundTrip={roundTrip}
+      onRoundTripChange={setRoundTrip}
+    />
+  )
+}
+
+function renderForm(overrides: Partial<FormProps> = {}) {
   const onSubmit = vi.fn()
   renderWithProviders(
-    <TripIdeaForm
+    <Harness
       start={START}
       profiles={[]}
       profileId={null}
       planning={false}
       onProfileChange={vi.fn()}
+      pace={3.5}
+      maxPace={5.5}
+      onPaceChange={vi.fn()}
+      canSaveSettings={false}
+      savingSettings={false}
+      onSaveSettings={vi.fn()}
       onClearStart={vi.fn()}
       onUseMapCenter={vi.fn()}
       onDemoStart={vi.fn()}
+      onLocate={vi.fn()}
+      onSearchPick={vi.fn()}
       onSubmit={onSubmit}
       {...overrides}
     />,
@@ -30,9 +59,11 @@ describe('TripIdeaForm', () => {
     const onSubmit = renderForm({ profileId: 3 })
     const user = userEvent.setup()
 
-    await user.click(screen.getByRole('button', { name: '45 min' }))
+    const minutes = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    await user.clear(minutes)
+    await user.type(minutes, '45')
     await user.click(screen.getByRole('switch', { name: 'Come back to the start' }))
-    await user.type(screen.getByLabelText('Your wishes (optional)'), '  coffee, then pizza ')
+    await user.type(screen.getByLabelText('What would you like?'), '  coffee, then pizza ')
     await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
 
     expect(onSubmit).toHaveBeenCalledWith({
@@ -42,6 +73,7 @@ describe('TripIdeaForm', () => {
       round_trip: false,
       language: 'en',
       wishes: 'coffee, then pizza',
+      pace_kmh: 3.5,
     })
   })
 
@@ -52,16 +84,62 @@ describe('TripIdeaForm', () => {
     expect(onSubmit.mock.calls[0][0]).toMatchObject({ max_minutes: 60, round_trip: true })
   })
 
+  it('keeps the slider and the number field in sync (audit idea 11)', async () => {
+    renderForm()
+    const user = userEvent.setup()
+    const slider = screen.getByRole('slider', { name: 'Time limit, slider' })
+    const field = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    expect(slider).toHaveValue('60')
+
+    // jsdom cannot drag a range input, so the test sends its change event.
+    fireEvent.change(slider, { target: { value: '135' } })
+    expect(field).toHaveValue(135)
+    expect(slider).toHaveAttribute('aria-valuetext', '135 min')
+
+    await user.clear(field)
+    await user.type(field, '25')
+    expect(slider).toHaveValue('25')
+  })
+
+  it('fixes a limit outside 15-180 when the field loses focus and before sending', async () => {
+    const onSubmit = renderForm()
+    const user = userEvent.setup()
+    const field = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+
+    await user.clear(field)
+    await user.type(field, '500')
+    await user.tab()
+    expect(field).toHaveValue(180)
+
+    await user.clear(field)
+    await user.type(field, '3')
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    expect(onSubmit.mock.calls[0][0]).toMatchObject({ max_minutes: 15 })
+
+    await user.clear(field)
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    expect(onSubmit.mock.calls[1][0]).toMatchObject({ max_minutes: 60 })
+  })
+
   it('keeps wishes at 200 characters, shows the counter and the privacy hint', () => {
     renderForm()
-    const field = screen.getByLabelText('Your wishes (optional)')
+    const field = screen.getByLabelText('What would you like?')
     expect(field).toHaveAttribute('maxLength', '200')
-    expect(field).toHaveAccessibleDescription(/Do not enter personal data/)
+    expect(field).toHaveAccessibleDescription(/No personal data/)
 
     // A paste can bypass maxLength in jsdom, so the handler cuts it too.
     fireEvent.change(field, { target: { value: 'a'.repeat(250) } })
     expect(field).toHaveValue('a'.repeat(200))
     expect(screen.getByText('200 / 200')).toHaveClass('text-destructive')
+  })
+
+  it('adds a quick idea chip to the wishes with a comma', async () => {
+    renderForm()
+    const user = userEvent.setup()
+    const field = screen.getByLabelText('What would you like?')
+    await user.type(field, 'pizza')
+    await user.click(screen.getByRole('button', { name: 'coffee' }))
+    expect(field).toHaveValue('pizza, coffee')
   })
 
   it('cannot be sent without a start or while planning', () => {
@@ -72,6 +150,16 @@ describe('TripIdeaForm', () => {
   it('shows a clear in-progress state', () => {
     renderForm({ planning: true })
     expect(screen.getByRole('button', { name: 'Planning the trip…' })).toBeDisabled()
-    expect(screen.getByRole('status')).toHaveTextContent(/10-20 seconds/)
+    expect(screen.getByRole('status')).toHaveTextContent(/up to a minute/)
+  })
+})
+
+describe('appendWish', () => {
+  it('starts a new text, adds with a comma, and keeps the limit', () => {
+    expect(appendWish('  ', 'park')).toBe('park')
+    expect(appendWish('kawa ', 'park')).toBe('kawa, park')
+    expect(appendWish('kawa, Park', 'park')).toBe('kawa, Park')
+    const full = 'a'.repeat(198)
+    expect(appendWish(full, 'park')).toBe(full)
   })
 })

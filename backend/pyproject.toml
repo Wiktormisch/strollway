@@ -10,4 +10,3 @@ select = ["E", "F", "W", "I", "B", "UP", "DJ"]
 DJANGO_SETTINGS_MODULE = "config.settings"
 python_files = ["test_*.py"]
 testpaths = ["tests", "walks", "planning"]
-addopts = "-q"

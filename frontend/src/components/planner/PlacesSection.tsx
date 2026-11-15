@@ -21,7 +21,10 @@ export function PlacesSection({ plan, hidden, onToggle, onReload, reloading }: P
   const label = usePoiLabel()
 
   let body
-  if (plan.pois_status === 'unavailable') {
+  if (plan.pois_status === 'outside_area') {
+    // Reloading cannot help here: the imported place data has no rows for this area.
+    body = <p className="text-sm">{t('poi.outsideArea')}</p>
+  } else if (plan.pois_status === 'unavailable') {
     body = (
       <div className="space-y-2">
         <p className="text-sm">{t('poi.unavailable')}</p>

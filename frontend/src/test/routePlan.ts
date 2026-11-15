@@ -12,6 +12,7 @@ export function makePlan(overrides: Partial<RoutePlan> = {}): RoutePlan {
       ],
       distance_m: 420,
       duration_min: 6,
+      kcal: 23,
       stairs_m: 0,
       stairs_segments: [],
     },
@@ -22,6 +23,7 @@ export function makePlan(overrides: Partial<RoutePlan> = {}): RoutePlan {
       ],
       distance_m: 132,
       duration_min: 2,
+      kcal: 7,
       stairs_m: 16,
       stairs_segments: [
         [

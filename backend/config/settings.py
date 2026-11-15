@@ -105,6 +105,15 @@ CORS_ALLOW_HEADERS = ["accept", "content-type", "x-client-id"]
 # Defaults of the per-IP limits; .env can change them (tests check these, not .env).
 ROUTE_PLANS_DEFAULT_RATE = "60/hour"
 TRIP_IDEAS_DEFAULT_RATE = "20/hour"
+WRITES_DEFAULT_RATE = "120/hour"
+# Search runs while the user types (with a short delay), so it gets a higher limit.
+PLACE_SEARCH_DEFAULT_RATE = "300/hour"
+# The planner asks once per start point; answers are cached, so this is plenty.
+BEST_TIME_DEFAULT_RATE = "120/hour"
+
+# How many walks one client can keep. `or` also covers an empty value in .env.
+MAX_WALKS_PER_CLIENT_DEFAULT = 200
+MAX_WALKS_PER_CLIENT = int(os.getenv("MAX_WALKS_PER_CLIENT") or MAX_WALKS_PER_CLIENT_DEFAULT)
 
 REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
@@ -113,10 +122,14 @@ REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": ["rest_framework.permissions.AllowAny"],
     "UNAUTHENTICATED_USER": None,
-    # Per-IP limits for the endpoints that call shared external APIs.
+    # Per-IP limits: the endpoints that call shared external APIs, and all writes to the
+    # walks API (walks, stops, profiles, demo data).
     "DEFAULT_THROTTLE_RATES": {
         "route_plans": os.getenv("ROUTE_PLANS_RATE", ROUTE_PLANS_DEFAULT_RATE),
         "trip_ideas": os.getenv("TRIP_IDEAS_RATE", TRIP_IDEAS_DEFAULT_RATE),
+        "writes": os.getenv("WRITES_RATE", WRITES_DEFAULT_RATE),
+        "place_search": os.getenv("PLACE_SEARCH_RATE", PLACE_SEARCH_DEFAULT_RATE),
+        "best_time": os.getenv("BEST_TIME_RATE", BEST_TIME_DEFAULT_RATE),
     },
     # How many reverse proxies stand in front of Django. 0 = trust only the TCP address,
     # so a client cannot pick its own "IP" with an X-Forwarded-For header and skip the
@@ -137,7 +150,8 @@ CACHES = {
 ROUTING_PROVIDER = os.getenv("ROUTING_PROVIDER", "auto")  # auto | ors | mock
 ORS_BASE_URL = os.getenv("ORS_BASE_URL", "https://api.heigit.org/openrouteservice").rstrip("/")
 ORS_API_KEY = os.getenv("ORS_API_KEY", "")
-POI_PROVIDER = os.getenv("POI_PROVIDER", "auto")  # auto | overpass | mock
+# db = our Place table (run `import_places` first); overpass = live; "auto" = overpass.
+POI_PROVIDER = os.getenv("POI_PROVIDER", "db")  # db | overpass | mock
 OVERPASS_URL = os.getenv("OVERPASS_URL", "https://overpass-api.de/api/interpreter")
 
 WEATHER_PROVIDER = os.getenv("WEATHER_PROVIDER", "auto")  # auto | mock
@@ -158,6 +172,9 @@ SPECTACULAR_SETTINGS = {
     "DESCRIPTION": "Stair-free walks for families with a stroller.",
     "VERSION": "0.1.0",
     "SERVE_INCLUDE_SCHEMA": False,
+    # Separate request and response components, so generated frontend types do not
+    # require read-only fields (id, created_at) in POST and PATCH bodies.
+    "COMPONENT_SPLIT_REQUEST": True,
     # Two different "source" choice sets (Stop.source and route-plans source) need own names.
     "ENUM_NAME_OVERRIDES": {
         "RoutePlanSourceEnum": ["ors", "fixture", "mock"],

@@ -1,0 +1,10 @@
+goto /walks
+wait 2000
+click "text=Oliwa: playground and coffee"
+wait 2500
+hover "text=Stairs avoided"
+scroll 700
+wait 2500
+hover "text=Status and rating"
+scroll 600
+wait 2500

@@ -273,6 +273,14 @@ def test_demo_start_works_with_no_network(demo_fixture, monkeypatch):
     assert idea["step_free_available"] is True  # recorded route has no stairs
 
 
+def test_demo_start_never_asks_overpass(demo_fixture, overpass):
+    """The demo answers at once, even with live Overpass turned on."""
+    idea = build(wishes="playground")
+
+    assert idea["stops"][0]["poi_id"] == "node/1"
+    assert overpass.requests == []
+
+
 def test_fixture_is_used_only_near_the_demo_start(demo_fixture):
     assert fixtures.load_trip_fixture(START) is not None
     assert fixtures.load_trip_fixture((52.2297, 21.0122)) is None

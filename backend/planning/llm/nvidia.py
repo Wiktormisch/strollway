@@ -20,9 +20,9 @@ THINK_BLOCK = re.compile(r"<think>.*?</think>", re.DOTALL)
 CODE_FENCE = re.compile(r"^```(?:json)?\s*|\s*```$")
 
 
-def make_client():
+def make_client(timeout=TIMEOUT_S):
     """The HTTP client. Tests replace this function with one that uses a MockTransport."""
-    return httpx.Client(timeout=TIMEOUT_S)
+    return httpx.Client(timeout=timeout)
 
 
 class NvidiaClient:
@@ -34,7 +34,8 @@ class NvidiaClient:
         self.api_key = api_key
         self.model = model
 
-    def complete_json(self, system, user, schema):
+    def complete_json(self, system, user, schema, timeout_s=None):
+        timeout = min(TIMEOUT_S, timeout_s or TIMEOUT_S)
         body = {
             "model": self.model,
             "messages": [
@@ -47,7 +48,7 @@ class NvidiaClient:
         }
         headers = {"Authorization": f"Bearer {self.api_key}", "Accept": "application/json"}
         try:
-            with make_client() as client:
+            with make_client(timeout=timeout) as client:
                 response = client.post(URL, json=body, headers=headers)
             response.raise_for_status()
             choice = response.json()["choices"][0]

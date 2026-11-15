@@ -193,5 +193,316 @@
    }
   }
  },
- "overpass": null
+ "overpass": {
+  "elements": [
+   {
+    "type": "node",
+    "id": 533995189,
+    "lat": 54.3488419,
+    "lon": 18.6186115,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Zakopiańska",
+     "public_transport": "platform",
+     "ref:ztm": "1262",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 748434039,
+    "lat": 54.344931,
+    "lon": 18.6180435,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "departures_board": "timetable",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Drwęcka 01",
+     "network": "ZTM Gdańsk",
+     "network:wikidata": "Q9387123",
+     "network:wikipedia": "pl:Zarząd Transportu Miejskiego w Gdańsku",
+     "operator": "ZTM Gdańsk",
+     "public_transport": "platform",
+     "ref:ztm": "1253",
+     "shelter": "yes",
+     "tactile_paving": "no"
+    }
+   },
+   {
+    "type": "node",
+    "id": 2319894929,
+    "lat": 54.3490247,
+    "lon": 18.6170456,
+    "tags": {
+     "bench": "yes",
+     "bin": "yes",
+     "bus": "yes",
+     "highway": "bus_stop",
+     "lit": "yes",
+     "name": "Zakopiańska",
+     "public_transport": "platform",
+     "ref:ztm": "1263",
+     "shelter": "yes",
+     "tactile_paving": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3675633226,
+    "lat": 54.3488021,
+    "lon": 18.6191154,
+    "tags": {
+     "name": "Zakopiańska",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2146",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3675633227,
+    "lat": 54.3488033,
+    "lon": 18.6185293,
+    "tags": {
+     "name": "Zakopiańska",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2145",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3686239179,
+    "lat": 54.3491037,
+    "lon": 18.6241873,
+    "tags": {
+     "name": "Ciasna",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2143",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3717510216,
+    "lat": 54.3490697,
+    "lon": 18.6123863,
+    "tags": {
+     "name": "Skrajna",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2147",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 3717510217,
+    "lat": 54.3490105,
+    "lon": 18.6129127,
+    "tags": {
+     "name": "Skrajna",
+     "public_transport": "stop_position",
+     "railway": "tram_stop",
+     "ref:ztm": "2148",
+     "tram": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6727057626,
+    "lat": 54.3478064,
+    "lon": 18.6161554,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6727057627,
+    "lat": 54.3478063,
+    "lon": 18.6160581,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6727057628,
+    "lat": 54.3478283,
+    "lon": 18.6162968,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6727057629,
+    "lat": 54.3479064,
+    "lon": 18.6160302,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6727057630,
+    "lat": 54.3479045,
+    "lon": 18.6161074,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 6727057631,
+    "lat": 54.3479062,
+    "lon": 18.6161814,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10814799147,
+    "lat": 54.3490749,
+    "lon": 18.6161769,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 10916987308,
+    "lat": 54.3456952,
+    "lon": 18.6134917,
+    "tags": {
+     "bus": "yes",
+     "highway": "bus_stop",
+     "name": "Świtezianki 02",
+     "public_transport": "platform",
+     "ref:ztm": "1117"
+    }
+   },
+   {
+    "type": "node",
+    "id": 11542703328,
+    "lat": 54.3487342,
+    "lon": 18.6203578,
+    "tags": {
+     "addr:city": "Gdańsk",
+     "addr:housenumber": "108",
+     "addr:street": "Kartuska",
+     "amenity": "cafe",
+     "cuisine": "coffee_shop;sandwich;cake",
+     "internet_access": "wlan",
+     "internet_access:fee": "no",
+     "name": "Caffe Aktywni",
+     "opening_hours": "Mo-Fr 09:00-17:00",
+     "payment:cards": "yes",
+     "payment:cash": "yes",
+     "payment:qr_code": "no",
+     "phone": "+48 882 089 933",
+     "smoking": "no",
+     "website": "https://www.swiatwrazliwy.pl/"
+    }
+   },
+   {
+    "type": "node",
+    "id": 12765648924,
+    "lat": 54.3487423,
+    "lon": 18.616812,
+    "tags": {
+     "amenity": "bench",
+     "backrest": "yes"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13031380688,
+    "lat": 54.3495896,
+    "lon": 18.6179256,
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "node",
+    "id": 13261249360,
+    "lat": 54.3487912,
+    "lon": 18.6159856,
+    "tags": {
+     "amenity": "bench",
+     "armrest": "yes",
+     "backrest": "yes",
+     "material": "wood"
+    }
+   },
+   {
+    "type": "way",
+    "id": 293133873,
+    "center": {
+     "lat": 54.349673,
+     "lon": 18.6171506
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 299781471,
+    "center": {
+     "lat": 54.3485893,
+     "lon": 18.6230327
+    },
+    "tags": {
+     "access": "yes",
+     "leisure": "playground"
+    }
+   },
+   {
+    "type": "way",
+    "id": 715827946,
+    "center": {
+     "lat": 54.3478737,
+     "lon": 18.6161229
+    },
+    "tags": {
+     "leisure": "park",
+     "name": "Placyk rekreacyjny im. Jacka Malczewskiego"
+    }
+   },
+   {
+    "type": "way",
+    "id": 1423300737,
+    "center": {
+     "lat": 54.3480558,
+     "lon": 18.6193978
+    },
+    "tags": {
+     "leisure": "playground"
+    }
+   }
+  ]
+ }
 }

@@ -43,3 +43,40 @@ it('opens the phone menu with the theme and language switches', async () => {
   expect(screen.queryByRole('dialog', { name: 'More options' })).not.toBeInTheDocument()
   expect(screen.getByRole('button', { name: 'More options' })).toHaveFocus()
 })
+
+it('starts with a skip link that moves focus to the main content (audit U9)', async () => {
+  const user = userEvent.setup()
+  renderLayout()
+
+  await user.tab()
+  const skip = screen.getByRole('link', { name: 'Skip to content' })
+  expect(skip).toHaveFocus()
+  expect(skip).toHaveAttribute('href', '#content')
+  expect(screen.getByRole('main')).toHaveAttribute('id', 'content')
+})
+
+it('gives every navigation link an icon and a name that works without the visible text', () => {
+  renderLayout('/')
+  const nav = screen.getByRole('navigation')
+  for (const name of ['Planner', 'My walks', 'Profiles']) {
+    const link = within(nav).getByRole('link', { name })
+    // On a phone only the icon is visible; the name stays for screen readers and as a tooltip.
+    expect(link.querySelector('svg')).toBeInTheDocument()
+    expect(link).toHaveAttribute('title', name)
+  }
+})
+
+it('links to the "How it works" page from the phone menu and the desktop bar', async () => {
+  const user = userEvent.setup()
+  renderLayout('/walks')
+
+  // Desktop: an icon link next to the theme and language switches.
+  const links = screen.getAllByRole('link', { name: 'How it works' })
+  expect(links[0]).toHaveAttribute('href', '/how-it-works')
+
+  // Phone: a link inside "More options"; following it closes the menu.
+  await user.click(screen.getByRole('button', { name: 'More options' }))
+  const menu = screen.getByRole('dialog', { name: 'More options' })
+  await user.click(within(menu).getByRole('link', { name: 'How it works' }))
+  expect(screen.queryByRole('dialog', { name: 'More options' })).not.toBeInTheDocument()
+})

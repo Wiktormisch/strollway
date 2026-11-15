@@ -6,7 +6,7 @@ import globals from 'globals'
 import tseslint from 'typescript-eslint'
 
 export default defineConfig([
-  globalIgnores(['dist', 'coverage']),
+  globalIgnores(['dist', 'coverage', 'src/api/schema.d.ts']),
   {
     files: ['**/*.{ts,tsx}'],
     extends: [
@@ -16,6 +16,12 @@ export default defineConfig([
       reactRefresh.configs.vite,
     ],
     languageOptions: { ecmaVersion: 2023, globals: globals.browser },
+  },
+  {
+    // Node scripts (tooling, not app code).
+    files: ['scripts/**/*.mjs'],
+    extends: [js.configs.recommended],
+    languageOptions: { ecmaVersion: 2023, globals: globals.node },
   },
   {
     // shadcn/ui files export helpers next to components; that is fine.

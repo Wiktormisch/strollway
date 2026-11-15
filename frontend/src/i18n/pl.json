@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "StrollWay",
-    "tagline": "Spacery bez schodów dla rodzin z wózkiem"
+    "tagline": "Spacery bez schodów dla rodzin z wózkiem",
+    "skipToContent": "Przejdź do treści"
   },
   "nav": {
     "planner": "Planer",
@@ -32,12 +33,17 @@
     "notFound": {
       "title": "Nie ma takiej strony",
       "back": "Wróć do planera"
+    },
+    "howItWorks": {
+      "title": "Jak to działa"
     }
   },
   "errors": {
     "network": "Brak połączenia z serwerem.",
     "http": "Serwer zwrócił błąd {{status}}.",
-    "unknown": "Coś poszło nie tak."
+    "unknown": "Coś poszło nie tak.",
+    "crash": "Ta strona przestała działać. Odśwież ją, aby spróbować ponownie.",
+    "reloadPage": "Odśwież stronę"
   },
   "planner": {
     "empty": "Wybierz start i cel na mapie albo wypróbuj trasę demo.",
@@ -52,7 +58,7 @@
       "expand": "Pokaż panel"
     },
     "form": {
-      "hint": "Dotknij mapy: pierwsze dotknięcie ustawia A, drugie B. Albo przesuń mapę i wybierz „Zmień”.",
+      "hint": "Dotknij mapy: pierwsze dotknięcie ustawia A, drugie B. Albo przesuń mapę i dotknij celownika.",
       "start": "Start",
       "end": "Cel",
       "clear": "Usuń: {{point}}",
@@ -105,8 +111,10 @@
       "stats": {
         "distance": "Dystans",
         "time": "Czas",
-        "places": "Miejsca"
+        "places": "Miejsca",
+        "kcal": "Kalorie"
       },
+      "kcalValue": "ok. {{kcal}} kcal",
       "statsLabel": "Trasa w liczbach"
     },
     "legend": {
@@ -130,6 +138,7 @@
       "unknown": "Coś poszło nie tak podczas planowania trasy.",
       "noPlacesNearby": "Nie znaleźliśmy placów zabaw, kawiarni ani restauracji w pobliżu tego startu. Wybierz inny start albo dłuższy limit czasu.",
       "placesUnavailable": "Usługa z miejscami nie odpowiedziała. Poczekaj chwilę i spróbuj ponownie.",
+      "outsideArea": "Mamy dane o miejscach tylko dla Trójmiasta (Gdańsk, Sopot, Gdynia). Wybierz start w tym obszarze.",
       "invalidTrip": "Formularz ma nieprawidłową wartość. Sprawdź start i profil, potem spróbuj ponownie."
     },
     "save": "Zapisz spacer",
@@ -139,10 +148,24 @@
     "point": {
       "onMap": "Punkt na mapie",
       "notSet": "Nie wybrano",
-      "change": "Zmień",
+      "useCenter": "Ustaw na środek mapy: {{point}}",
       "details": "Szczegóły"
     },
-    "results": "Twój spacer"
+    "results": "Twój spacer",
+    "dataArea": "Dane o miejscach (OpenStreetMap) obejmują tylko Trójmiasto. Publiczne API Overpass jest często przeciążone, więc korzystamy z własnego importu.",
+    "bestTime": {
+      "title": "Najlepszy czas na spacer",
+      "unavailable": "Prognoza jest teraz niedostępna. Spróbuj później.",
+      "none": "Brak dobrych godzin w najbliższych 3 dniach: cały czas deszcz, wiatr albo burza.",
+      "today": "Dziś",
+      "tomorrow": "Jutro",
+      "labels": {
+        "great": "Świetnie",
+        "good": "Dobrze",
+        "ok": "Może być"
+      },
+      "credit": "Dane pogodowe:"
+    }
   },
   "poi": {
     "title": "Miejsca po drodze",
@@ -156,12 +179,17 @@
       "wheelchair": "Dostęp dla wózków",
       "changing_table": "Przewijak"
     },
+    "outsideArea": "Mamy dane o miejscach tylko dla Trójmiasta. Ta trasa jest poza tym obszarem.",
     "unavailable": "Usługa z miejscami nie odpowiedziała.",
     "reload": "Wczytaj miejsca ponownie",
     "none": "W OpenStreetMap nie ma oznaczonych miejsc przy tej trasie.",
     "allHidden": "Wszystkie kategorie są ukryte.",
     "categories": {
+      "bus_stop": "Przystanek autobusowy",
+      "tram_stop": "Przystanek tramwajowy",
       "playground": "Plac zabaw",
+      "indoor_play": "Sala zabaw",
+      "skatepark": "Skatepark",
       "toilets": "Toaleta",
       "cafe": "Kawiarnia",
       "restaurant": "Restauracja",
@@ -211,6 +239,7 @@
     "card": {
       "distance": "Dystans",
       "duration": "Czas marszu",
+      "kcal": "Kalorie",
       "stairsAvoided": "Ominięte schody",
       "stops": "Przystanki",
       "saved": "Zapisano {{date}}"
@@ -247,7 +276,10 @@
     "errors": {
       "nameRequired": "Podaj nazwę spaceru."
     },
-    "paceMismatch": "Czas marszu policzono dla innego profilu. Zapisze się bez zmian; zaplanuj trasę ponownie z tym profilem, aby go zaktualizować."
+    "paceMismatch": "Czas marszu policzono dla innego profilu. Wycieczka zapisze się z tym czasem; zaplanuj ją ponownie z tym profilem, aby go zaktualizować.",
+    "walkingTime": "Czas marszu dla tego profilu: {{minutes}} min.",
+    "recomputing": "Przeliczam czas marszu…",
+    "recomputeFailed": "Nie udało się przeliczyć czasu. Zapisze się czas z planu."
   },
   "walkDetail": {
     "back": "Wróć do moich spacerów",
@@ -289,6 +321,7 @@
     "empty": "Brak przystanków.",
     "add": "Dodaj przystanek",
     "addHint": "Kliknij mapę, aby wskazać nowy przystanek.",
+    "newPoint": "Nowy przystanek",
     "pointSet": "Punkt ustawiony. Kliknij mapę ponownie, aby go przesunąć.",
     "addSubmit": "Dodaj przystanek",
     "name": "Nazwa (opcjonalnie)",
@@ -321,6 +354,7 @@
     "editNamed": "Edytuj {{name}}",
     "deleteNamed": "Usuń {{name}}",
     "ageChip": "{{age}} l.",
+    "noChildren": "Bez dzieci",
     "empty": {
       "title": "Nie masz jeszcze profili.",
       "text": "Dodaj profil, aby planować spacery w tempie Twojej rodziny.",
@@ -328,29 +362,29 @@
     },
     "wheels": {
       "none": "Pieszo",
-      "stroller": "Wózek",
-      "kid_bike": "Rowerek"
-    },
-    "pace": {
-      "relaxed": "Spokojne tempo",
-      "normal": "Normalne tempo"
+      "stroller": "Z wózkiem",
+      "kid_bike": "Z rowerkiem biegowym"
     },
     "form": {
       "name": "Nazwa profilu",
       "namePlaceholder": "np. Weekend z wózkiem",
       "ages": "Wiek dzieci",
-      "agesHint": "Od 1 do {{max}} dzieci, wiek 0-{{maxAge}}.",
+      "agesHint": "Opcjonalne. Najwyżej {{max}} dzieci, wiek 0-{{maxAge}}.",
       "age": "Wiek dziecka",
       "addAge": "Dodaj wiek",
       "removeAge": "Usuń wiek {{age}}",
-      "wheels": "Na kółkach",
-      "pace": "Tempo",
+      "wheels": "Jak się poruszacie?",
       "errors": {
         "nameRequired": "Podaj nazwę profilu.",
-        "noChildren": "Dodaj wiek co najmniej jednego dziecka.",
         "ageInvalid": "Wiek to liczba całkowita od 0 do {{maxAge}}.",
         "tooMany": "Najwyżej {{max}} dzieci."
-      }
+      },
+      "tripMinutes": "Limit czasu",
+      "sections": {
+        "moving": "Spacer",
+        "trip": "Wycieczka"
+      },
+      "minutesUnit": "min"
     },
     "delete": {
       "title": "Usunąć ten profil?",
@@ -366,20 +400,35 @@
   "trip": {
     "empty": "Ustaw start na mapie (albo wypróbuj start demo), napisz, na co masz ochotę, i kliknij „Zaproponuj wycieczkę”.",
     "form": {
-      "hint": "Dotknij mapy, aby ustawić start, albo przesuń mapę i wybierz „Zmień”. Wycieczka zaczyna się i kończy w tym miejscu.",
+      "hint": "Dotknij mapy, aby ustawić start, albo przesuń mapę i dotknij celownika. Wycieczka zaczyna się i kończy w tym miejscu.",
       "start": "Start",
       "demoStart": "Wypróbuj start demo",
       "minutes": "Limit czasu",
       "minutesOption": "{{minutes}} min",
+      "minutesSlider": "Limit czasu, suwak",
+      "minutesField": "Limit czasu w minutach",
+      "minutesRange": "Od {{min}} do {{max}} min.",
       "roundTrip": "Wróć do startu",
-      "wishes": "Wasze życzenia (opcjonalnie)",
+      "wishes": "Na co macie ochotę?",
+      "wishesIntro": "Napiszcie lub wybierzcie – AI ułoży z tego plan wycieczki.",
+      "wishesChipsLabel": "Szybkie pomysły",
+      "wishesChips": {
+        "playground": "plac zabaw",
+        "coffee": "kawa",
+        "sweets": "lody",
+        "park": "park",
+        "shortWalk": "mało chodzenia"
+      },
       "wishesCount": "{{count}} / {{max}}",
-      "wishesPlaceholder": "np. plac zabaw, potem kawa, na koniec pizza; nie chcemy dużo chodzić",
-      "privacy": "Nie wpisuj danych osobowych. Ten tekst jest wysyłany do modelu AI.",
+      "wishesPlaceholder": "Opcjonalnie, np. plac zabaw, potem kawa, na koniec pizza; nie chcemy dużo chodzić",
+      "privacy": "Bez danych osobowych – ten tekst trafia do AI.",
       "submit": "Zaproponuj wycieczkę",
       "planning": "Planuję wycieczkę…",
-      "planningHint": "Model AI może potrzebować 10-20 sekund. Poczekaj chwilę.",
-      "demoName": "Start demo"
+      "planningHint": "Model AI może potrzebować do minuty. Poczekaj chwilę.",
+      "demoName": "Start demo",
+      "saveSettings": "Zapisz w profilu: tempo, limit czasu, powrót",
+      "settingsSaved": "Zapisano ustawienia w profilu „{{name}}”.",
+      "settingsFailed": "Nie udało się zapisać ustawień. Spróbuj ponownie."
     },
     "engine": {
       "ai": "Zaplanowane przez AI",
@@ -409,6 +458,12 @@
       "wind": "wiatr {{value}} km/h"
     },
     "saveDescription": "Nadaj wycieczce nazwę. Przystanki do zapisania: {{count}}.",
+    "replace": {
+      "title": "Zastąpić obecną wycieczkę?",
+      "description": "Nowy start wymaga nowej wycieczki. Obecna zniknie z mapy. Jeśli chcesz ją zachować, najpierw ją zapisz.",
+      "confirm": "Użyj nowego startu",
+      "cancel": "Zostaw obecną wycieczkę"
+    },
     "map": {
       "startFinish": "Start i meta"
     }
@@ -421,6 +476,71 @@
   },
   "topBar": {
     "menu": "Więcej opcji",
-    "theme": "Motyw"
+    "theme": "Motyw",
+    "howItWorks": "Jak to działa"
+  },
+  "placeSearch": {
+    "label": "Szukaj miejsca na start",
+    "placeholder": "np. Park Oliwski",
+    "loading": "Szukam…",
+    "empty": "Nic nie znaleziono. Mamy tylko miejsca z Trójmiasta.",
+    "error": "Wyszukiwanie nie działa. Spróbuj później."
+  },
+  "location": {
+    "use": "Użyj mojej lokalizacji",
+    "locating": "Szukam Twojej lokalizacji…",
+    "error": {
+      "unsupported": "Lokalizacja działa tylko na bezpiecznej stronie (https) i w przeglądarce, która ją obsługuje. Kliknij mapę.",
+      "denied": "Dostęp do lokalizacji jest zablokowany. Zezwól na niego w ustawieniach przeglądarki albo kliknij mapę.",
+      "unavailable": "Twoja lokalizacja jest teraz niedostępna. Kliknij mapę.",
+      "timeout": "Szukanie lokalizacji trwało zbyt długo. Spróbuj ponownie albo kliknij mapę."
+    }
+  },
+  "mapsExport": {
+    "open": "Otwórz w Google Maps",
+    "newTab": "(otwiera się w nowej karcie)",
+    "warning": "Google sam wyznacza drogę między naszymi punktami, więc może wybrać drogę ze schodami. Sprawdź trasę na naszej mapie.",
+    "stopsCut": "Link zawiera tylko pierwsze przystanki (maks. {{count}}, limit Google Maps na telefonach)."
+  },
+  "pace": {
+    "label": "Tempo",
+    "slow": "Wolno",
+    "fast": "Szybko",
+    "strollerLimit": "Z wózkiem najwyżej {{max}}."
+  },
+  "howItWorks": {
+    "intro": "StrollWay planuje spacery bez schodów dla rodzin z wózkiem i podpowiada krótkie rodzinne wycieczki z przystankami po drodze.",
+    "route": {
+      "title": "Trasa bez schodów",
+      "text": "Dla każdego spaceru prosimy openrouteservice o dwie trasy piesze: najkrótszą i taką, która omija schody. Na mapie widzisz obie, a schody na najkrótszej trasie są zaznaczone, więc możesz ocenić, czy objazd się opłaca."
+    },
+    "ai": {
+      "title": "Co robi kod, a co AI",
+      "text": "Odległości, czas marszu, godziny otwarcia i wybór miejsc-kandydatów liczy kod. AI tylko wybiera i układa przystanki spośród tych kandydatów oraz pisze krótkie teksty. Każda odpowiedź AI jest sprawdzana; gdy jest błędna, wycieczkę planują proste reguły. Do AI trafia tylko Twój krótki tekst „życzeń”, nigdy Twoja lokalizacja."
+    },
+    "area": {
+      "title": "Gdzie to działa",
+      "text": "Trasy działają w większości miejsc, ale lista miejsc (place zabaw, kawiarnie, toalety i inne) obejmuje tylko Trójmiasto: Gdańsk, Gdynię i Sopot. Poza Trójmiastem trasa nie ma miejsc w pobliżu."
+    },
+    "keyboard": {
+      "title": "Bez myszy",
+      "text": "Nie musisz klikać mapy, żeby wybrać start. Użyj wyszukiwarki miejsc albo przycisku „Użyj mojej lokalizacji”; oba działają z klawiaturą i czytnikiem ekranu. Punkt końcowy trasy (B) nadal wymaga mapy albo trasy demo."
+    },
+    "sources": {
+      "title": "Źródła danych",
+      "licences": "Dane mapy i miejsc z OpenStreetMap są dostępne na licencji ODbL. Trasy z openrouteservice są na licencji CC BY-SA 4.0. Dane pogodowe z Open-Meteo są na licencji CC BY 4.0.",
+      "routes": {
+        "what": "Trasy",
+        "credit": "© openrouteservice by HeiGIT | Data from OpenStreetMap"
+      },
+      "map": {
+        "what": "Mapa i miejsca",
+        "credit": "© OpenStreetMap contributors"
+      },
+      "weather": {
+        "what": "Pogoda",
+        "credit": "Weather data by Open-Meteo.com"
+      }
+    }
   }
 }

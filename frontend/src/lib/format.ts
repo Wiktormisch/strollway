@@ -6,6 +6,15 @@ export function formatDistance(metres: number, locale = 'en'): string {
   return `${km} km`
 }
 
+/** "3.5 km/h" (or "3,5 km/h" in Polish). */
+export function formatKmh(kmh: number, locale = 'en'): string {
+  const value = new Intl.NumberFormat(locale, {
+    minimumFractionDigits: 1,
+    maximumFractionDigits: 1,
+  }).format(kmh)
+  return `${value} km/h`
+}
+
 /** "Jan 1, 2026" in English, "1 sty 2026" in Polish, in the user's time zone. */
 export function formatDate(iso: string, locale = 'en'): string {
   return new Intl.DateTimeFormat(locale, {

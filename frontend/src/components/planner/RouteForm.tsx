@@ -6,6 +6,9 @@ import { Button } from '@/components/ui/button'
 import { Switch } from '@/components/ui/switch'
 import { DEMO_ROUTES, type DemoRoute } from '@/constants/demoRoutes'
 import { demoRouteOf } from '@/lib/planner'
+import { FormSection } from './FormSection'
+import { LocateButton } from './LocateButton'
+import { PlaceSearch } from './PlaceSearch'
 import { PointRow } from './PointRow'
 import { StairsIcon } from './StairsIcon'
 
@@ -19,6 +22,10 @@ interface RouteFormProps {
   onAvoidStairsChange: (value: boolean) => void
   onClear: (which: 'start' | 'end') => void
   onUseMapCenter: (which: 'start' | 'end') => void
+  /** "Use my location" sets point A. */
+  onLocate: (point: LatLng) => void
+  /** A place picked in the name search becomes the start (A). */
+  onSearchPick: (point: LatLng) => void
   onDemo: (route: DemoRoute) => void
   onPlan: () => void
 }
@@ -47,11 +54,14 @@ export function RouteForm(props: RouteFormProps) {
       <div className="space-y-2">
         {row('start')}
         {row('end')}
+        <LocateButton onLocate={props.onLocate} />
       </div>
+      <PlaceSearch onPick={props.onSearchPick} />
 
-      <div className="space-y-2">
+      <FormSection>
         <p className="text-sm font-medium">{t('planner.form.demoTitle')}</p>
-        <div className="flex flex-wrap gap-2">
+        {/* Wrap + center: three in a row when they fit, otherwise two and one, all centred. */}
+        <div className="flex flex-wrap justify-center gap-2">
           {DEMO_ROUTES.map((route) => (
             <Button key={route.id} variant="demo" size="sm" onClick={() => props.onDemo(route)}>
               <Play aria-hidden />
@@ -59,22 +69,24 @@ export function RouteForm(props: RouteFormProps) {
             </Button>
           ))}
         </div>
-      </div>
+      </FormSection>
 
-      {props.profileField}
+      <FormSection>
+        {props.profileField}
 
-      <div className="flex min-h-11 items-center justify-between gap-2">
-        <label htmlFor={switchId} className="flex items-center gap-2 text-sm font-medium">
-          {/* Terracotta is only for stairs (DESIGN.md section 1). */}
-          <StairsIcon aria-hidden className="size-5 text-stairs" />
-          {t('planner.form.avoidStairs')}
-        </label>
-        <Switch
-          id={switchId}
-          checked={props.avoidStairs}
-          onCheckedChange={props.onAvoidStairsChange}
-        />
-      </div>
+        <div className="flex min-h-11 items-center justify-between gap-2">
+          <label htmlFor={switchId} className="flex items-center gap-2 text-sm font-medium">
+            {/* Terracotta is only for stairs (DESIGN.md section 1). */}
+            <StairsIcon aria-hidden className="size-5 text-stairs" />
+            {t('planner.form.avoidStairs')}
+          </label>
+          <Switch
+            id={switchId}
+            checked={props.avoidStairs}
+            onCheckedChange={props.onAvoidStairsChange}
+          />
+        </div>
+      </FormSection>
 
       <Button
         className="w-full"

@@ -1,11 +1,15 @@
-"""Current weather from Open-Meteo (no key). Used only as a hint for the trip planner.
+"""Weather from Open-Meteo (no key): the current weather (a hint for the trip planner) and
+a 3-day hourly forecast (the "best time for a walk" card, audit idea 2).
 
 Privacy: coordinates are rounded to 0.01 degrees (about 1 km) before they leave the
 server. The same rounded point is the cache key, so one call serves a whole area for 1 h.
 Any failure returns None: a trip never fails because of the weather.
 """
 
+import json
 import logging
+from datetime import date, datetime
+from pathlib import Path
 
 import httpx
 from django.conf import settings
@@ -16,6 +20,17 @@ logger = logging.getLogger(__name__)
 TIMEOUT_S = 5
 CACHE_TIMEOUT_S = 60 * 60
 CURRENT_FIELDS = "temperature_2m,precipitation_probability,wind_speed_10m"
+HOURLY_FIELDS = (
+    "temperature_2m,precipitation_probability,precipitation,"
+    "wind_speed_10m,sunshine_duration,weather_code"
+)
+FORECAST_DAYS = 3
+# After a failure (e.g. 429 Too Many Requests) we wait this long before we ask again,
+# so a busy user does not hit the API on every new start point. No sleep in the request.
+FAILURE_CACHE_S = 5 * 60
+_FAILED = {"failed": True}
+# Fake forecast for WEATHER_PROVIDER=mock, so the card also works offline and in a demo.
+MOCK_FORECAST_PATH = Path(__file__).resolve().parent / "fixtures" / "weather_hourly.json"
 
 
 def make_client():
@@ -45,14 +60,80 @@ def current_weather(point):
     return weather
 
 
-def _request(lat, lng):
+def hourly_forecast(point):
+    """{"utc_offset_s", "hours": [{"time", "temp_c", ...}]} for 3 days, or None.
+
+    `time` is local time at the point ("2026-11-14T10:00"), as Open-Meteo sends it.
+    """
+    if not is_enabled():
+        return mock_forecast()
+    lat, lng = round(point[0], 2), round(point[1], 2)
+    key = f"weather:hourly:{lat}:{lng}"
+    cached = cache.get(key)
+    if cached is not None:
+        return None if cached == _FAILED else cached
+    try:
+        forecast = parse_hourly(_request(lat, lng, hourly=True))
+    # IndexError: the hourly columns do not have the same length.
+    except (httpx.HTTPError, ValueError, KeyError, TypeError, IndexError) as exc:
+        logger.warning("Weather forecast unavailable: %s", exc)
+        cache.set(key, _FAILED, FAILURE_CACHE_S)
+        return None
+    cache.set(key, forecast, CACHE_TIMEOUT_S)
+    return forecast
+
+
+def mock_forecast(today=None):
+    """The fake forecast with its first day moved to `today` (local date)."""
+    forecast = parse_hourly(json.loads(MOCK_FORECAST_PATH.read_text(encoding="utf-8")))
+    first_day = datetime.fromisoformat(forecast["hours"][0]["time"]).date()
+    shift = (today or date.today()) - first_day
+    for hour in forecast["hours"]:
+        hour["time"] = (datetime.fromisoformat(hour["time"]) + shift).isoformat(timespec="minutes")
+    return forecast
+
+
+def parse_hourly(body):
+    hourly = body["hourly"]
+    columns = {
+        "temp_c": hourly["temperature_2m"],
+        "precip_probability": hourly["precipitation_probability"],
+        "precip_mm": hourly["precipitation"],
+        "wind_kmh": hourly["wind_speed_10m"],
+        "sunshine_s": hourly["sunshine_duration"],
+        "weather_code": hourly["weather_code"],
+    }
+    hours = []
+    for index, time in enumerate(hourly["time"]):
+        values = {name: column[index] for name, column in columns.items()}
+        hours.append(
+            {
+                "time": datetime.fromisoformat(time).isoformat(timespec="minutes"),
+                "temp_c": _number(values["temp_c"]),
+                "precip_probability": _integer(values["precip_probability"]),
+                "precip_mm": _number(values["precip_mm"]),
+                "wind_kmh": _number(values["wind_kmh"]),
+                "sunshine_s": _integer(values["sunshine_s"]),
+                "weather_code": _integer(values["weather_code"]),
+            }
+        )
+    if not hours:
+        raise ValueError("empty forecast")
+    return {"utc_offset_s": int(body["utc_offset_seconds"]), "hours": hours}
+
+
+def _request(lat, lng, hourly=False):
     params = {
         "latitude": lat,
         "longitude": lng,
-        "current": CURRENT_FIELDS,
         "wind_speed_unit": "kmh",
         "timezone": "auto",
     }
+    if hourly:
+        params["hourly"] = HOURLY_FIELDS
+        params["forecast_days"] = FORECAST_DAYS
+    else:
+        params["current"] = CURRENT_FIELDS
     with make_client() as client:
         response = client.get(settings.WEATHER_URL, params=params)
     response.raise_for_status()
@@ -71,3 +152,7 @@ def _parse(body):
 
 def _number(value):
     return None if value is None else round(float(value), 1)
+
+
+def _integer(value):
+    return None if value is None else int(round(float(value)))

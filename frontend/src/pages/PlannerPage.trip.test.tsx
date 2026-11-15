@@ -1,4 +1,4 @@
-import { screen, within } from '@testing-library/react'
+import { screen, waitFor, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render } from '@testing-library/react'
@@ -32,6 +32,53 @@ const BASE = {
 }
 
 describe('PlannerPage, trip idea', () => {
+  it('opens on the trip idea tab, which comes first (audit idea 7)', () => {
+    mockApi(BASE)
+    renderPlanner()
+    const tabs = screen.getAllByRole('tab')
+    expect(tabs.map((tab) => tab.textContent)).toEqual(['Trip idea', 'Route A → B'])
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true')
+  })
+
+  it('asks before a new start replaces the trip (audit idea 12)', async () => {
+    mockApi({ ...BASE, 'POST /api/trip-ideas/': makeTrip() })
+    const user = userEvent.setup()
+    renderPlanner()
+
+    await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    await screen.findByText('Planned by rules (demo mode)')
+
+    // "Keep" leaves the trip and its start as they were.
+    await user.click(screen.getByRole('button', { name: 'fake map click A' }))
+    const dialog = await screen.findByRole('dialog', { name: 'Replace the current trip?' })
+    await user.click(within(dialog).getByRole('button', { name: 'Keep the current trip' }))
+    expect(screen.queryByRole('dialog')).not.toBeInTheDocument()
+    expect(screen.getByText('Planned by rules (demo mode)')).toBeInTheDocument()
+    expect(screen.getByText(/^map start: start and finish/)).toBeInTheDocument()
+
+    // "Use the new start" removes the trip.
+    await user.click(screen.getByRole('button', { name: 'fake map click A' }))
+    await user.click(
+      within(await screen.findByRole('dialog')).getByRole('button', { name: 'Use the new start' }),
+    )
+    expect(screen.queryByText('Planned by rules (demo mode)')).not.toBeInTheDocument()
+    expect(screen.getByText(/Set a start on the map/)).toBeInTheDocument()
+  })
+
+  it('shows the best time for a walk once a start is set (audit idea 2)', async () => {
+    const calls = mockApi({ ...BASE, 'GET /api/best-walk-time/': { available: true, windows: [] } })
+    const user = userEvent.setup()
+    renderPlanner()
+    expect(screen.queryByRole('heading', { name: 'Best time for a walk' })).not.toBeInTheDocument()
+
+    await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
+
+    expect(await screen.findByRole('heading', { name: 'Best time for a walk' })).toBeInTheDocument()
+    expect(await screen.findByText(/No good hours/)).toBeInTheDocument()
+    expect(calls.filter((call) => call.path === '/api/best-walk-time/')).toHaveLength(1)
+  })
+
   it('suggests a trip, removes a stop, saves it and opens the walk', async () => {
     const calls = mockApi({
       ...BASE,
@@ -43,6 +90,8 @@ describe('PlannerPage, trip idea', () => {
 
     await user.click(screen.getByRole('tab', { name: 'Trip idea' }))
     await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
+    // The demo start is shown on the map at once (audit idea 6).
+    expect(screen.getByText(/^map focus: 1 \[\[/)).toBeInTheDocument()
     await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
 
     expect(await screen.findByText('Planned by rules (demo mode)')).toBeInTheDocument()
@@ -52,6 +101,7 @@ describe('PlannerPage, trip idea', () => {
       round_trip: true,
       language: 'en',
       wishes: '',
+      pace_kmh: 4,
     })
     expect(
       screen.getByText('map stops: Fake Playground, Fake Cafe, Restaurant'),
@@ -65,6 +115,10 @@ describe('PlannerPage, trip idea', () => {
     await user.click(screen.getByRole('button', { name: 'Remove stop Fake Cafe' }))
     expect(screen.getByText('map stops: Fake Playground, Restaurant')).toBeInTheDocument()
     expect(screen.getByText(/You removed a stop/)).toBeInTheDocument()
+    // The Google Maps link has the remaining stops only (audit idea 9).
+    const mapsLink = screen.getByRole('link', { name: /Open in Google Maps/ })
+    const waypoints = new URL(mapsLink.getAttribute('href')!).searchParams.get('waypoints')
+    expect(waypoints?.split('|')).toHaveLength(2)
 
     await user.click(screen.getByRole('button', { name: 'Save walk' }))
     const dialog = await screen.findByRole('dialog')
@@ -82,6 +136,33 @@ describe('PlannerPage, trip idea', () => {
       [1, 'node/1', 'rules'],
       [2, 'node/3', 'rules'],
     ])
+  })
+
+  it('uses the browser position once as the trip start (audit idea 8)', async () => {
+    vi.stubGlobal('isSecureContext', true)
+    const getCurrentPosition = vi.fn((ok: PositionCallback) =>
+      ok({ coords: { latitude: 54.4, longitude: 18.6 } } as GeolocationPosition),
+    )
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: { getCurrentPosition },
+    })
+    const calls = mockApi({ ...BASE, 'POST /api/trip-ideas/': makeTrip() })
+    const user = userEvent.setup()
+    renderPlanner()
+
+    await user.click(screen.getByRole('tab', { name: 'Trip idea' }))
+    await user.click(screen.getByRole('button', { name: 'Use my location' }))
+    expect(screen.getByText(/^map focus: 1 \[\[54.4,18.6\]\]/)).toBeInTheDocument()
+    await user.click(screen.getByRole('button', { name: 'Suggest a trip' }))
+    await screen.findByText('Planned by rules (demo mode)')
+    expect(calls.find((call) => call.path === '/api/trip-ideas/')?.body).toMatchObject({
+      start: { lat: 54.4, lng: 18.6 },
+    })
+    expect(getCurrentPosition).toHaveBeenCalledTimes(1)
+
+    vi.unstubAllGlobals()
+    delete (navigator as { geolocation?: unknown }).geolocation
   })
 
   it('shows a friendly message for 422 no_places_nearby', async () => {
@@ -126,7 +207,9 @@ describe('PlannerPage, trip idea', () => {
     renderPlanner()
 
     await user.click(screen.getByRole('tab', { name: 'Trip idea' }))
-    await user.click(screen.getByRole('button', { name: '90 min' }))
+    const minutes = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    await user.clear(minutes)
+    await user.type(minutes, '90')
     await user.click(screen.getByRole('button', { name: 'Try the demo start' }))
     await user.click(screen.getByRole('button', { name: 'Hide the panel' }))
 
@@ -140,5 +223,35 @@ describe('PlannerPage, trip idea', () => {
     // The folded form was submitted, so the chosen limit is in the request.
     expect(sent[0].body).toMatchObject({ max_minutes: 90 })
     expect(screen.getAllByRole('button', { name: 'Save walk' }).length).toBeGreaterThan(0)
+  })
+
+  it('takes the trip settings from the profile and saves changes back (audit idea 4)', async () => {
+    const profile = makeProfile({ trip_minutes: 90, round_trip: false })
+    const calls = mockApi({
+      ...BASE,
+      'GET /api/profiles/': [profile],
+      'PATCH /api/profiles/3/': { ...profile, trip_minutes: 120 },
+    })
+    const user = userEvent.setup()
+    renderPlanner()
+
+    await user.click(await screen.findByRole('combobox', { name: /Family profile/ }))
+    await user.click(await screen.findByRole('option', { name: 'Fake weekend' }))
+
+    const minutes = screen.getByRole('spinbutton', { name: 'Time limit in minutes' })
+    expect(minutes).toHaveValue(90)
+    expect(screen.getByRole('switch', { name: 'Come back to the start' })).not.toBeChecked()
+    // Nothing changed yet, so there is nothing to save.
+    expect(screen.queryByRole('button', { name: /Save to the profile/ })).not.toBeInTheDocument()
+
+    await user.clear(minutes)
+    await user.type(minutes, '120')
+    await user.click(screen.getByRole('button', { name: /Save to the profile/ }))
+
+    // The page has no Toaster in this test, so the check reads the request.
+    await waitFor(() => expect(calls.some((call) => call.method === 'PATCH')).toBe(true))
+    const put = calls.find((call) => call.method === 'PATCH')
+    // Only the three settings: a name or ages changed in another tab stay.
+    expect(put?.body).toEqual({ trip_minutes: 120, round_trip: false, pace_kmh: 3.5 })
   })
 })

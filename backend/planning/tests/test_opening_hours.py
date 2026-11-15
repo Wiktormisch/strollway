@@ -27,6 +27,16 @@ SUN_23 = datetime(2026, 11, 15, 23, 30)
         ("Mo-Fr 08:00-12:00,13:00-17:00", WED_10, True),
         ("Sa-Mo 10:00-24:00", SUN_23, True),
         ("Mo-Fr 18:00-18:00", WED_10, None),
+        # Audit P1: "PH" inside a day list is ignored, a rule only for "PH" is skipped.
+        ("Mo-Sa 07:00-15:00; Su,PH off", WED_10, True),
+        ("Mo-Sa 07:00-15:00; Su,PH off", SUN_23, False),
+        ("Mo-Fr 08:00-18:00; PH off", WED_10, True),
+        ("Su,PH 10:00-14:00", datetime(2026, 11, 15, 12, 0), True),
+        # Audit P1: a "," between rules works like ";".
+        ("Mo-Sa 10:00-24:00, Su 11:00-23:00", SAT_12, True),
+        ("Mo-Sa 10:00-24:00, Su 11:00-23:00", SUN_23, False),
+        ("Mo-Fr 09:00-17:00, Sa off, Su 10:00-12:00", SAT_12, False),
+        ("Mo-Fr 08:00-12:00,13:00-17:00, Sa 09:00-13:00", SAT_12, True),
     ],
 )
 def test_supported_patterns(text, now, expected):
@@ -42,7 +52,8 @@ def test_closing_time_itself_is_closed():
     [
         None,
         "",
-        "Mo-Fr 08:00-18:00; PH off",
+        "Mo-Fr 08:00-18:00; SH off",
+        "Mo-Fr,XX 08:00-18:00",
         "Jan-Mar Mo-Fr 10:00-16:00",
         "Fr-Sa 18:00-02:00",
         "sunrise-sunset",

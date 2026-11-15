@@ -72,6 +72,7 @@ export type PlanErrorKey =
   | 'noRoutablePoint'
   | 'noPlacesNearby'
   | 'placesUnavailable'
+  | 'outsideArea'
   | 'invalid'
   | 'tooManyRequests'
   | 'network'
@@ -82,6 +83,7 @@ const ERROR_CODE_KEYS: Record<RoutePlanErrorCode | TripIdeaErrorCode, PlanErrorK
   no_routable_point: 'noRoutablePoint',
   no_places_nearby: 'noPlacesNearby',
   places_unavailable: 'placesUnavailable',
+  outside_area: 'outsideArea',
 }
 
 /** Maps a failed route-plans or trip-ideas request to an i18n key under `planner.errors`. */
@@ -113,4 +115,29 @@ export function demoRouteOf(point: LatLng | null, which: 'start' | 'end'): DemoR
     (route) => route[which].lat === point.lat && route[which].lng === point.lng,
   )
   return match?.id ?? null
+}
+
+/** The gap in px between the fitted points and the visible edge of the map. */
+export const MAP_FIT_GAP = 40
+
+/**
+ * Leaflet padding for fitBounds. On phones the bottom sheet covers the lower part of the map,
+ * so its height is added at the bottom: the route then fits in the part above the sheet.
+ */
+export function fitPadding(bottomInset: number): {
+  paddingTopLeft: [number, number]
+  paddingBottomRight: [number, number]
+} {
+  return {
+    paddingTopLeft: [MAP_FIT_GAP, MAP_FIT_GAP],
+    paddingBottomRight: [MAP_FIT_GAP, MAP_FIT_GAP + Math.max(0, bottomInset)],
+  }
+}
+
+/** True when the system asks for less motion. False when matchMedia is missing (tests). */
+export function prefersReducedMotion(): boolean {
+  return (
+    typeof window.matchMedia === 'function' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  )
 }

@@ -104,4 +104,4 @@ def test_trip_search_uses_the_short_timeout(overpass, monkeypatch):
 
     pois.find_candidates(START, 700)
 
-    assert seen == [pois.TRIP_TIMEOUT_S]
+    assert seen == [pois.TIMEOUT_S]

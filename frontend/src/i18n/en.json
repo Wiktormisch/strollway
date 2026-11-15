@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "StrollWay",
-    "tagline": "Stair-free walks for families with a stroller"
+    "tagline": "Stair-free walks for families with a stroller",
+    "skipToContent": "Skip to content"
   },
   "nav": {
     "planner": "Planner",
@@ -32,12 +33,17 @@
     "notFound": {
       "title": "Page not found",
       "back": "Go to the planner"
+    },
+    "howItWorks": {
+      "title": "How it works"
     }
   },
   "errors": {
     "network": "No connection to the server.",
     "http": "The server returned error {{status}}.",
-    "unknown": "Something went wrong."
+    "unknown": "Something went wrong.",
+    "crash": "This page stopped working. Reload it to try again.",
+    "reloadPage": "Reload the page"
   },
   "planner": {
     "empty": "Set a start and an end on the map, or try a demo route.",
@@ -52,7 +58,7 @@
       "expand": "Show the panel"
     },
     "form": {
-      "hint": "Tap the map: the first tap sets A, the second B. Or move the map and tap \"Change\".",
+      "hint": "Tap the map: the first tap sets A, the second B. Or move the map and tap the crosshair.",
       "start": "Start",
       "end": "End",
       "clear": "Clear {{point}}",
@@ -105,8 +111,10 @@
       "stats": {
         "distance": "Distance",
         "time": "Time",
-        "places": "Places"
+        "places": "Places",
+        "kcal": "Calories"
       },
+      "kcalValue": "about {{kcal}} kcal",
       "statsLabel": "Route in numbers"
     },
     "legend": {
@@ -130,6 +138,7 @@
       "unknown": "Something went wrong while planning the route.",
       "noPlacesNearby": "We found no playgrounds, cafes or restaurants near this start point. Try another start, or a longer time limit.",
       "placesUnavailable": "The places service did not answer. Wait a moment and try again.",
+      "outsideArea": "We have place data for the Tricity only (Gdansk, Sopot, Gdynia). Choose a start in that area.",
       "invalidTrip": "The form has an invalid value. Check the start point and the profile, then try again."
     },
     "save": "Save walk",
@@ -139,10 +148,24 @@
     "point": {
       "onMap": "Point on the map",
       "notSet": "Not set",
-      "change": "Change",
+      "useCenter": "Set to the map centre: {{point}}",
       "details": "Details"
     },
-    "results": "Your walk"
+    "results": "Your walk",
+    "dataArea": "Place data (OpenStreetMap) covers the Tricity only. The public Overpass API is often overloaded, so we use our own import.",
+    "bestTime": {
+      "title": "Best time for a walk",
+      "unavailable": "The forecast is not available right now. Try again later.",
+      "none": "No good hours in the next 3 days: rain, wind or a storm all the time.",
+      "today": "Today",
+      "tomorrow": "Tomorrow",
+      "labels": {
+        "great": "Great",
+        "good": "Good",
+        "ok": "OK"
+      },
+      "credit": "Weather data by"
+    }
   },
   "poi": {
     "title": "Places on the way",
@@ -156,12 +179,17 @@
       "wheelchair": "Wheelchair access",
       "changing_table": "Changing table"
     },
+    "outsideArea": "We have place data for the Tricity only. This route is outside that area.",
     "unavailable": "The places service did not answer.",
     "reload": "Load places again",
     "none": "There are no tagged places near this route in OpenStreetMap.",
     "allHidden": "All categories are hidden.",
     "categories": {
+      "bus_stop": "Bus stop",
+      "tram_stop": "Tram stop",
       "playground": "Playground",
+      "indoor_play": "Indoor play",
+      "skatepark": "Skatepark",
       "toilets": "Toilets",
       "cafe": "Cafe",
       "restaurant": "Restaurant",
@@ -211,6 +239,7 @@
     "card": {
       "distance": "Distance",
       "duration": "Walking time",
+      "kcal": "Calories",
       "stairsAvoided": "Stairs avoided",
       "stops": "Stops",
       "saved": "Saved {{date}}"
@@ -247,7 +276,10 @@
     "errors": {
       "nameRequired": "Give the walk a name."
     },
-    "paceMismatch": "The walking time was planned with another profile. It is saved as it is; plan the route again with this profile to update it."
+    "paceMismatch": "The walking time was planned with another profile. The trip is saved with this time; plan it again with this profile to update it.",
+    "walkingTime": "Walking time for this profile: {{minutes}} min.",
+    "recomputing": "Recomputing the walking time…",
+    "recomputeFailed": "Could not recompute the time. The planned time will be saved."
   },
   "walkDetail": {
     "back": "Back to my walks",
@@ -289,6 +321,7 @@
     "empty": "No stops yet.",
     "add": "Add a stop",
     "addHint": "Click the map to place the new stop.",
+    "newPoint": "New stop",
     "pointSet": "Point set. Click the map again to move it.",
     "addSubmit": "Add stop",
     "name": "Name (optional)",
@@ -321,6 +354,7 @@
     "editNamed": "Edit {{name}}",
     "deleteNamed": "Delete {{name}}",
     "ageChip": "{{age}} y.",
+    "noChildren": "No children",
     "empty": {
       "title": "No profiles yet.",
       "text": "Add a profile to plan walks at your family's pace.",
@@ -328,29 +362,29 @@
     },
     "wheels": {
       "none": "On foot",
-      "stroller": "Stroller",
-      "kid_bike": "Kid bike"
-    },
-    "pace": {
-      "relaxed": "Relaxed pace",
-      "normal": "Normal pace"
+      "stroller": "With a stroller",
+      "kid_bike": "With a balance bike"
     },
     "form": {
       "name": "Profile name",
       "namePlaceholder": "e.g. Weekend with a stroller",
       "ages": "Children's ages",
-      "agesHint": "From 1 to {{max}} children, ages 0-{{maxAge}}.",
+      "agesHint": "Optional. At most {{max}} children, ages 0-{{maxAge}}.",
       "age": "Child's age",
       "addAge": "Add age",
       "removeAge": "Remove age {{age}}",
-      "wheels": "Wheels",
-      "pace": "Pace",
+      "wheels": "How do you get around?",
       "errors": {
         "nameRequired": "Give the profile a name.",
-        "noChildren": "Add at least one child's age.",
         "ageInvalid": "An age is a whole number from 0 to {{maxAge}}.",
         "tooMany": "At most {{max}} children."
-      }
+      },
+      "tripMinutes": "Time limit",
+      "sections": {
+        "moving": "Walking",
+        "trip": "Trip"
+      },
+      "minutesUnit": "min"
     },
     "delete": {
       "title": "Delete this profile?",
@@ -366,20 +400,35 @@
   "trip": {
     "empty": "Set a start on the map (or try the demo start), say what you would like, and press \"Suggest a trip\".",
     "form": {
-      "hint": "Tap the map to set the start, or move the map and tap \"Change\". The trip starts and ends there.",
+      "hint": "Tap the map to set the start, or move the map and tap the crosshair. The trip starts and ends there.",
       "start": "Start",
       "demoStart": "Try the demo start",
       "minutes": "Time limit",
       "minutesOption": "{{minutes}} min",
+      "minutesSlider": "Time limit, slider",
+      "minutesField": "Time limit in minutes",
+      "minutesRange": "From {{min}} to {{max}} min.",
       "roundTrip": "Come back to the start",
-      "wishes": "Your wishes (optional)",
+      "wishes": "What would you like?",
+      "wishesIntro": "Write or pick – AI will plan the trip from it.",
+      "wishesChipsLabel": "Quick ideas",
+      "wishesChips": {
+        "playground": "playground",
+        "coffee": "coffee",
+        "sweets": "dessert",
+        "park": "park",
+        "shortWalk": "little walking"
+      },
       "wishesCount": "{{count}} / {{max}}",
-      "wishesPlaceholder": "e.g. playground, then coffee, finally pizza; we do not want to walk much",
-      "privacy": "Do not enter personal data. This text is sent to the AI model.",
+      "wishesPlaceholder": "Optional, e.g. playground, then coffee, finally pizza; we do not want to walk much",
+      "privacy": "No personal data – this text is sent to AI.",
       "submit": "Suggest a trip",
       "planning": "Planning the trip…",
-      "planningHint": "The AI model can take 10-20 seconds. Please wait.",
-      "demoName": "Demo start"
+      "planningHint": "The AI model can take up to a minute. Please wait.",
+      "demoName": "Demo start",
+      "saveSettings": "Save to the profile: pace, time limit, return",
+      "settingsSaved": "Settings saved in the profile \"{{name}}\".",
+      "settingsFailed": "Could not save the settings. Try again."
     },
     "engine": {
       "ai": "Planned by AI",
@@ -409,6 +458,12 @@
       "wind": "wind {{value}} km/h"
     },
     "saveDescription": "Give the trip a name. Stops to save: {{count}}.",
+    "replace": {
+      "title": "Replace the current trip?",
+      "description": "A new start needs a new trip. The current trip will be removed from the map. Save it first if you want to keep it.",
+      "confirm": "Use the new start",
+      "cancel": "Keep the current trip"
+    },
     "map": {
       "startFinish": "Start and finish"
     }
@@ -421,6 +476,71 @@
   },
   "topBar": {
     "menu": "More options",
-    "theme": "Theme"
+    "theme": "Theme",
+    "howItWorks": "How it works"
+  },
+  "placeSearch": {
+    "label": "Search for a start place",
+    "placeholder": "e.g. Park Oliwski",
+    "loading": "Searching…",
+    "empty": "Nothing found. We only have places in the Tricity.",
+    "error": "Search does not work right now. Try again later."
+  },
+  "location": {
+    "use": "Use my location",
+    "locating": "Finding your location…",
+    "error": {
+      "unsupported": "Location needs a secure (https) page and a browser that supports it. Tap the map instead.",
+      "denied": "Location access is blocked. Allow it in the browser settings, or tap the map.",
+      "unavailable": "Your location is not available right now. Tap the map instead.",
+      "timeout": "Finding your location took too long. Try again or tap the map."
+    }
+  },
+  "mapsExport": {
+    "open": "Open in Google Maps",
+    "newTab": "(opens in a new tab)",
+    "warning": "Google plans the way between our points by itself, so it may choose a way with stairs. Check the route on our map.",
+    "stopsCut": "The link has only the first {{count}} stops (a limit of Google Maps on phones)."
+  },
+  "pace": {
+    "label": "Pace",
+    "slow": "Slow",
+    "fast": "Fast",
+    "strollerLimit": "With a stroller, at most {{max}}."
+  },
+  "howItWorks": {
+    "intro": "StrollWay plans walks without stairs for families with a stroller and suggests short family trips with stops on the way.",
+    "route": {
+      "title": "A route without stairs",
+      "text": "For every walk we ask openrouteservice for two walking routes: the shortest one and one that avoids stairs. You see both on the map, and the stairs on the shortest route are marked, so you can decide if the detour is worth it."
+    },
+    "ai": {
+      "title": "What is code and what is AI",
+      "text": "Distances, walking times, opening hours and the choice of candidate places are done in code. AI only picks and orders stops from those candidates and writes short texts. Every AI answer is checked; when it is wrong, simple rules plan the trip instead. Only your short \"wishes\" text is sent to the AI, never your location."
+    },
+    "area": {
+      "title": "Where it works",
+      "text": "Routes work in most places, but the list of places (playgrounds, cafes, toilets and more) covers only the Tricity: Gdańsk, Gdynia and Sopot. Outside the Tricity a route has no places next to it."
+    },
+    "keyboard": {
+      "title": "Without a mouse",
+      "text": "You do not need to tap the map to choose a start. Use the place search or the \"Use my location\" button; both work with a keyboard and a screen reader. The end point (B) of a route still needs the map or a demo route."
+    },
+    "sources": {
+      "title": "Data sources",
+      "licences": "Map and place data from OpenStreetMap are available under the ODbL. Routes from openrouteservice are licensed under CC BY-SA 4.0. Weather data from Open-Meteo is licensed under CC BY 4.0.",
+      "routes": {
+        "what": "Routes",
+        "credit": "© openrouteservice by HeiGIT | Data from OpenStreetMap"
+      },
+      "map": {
+        "what": "Map and places",
+        "credit": "© OpenStreetMap contributors"
+      },
+      "weather": {
+        "what": "Weather",
+        "credit": "Weather data by Open-Meteo.com"
+      }
+    }
   }
 }

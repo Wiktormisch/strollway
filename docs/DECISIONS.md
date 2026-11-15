@@ -120,7 +120,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 - These are expected fair-use values, not hard technical limits. About 30,000 daily users share the public instances. A request may wait up to 15 s for a free slot.
 - Database lag: changes in OSM can take a couple of minutes to show up (`osm3s.timestamp_osm_base` in every result).
 - A second AI's summary of these limits was checked against the sources. Two of its numbers are **not confirmed**: "2 parallel slots per IP" (the Commons page only says the number of slots is in the status response; the one number on the wiki, 4, is for a different instance) and "10 minutes of total query time per day" (the wiki says "no more than 10 minutes" in sum, without "per day"). The values "1 GiB maximum declared memory" and the list of alternative servers were not found either.
-- Rules for the app: one combined query per stroll; a small area; `[timeout:20]`; cache by area; on 429, 504 or a timeout do not wait, return the route with `pois_status: "unavailable"`. Our use is far below 10,000 requests per day.
+- Rules for the app: one combined query per stroll; a small area; a short `[timeout:10]` (was 20, changed on 2026-11-14, see section 10); cache by area; on 429, 504 or a timeout do not wait, return the route with `pois_status: "unavailable"`. Our use is far below 10,000 requests per day.
 
 ## 4. `claude -p` flags (read from `claude --help`; tested in stage 6, see section 10)
 
@@ -173,17 +173,17 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 
 ## 7. Stage 3: route plans
 
-- **Pace.** The profile model has `relaxed` (3.5 km/h) and `normal` (4.5 km/h). A stroller is a limit of 4 km/h, so `normal` + stroller gives 4 km/h. No profile means 4 km/h. ORS `duration` is ignored.
+- **Pace.** The profile model has `relaxed` (3.5 km/h) and `normal` (4.5 km/h). A stroller is a limit of 4 km/h, so `normal` + stroller gives 4 km/h. No profile means 4 km/h. ORS `duration` is ignored. (Changed in phase D: the pace is now a number in km/h, see section 12.)
 - **The avoid-steps request is skipped** when the shortest route has 0 m of stairs: the answer is `step_free_available: true`, `detour_m: 0`. This saves one ORS call.
 - **Avoid-steps request fails** (timeout, 429, 5xx) after a good normal route: we return the normal route with `step_free_available: null` instead of a fixture or a straight line. A real route is better than a fake one.
 - **Cache:** one entry per ORS request (rounded coordinates + avoid flag), 24 h. Routes and the stable errors 2009 and 2010 are cached; temporary failures are not. Overpass: one entry per query, only successful answers. Django file cache in `backend/.cache/` (git-ignored).
-- **Fixtures hold raw answers** (trimmed ORS bodies and Overpass elements) and go through the same parsers as live data. They were recorded on 2026-11-11; Overpass answered 502 that day, so no fixture has places yet (`"overpass": null`). Run `record_fixtures` again to add them. Tests use fixed copies in `planning/tests/data/fixtures/`, so a new recording never breaks them.
+- **Fixtures hold raw answers** (trimmed ORS bodies and Overpass elements) and go through the same parsers as live data. They were recorded on 2026-11-11; Overpass answered 502 that day, so the pairs had no places (`"overpass": null`). On 2026-11-14 the places were added from Overpass Turbo exports with `record_fixtures --pair N --overpass-file <file>`, which keeps the recorded ORS routes. Tests use fixed copies in `planning/tests/data/fixtures/`, so a new recording never breaks them.
 - **Stage 0 file:** its third route ("C") is the rejected Brzezno pair, not Kartuska. It is kept as the test sample for "no stairs on the route".
-- **Mock line and places:** for a straight-line route, live Overpass places near the line are still returned (they are real). Without Overpass, the list is empty. Recorded places are used only for a fixture route.
+- **Mock line and places:** for a straight-line route, live Overpass places near the line are still returned (they are real). Without Overpass, the list is empty. Recorded places are used only for a demo pair (since 2026-11-14 also when ORS gave the route, see section 10).
 - **Duplicates:** places with the same category and name within 30 m are one place (a playground as a point and an outline; groups of benches). Then at most 10 benches, the closest to the route.
 - **Transit stops:** one entry per name, kind and end (a stop has one platform per direction), at most 3 per end.
 - **Overpass (checked 2026-11-11):** the public server answers **406 without a `User-Agent`**, so the client sends `StrollWay/0.1`. It also answered **502** "at capacity" with a text body. Any status other than 200, and a 200 with `remark: runtime error`, mean `pois_status: "unavailable"`.
-- **`indoor_play` not checked yet:** Overpass was at capacity during stage 3. Not a category for now; check again in stage 6.
+- **`indoor_play` not checked yet:** Overpass was at capacity during stage 3. Not a category for now; check again in stage 6. (Checked in phase B: 16 in the Tricity, now a category, see section 11.)
 - **Input limit:** start and end must be at most 20 km apart (straight line). It is a stroller walk, and it protects the ORS daily limit.
 
 ## 8. Stage 4: planner UI
@@ -200,7 +200,7 @@ Source: the Overpass "Commons" page (https://dev.overpass-api.de/overpass-doc/en
 
 - **Saving a plan as a walk:** `buildWalkPayload` (`frontend/src/lib/walkPayload.ts`) saves unknown values as 0: `stairs_m: null` (mock line) and `detour_m: null` (no stair-free route). `stairs_avoided_m = max(0, baseline.stairs_m - route.stairs_m)`. A POI category the `Stop` model does not know becomes `other`; a place without a name is saved with `name: ""`.
 - **A stop's note is the `reason` field.** The API has no separate note field.
-- **Profile and pace:** the backend computes the walking time from the profile in `/api/route-plans/`. Choosing a profile in the planner plans the route again at once. In the save dialog, a different profile only links the walk to it; a hint says that the saved time stays as planned. Recomputing there was left for later (it needs `keepPreviousData`, so the dialog does not close while loading).
+- **Profile and pace:** the backend computes the walking time from the profile in `/api/route-plans/`. Choosing a profile in the planner plans the route again at once. In the save dialog, a different profile only links the walk to it; a hint says that the saved time stays as planned. Recomputing there was left for later (it needs `keepPreviousData`, so the dialog does not close while loading). (Done in phase D for A -> B, see section 12.)
 - **Field errors:** `parseFieldErrors` puts DRF 400 messages under the fields the form shows; other messages go to a toast. Backend messages are English only.
 - **Retries:** app-wide `retry: 1`, because the default 3 retries with growing delays kept a stopped backend "loading" for about 7 s. Route plans set `retry: false` themselves: `fetchQuery` turns retries off only when no default is set, and a 422 or 429 will not change.
 - **Planner panel z-index** went from `z-1000` to `z-10`, so dialogs and selects (`z-50`) open above it. The map is in an `isolate` box, so Leaflet stays under the panel.
@@ -214,7 +214,8 @@ Checked by hand on 2026-11-12.
 
 - From the developer's machine, `overpass-api.de`, `overpass.private.coffee`, `maps.mail.ru` and `overpass.kumi.systems` all failed, even for `[out:json];node(1);out;`: DNS, TCP and TLS took under 0.4 s, then no answer for 20-30 s, or a 502 at once. IPv4 and IPv6 behaved the same. So the network and our query were fine; the servers were full.
 - The `overpass-api.de` page says: "Nowadays this server is overloaded ... do not expect high reliability. Use alternatives if possible." For regular use it asks for fewer than 100 queries per day, a User-Agent that names the app, caching, and no use from AI app platforms.
-- Decision: **the demo must work on recorded data; live Overpass is a bonus.** `record_fixtures --trip --overpass-file <file>` takes places exported from Overpass Turbo (raw data, same JSON as the API) and records only the ORS routes. The trip search waits at most 12 s (`TRIP_TIMEOUT_S`); route plans keep 25 s.
+- Decision: **the demo must work on recorded data; live Overpass is a bonus.** `record_fixtures --trip --overpass-file <file>` takes places exported from Overpass Turbo (raw data, same JSON as the API) and records only the ORS routes. The trip search waits at most 12 s. Since 2026-11-14 route plans wait 12 s too (`TIMEOUT_S`; it was 25 s), and the query declares `[timeout:10]`, so the server gives up before the client: a live check on that day showed four public servers that did not answer even `/api/status` (`docs/AUDIT.md`, part 2).
+- **Demo places first (2026-11-14).** A demo pair or the demo trip start with recorded places never calls Overpass; other points still do. Why: the public servers almost never answer, so asking first only made the demo wait 12 s before it used the same recorded places. Cost: the demo does not show fresher OSM data even when Overpass works; for three fixed routes this does not matter. To refresh, record again (`record_fixtures --pair N --overpass-file <file>`).
 - Later (medium): a list of servers (`OVERPASS_URLS`) or a self-hosted Overpass for the public deploy.
 
 ### Demo trip recording
@@ -336,3 +337,235 @@ Checked by hand on 2026-11-12.
   both together. The overlay is `foreground/25` (light) and `background/70` (dark) instead of black.
 - **Shadows use plain black with low alpha** (`rgb(0 0 0 / 0.12)`). They are not palette colours,
   and both themes need the same dark shadow, so there is no token for them.
+
+### Write limits on the walks API (audit S2, S3, W1)
+
+- **Writes are limited per IP, not per client:** `WRITES_RATE` (default `120/hour`) counts POST,
+  PUT, PATCH and DELETE on walks, stops, profiles and demo data. A new random `X-Client-Id` is free,
+  so a per-client limit is easy to skip. Reads are not counted. Known cost: people behind one
+  carrier IP (CGNAT) share the limit; raise it in `.env` if that becomes a problem.
+- **At most `MAX_WALKS_PER_CLIENT` walks per client** (default 200); a new walk over the limit
+  gives 400. Edits are allowed. Profiles have no own limit: they are small templates, and the
+  per-IP limit covers them.
+- **The shared `demo` client is read-only.** A write without `X-Client-Id` gives 400 (not 403:
+  the client can fix it by sending the header, like a bad header gives 400). The frontend always
+  sends the header, and `seed_demo` writes through the ORM, so neither is affected.
+- **`/api/stops/` checks what the nested create checks:** at most 20 stops per walk and a different
+  `order` for each stop. No database constraint yet: it needs a migration, and old databases may
+  already have duplicate orders.
+
+### LLM time budget and Anthropic effort (audit L1, L2)
+
+- **One deadline for the LLM chain:** it ends 50 s after the request starts. Each backend gets
+  only the time that is left as its timeout, and none starts with less than 5 s. The Anthropic
+  client does not retry. With up to 60 s of ORS calls after it, a request stays under the planned
+  120 s gunicorn timeout. Known gap: the httpx and SDK timeouts limit each network step, not the
+  whole call, so a very slow stream can go a little over.
+- **`effort: medium`, `max_tokens: 8000`.** Measured on 2026-11-14 with `claude-opus-5-5`, the
+  demo trip (40 candidates, about 4,170 input tokens), 3 fake wishes per level:
+  - `low`: 4.7-5.5 s, 292-333 output tokens, 2 of 3 answers valid (one `unmet_wishes` text over
+    80 characters).
+  - `medium`: 8.2-8.5 s, 672-706 output tokens, 3 of 3 valid.
+  An invalid answer is paid for and then replaced by the rules, so `medium` wins for now. The
+  sample is small. Try `low` again after audit L3 (cutting too-long texts in code). Every call
+  ended with `end_turn`, far below 8,000 tokens.
+- **`ANTHROPIC_MODEL` takes an API model id** (`claude-opus-5-5`), not a CLI alias like `opus`:
+  the API answers 404, and every trip falls back to the rules. Leave it empty for the default.
+
+## 11. Phase A decisions (2026-11-14)
+
+Decisions taken before the remaining backlog (`docs/AUDIT.md`, "Updated order", phase A).
+
+- **Places come from our own `Place` table (audit task 10, option A1).** A one-time export from
+  Overpass Turbo (our tags, Tricity) goes through the existing parsers into SQLite with an
+  `import_places <file>` command. `pois.py` reads by bounding box and filters by distance in
+  code. Live Overpass stays as an optional provider (`POI_PROVIDER=overpass`) for points outside
+  the import. This replaces "Overpass only" in section 1: the data is still OSM, but imported.
+  Why: the public Overpass servers are overloaded (section 10, audit part 2); a local table is
+  fast, works offline and in CI, and needs no new dependency. A Geofabrik extract with `osmium`
+  (option A2) was rejected for now: a heavy dependency and a file too big for the repo.
+- **The app and the README say plainly that place data covers the Tricity only.** The note
+  explains why (the public Overpass API is often overloaded) and what we considered for a
+  production version: a self-hosted Overpass service in Docker, or regular imports of more
+  regions on the server. Why: a reviewer should see that we know the limit and how to lift it.
+- **"Use my location" is a one-time browser position (idea 8, D9).** A button calls
+  `navigator.geolocation` once, sets point A or the trip start and centres the map. Nothing is
+  stored. The position goes only to our backend, like a map click; never to the LLM or a new
+  outside service. No live tracking (`watchPosition`): that would be navigation, which
+  `docs/PLAN.md` section C still excludes. A point outside the Tricity gets a clear message.
+- **Export to Google Maps is a directions link with up to 9 waypoints (idea 9, D9).** Code builds
+  a `google.com/maps/dir/?api=1` link with `travelmode=walking`: the stops first, then points
+  picked from our own geometry (mainly on the stair-free detour), at most 9 waypoints in total,
+  so Google stays close to our route. No key, no Google API, no Google data stored, so the
+  "OSM only" rule for our data holds. Google still routes by itself between the points, so the
+  UI warns that it may choose a way with stairs. This is a key feature, so it moved up the
+  backlog. Considered for later: a GPX file of our exact route, and a public share link to a
+  saved walk (needs an API change).
+  Update (2026-11-14, built): **at most 3 waypoints**, not 9. The Google Maps URLs docs say
+  mobile browsers accept only 3, and the app is mobile first. A trip uses its remaining stops
+  (the first 3; the UI says when stops are cut). A route uses 3 points sampled evenly from our
+  stair-free line. Points only on the parts that differ from the baseline were left for later.
+- **TypeScript types are generated from the OpenAPI schema (idea 18).** `openapi-typescript`
+  (dev dependency, pinned) turns the `drf-spectacular` schema into `src/api/schema.d.ts`;
+  `src/api/types.ts` becomes aliases of the generated types. The generated file is committed
+  and a CI check fails when it is out of date. Why: types only, no runtime code, and the API
+  layer in `src/api/` stays as it is. Rejected: client generators (`orval`, `@hey-api`), because
+  they replace our tested API layer; a schema snapshot test alone, because it does not check
+  the frontend types. Views with hand-built answers may need `@extend_schema` first.
+- **Stops are reordered with up/down buttons (idea 16).** No drag library. Why: a trip has a few
+  stops, the list lives in a bottom sheet over the map on a phone, and buttons are accessible by
+  default and easy to test. The same reason as for the bottom sheet in stage 7b. Drag and drop
+  (`@dnd-kit`, maybe from 768 px) is a possible extra later.
+
+### Generated API types (phase B, idea 18)
+
+- **Two committed generated files:** `backend/openapi.yml` (drf-spectacular) and
+  `frontend/src/api/schema.d.ts` (`npm run gen:api`). Each language checks its own file: a
+  pytest test compares the schema with a fresh one, and a CI step in the frontend job runs
+  `gen:api` and fails on a diff. So no CI job needs both Python and Node.
+- **`COMPONENT_SPLIT_REQUEST: True`.** Without it, one `Walk` component is used for reading and
+  writing, and the generated type would require `id` and `created_at` in a POST body.
+- **npm `overrides` for TypeScript.** `openapi-typescript` 7.13.0 declares the peer
+  `typescript: ^5.x`; we pin 6.0 (section 1). The override makes it use our version. It only
+  uses TypeScript to print the output, and the generated file passes `tsc`. Remove the override
+  when a release supports TypeScript 6.
+- **`types.ts` keeps three hand-written fixes:** `[lat, lng]` tuples (OpenAPI has no tuples),
+  `Required<...>` for saved data (fields with a model default are optional in the schema but
+  always sent), and the frontend-only `Poi.accessibility`.
+- **JSON fields get a schema shape** with two schema-only subclasses in `walks/serializers.py`
+  (`IntListJSONField`, `LatLngListJSONField`); validation stays in the `validate_*` methods.
+
+### Place table (phase B, audit task 10)
+
+- **Data:** `backend/data/places_tricity.json.gz`, an Overpass Turbo export from 2026-11-14, gzipped (21 061
+  elements, 5.4 MB raw, 0.5 MB gzipped; re-exported in phase D with skateparks). It is committed, so a fresh clone works after `migrate` and `import_places`.
+  The query (export as raw OSM data, JSON):
+
+  ```
+  [out:json][timeout:180][bbox:54.27,18.43,54.62,18.80];
+  (
+    nwr["leisure"~"^(playground|park|indoor_play)$"];
+    nwr["sport"="skateboard"];
+    nwr["amenity"~"^(toilets|cafe|ice_cream|restaurant|fast_food|bench|drinking_water)$"];
+    nwr["tourism"~"^(zoo|museum)$"];
+    nwr["natural"="beach"];
+    nwr["shop"~"^(supermarket|convenience|bakery)$"];
+    node["highway"="bus_stop"];
+    node["railway"="tram_stop"];
+  );
+  out center tags;
+  ```
+- **Rows keep raw OSM tags** (only our keys plus `name`, `opening_hours`, `cuisine`, `wheelchair`,
+  `changing_table`). The `db` provider turns rows back into an Overpass-like body, so the same
+  parsers and rules in `pois.py` serve both providers.
+- **Reading:** a bounding box query (index on `lat`, `lng`), then distances in code. Route places
+  are kept within 150 m of the *segments* of the same simplified line the Overpass query uses
+  (`geo.distance_to_polyline_m`), not only of its vertices. Both routes and trips answer in
+  under 50 ms on the full import.
+- **Area:** `PlaceImport` stores the bounding box of the last import. A route end or a trip start
+  outside it gives `pois_status: "outside_area"` (route plans, still 200) or a 422 with code
+  `outside_area` (trip ideas). An empty table gives the usual `unavailable` and a log hint to run
+  `import_places`. Recorded demo places in fixtures still come first.
+- **`POI_PROVIDER`:** `db` (default) | `overpass` | `mock`. The old `auto` still means `overpass`.
+- **`indoor_play` checked (closes D7 and audit O7):** 16 elements with `leisure=indoor_play` in
+  the Tricity export. Added as a category (stop model, both tag tables, trip rules with 60 min and
+  the wishes "sala zabaw" / "indoor play", icon and pl/en labels).
+
+## 12. Phase D: the profile as a template (2026-11-14)
+
+- **The profile is a template for both planner modes.** It sets the defaults; the user can still
+  change them in the planner.
+- **Children are optional (audit idea 5).** A profile can have 0-6 children. A profile without
+  children is only a pace and a way of moving.
+- **"Wheels" stays in the API, only the UI changes.** The field is shown as "How do you get
+  around?" with "On foot", "With a stroller" and "With a balance bike". Renaming the field would
+  need a migration and an API change and gives the user nothing.
+- **A stroller or a balance bike turns on "Avoid stairs" by default.** It is a default, not a
+  lock: the switch stays usable.
+- **Age picks the places** (rules in code, not the LLM): 0-1 park and cafe, 2-8 playground and
+  cafe, 9-12 playground or park and ice cream or cafe, 13-17 park and skatepark. No children:
+  park and cafe. With several children, the bands are joined, youngest first. A missing default
+  place is not reported as an unmet wish, because the user did not ask for it.
+- **Skatepark is a category:** matched by `sport=skateboard` (mostly on `leisure=pitch`). The
+  re-export found 25 in the Tricity. Wishes: "skatepark", "deskorolka", "rolki", "hulajnoga".
+- **No age filters in the A -> B mode:** the route shows all places; the user filters them.
+- **Ideas 13 and 22:** idea 13 (at least one stop on a saved trip walk) is dropped. Idea 22
+  (recompute the time in the save dialog) moves to phase D, after the profile changes.
+- **The pace is a slider in km/h (audit idea 3, W4).** `FamilyProfile.pace_kmh` is a number from
+  2.5 to 5.5 in steps of 0.5 (default 3.5). It replaces `relaxed` / `normal`. Migration 0005 keeps
+  today's times: relaxed = 3.5, normal = 4.5, normal with a stroller = 4.0. The migration can be
+  reversed. A float, not a Decimal: DRF sends a Decimal as a string.
+- **A stroller is capped at 4 km/h in two places.** The UI slider stops at 4.0 for a stroller
+  (and a faster pace drops to 4.0 when the user picks a stroller). The backend keeps
+  `min(pace, 4)` as a safety net for other clients.
+- **The planner sends the pace.** `route-plans` and `trip-ideas` take an optional `pace_kmh`. When
+  sent, it wins over the profile pace. The planner slider starts from the profile (no profile:
+  4 km/h) and resets when the profile changes. A changed pace in the A -> B mode hides the old
+  result until the user plans again, like the "Avoid stairs" switch. Trip ideas have no result
+  cache, so a new pace never returns an old answer.
+- **Saved planner settings (audit idea 4).** The profile keeps `trip_minutes` (15-180, default 60)
+  and `round_trip` (default true) as plain fields, not JSON: they get validation and real types in
+  OpenAPI and TypeScript. Picking a profile in the planner sets the pace, the time limit and
+  "come back to the start". A "Save to the profile" button appears when these differ from the
+  profile; the profile form edits them too. "Avoid stairs" is not saved: it still follows the way
+  of moving. Wishes and the start point are never saved (free text and coordinates, rule 5).
+- **The save dialog recomputes the time (audit idea 22).** A -> B: another profile in the dialog
+  sends `route-plans` again with that profile and its pace (the cache answers a known request).
+  `keepPreviousData` keeps the last time on screen while loading, and "Save" waits for the new
+  time, so the walk is never saved with the time of the wrong profile. If the request fails,
+  the planned time is saved and a hint says so. A trip keeps the hint only: a new trip would be
+  a paid LLM call.
+
+## 13. Phase F: extras (2026-11-14)
+
+Decided with the developer before the code. Order: calories (idea 1), place search (idea 15),
+best time for a walk (idea 2 with the X1 credit). Each is its own branch from `dev`.
+
+- **Calories (idea 1).** Fixed formula in `planning/calories.py`, no LLM:
+  `kcal = MET x 70 kg x hours`, MET interpolated from the pace (Compendium of Physical
+  Activities, level walking). A fixed adult weight of 70 kg, so the app stores no body data.
+  A stroller adds 5% (a stroller profile, or no profile, because the app assumes a stroller).
+  Only the walking part counts, not the time at stops. `route.kcal` is in both `route-plans`
+  and `trip-ideas`; the UI shows "about N kcal", because it is a rough estimate.
+- **Place search (idea 15).** Searches our own `Place` table only, no outside geocoder. It sets
+  the start point only (in both tabs). `GET /api/places/search/?q=`: the match is done in
+  Python, because SQLite `LIKE` does not fold Polish letters ("lakowa" finds "Łąkowa"); about
+  5 000 named places scan in ~20 ms. Names that start with the query come first; max 8 results,
+  one per name and category. The UI waits 300 ms after the last key (debounce) and caches
+  answers for an hour. Own limit `PLACE_SEARCH_RATE` (default `300/hour`).
+- **Best time for a walk (idea 2).** Its own card in the planner, for the chosen start point.
+  `GET /api/best-walk-time/?lat=&lng=` reads the Open-Meteo 3-day hourly forecast
+  (`weather.hourly_forecast`: rounded point, 5 s timeout, 1 h cache; after a failure such as
+  429 it waits 5 minutes before it asks again, with no sleep in the request). The answer is
+  always 200; no forecast gives `available: false`. `planning/best_time.py` scores the hours
+  8:00-20:00 in code, no LLM. The weights follow the developer's order: sunshine 40, calm wind
+  25, mild temperature 25 (full points at 15-24 °C), low chance of rain 10. A thunderstorm
+  (WMO 95-99), heavy rain (2 mm/h or more) or a strong wind (40 km/h or more) rule an hour
+  out. Hours next to each other with the same label (great 75+, good 55+, ok 35+) form a
+  window, so a sunny midday is not hidden in a long average; up to 3 windows, the best first.
+  The card loads by itself when a start is set, in both tabs (each tab has its own start).
+  With `WEATHER_PROVIDER=mock` it shows a fake forecast (`planning/fixtures/weather_hourly.json`,
+  moved to today), so the demo works offline. Own limit `BEST_TIME_RATE` (default `120/hour`).
+  The card and the trip weather line credit Open-Meteo with a link (X1).
+
+## 14. Closing the project (2026-11-14)
+
+Decided with the developer before phase G. The goal is to finish a complete, documented app
+instead of adding more features.
+
+- **Phase E (route editing) is dropped / out of scope:** ideas 14, 16 and 17, L3, L4, the
+  debounced re-plan in the A -> B tab, and the split of `PlannerPage.tsx`. They stay in
+  `docs/AUDIT.md` as a record. The app works without them; they would add risk at the end.
+- **No weather rule in `trip_rules.py`.** The "Best time for a walk" card (section 13) already
+  helps with the weather; a rule that changes the stops is extra logic to test and explain.
+- **The "Tricity only" data note** goes into the README and the "How it works" page, not
+  onto the walk page. One clear place is enough.
+- **Rest of task 12:** B6, F7, F8 and P1 are done in phase G. B5, B7, W2 and O3-O6 are dropped (reasons in
+  `docs/AUDIT.md`, phase G notes).
+- **Licence (X2):** MIT for the code (`LICENSE`, added with the README). The place and route fixtures contain OpenStreetMap data
+  under ODbL; the README says so.
+- **Next session:** the deploy (stage 8), `docs/AI_USAGE.md` and the demo video.
+- **README screenshots:** stage 9 said "no screenshots generated by the agent"; the developer
+  asked for them in this session. They are made with `npm run visual-check` and the new
+  `ALLOW_TILES=1` option (loads OpenStreetMap tiles only), with mock LLM and weather. The trip
+  screenshot was left out: without an ORS key a trip is a straight line.

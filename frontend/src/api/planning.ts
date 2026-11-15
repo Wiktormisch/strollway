@@ -1,4 +1,4 @@
-import { useMutation, useQuery, type QueryClient } from '@tanstack/react-query'
+import { keepPreviousData, useMutation, useQuery, type QueryClient } from '@tanstack/react-query'
 import { apiFetch } from './client'
 import type { RoutePlan, RoutePlanRequest, TripIdea, TripIdeaRequest } from './types'
 
@@ -11,7 +11,8 @@ export function postTripIdea(request: TripIdeaRequest): Promise<TripIdea> {
 
 /**
  * A mutation, not a query: every click on "Suggest" is a new LLM call, so nothing is cached.
- * No timeout on purpose: the backend ends the LLM call after 60 s and answers with rules.
+ * No client timeout: the backend gives the whole LLM chain one 50 s deadline and then answers
+ * with the rules, so a request ends in about a minute even when the AI model is slow.
  */
 export function useTripIdea() {
   return useMutation({ mutationFn: postTripIdea, retry: false })
@@ -49,6 +50,19 @@ function routePlanOptions(request: RoutePlanRequest | null) {
  */
 export function useRoutePlan(request: RoutePlanRequest | null) {
   return useQuery({ ...routePlanOptions(request), enabled: false })
+}
+
+/**
+ * The plan for the save dialog when the user picks another profile (audit idea 22).
+ * It fetches by itself (the cache answers a known request), and `keepPreviousData` keeps
+ * the last time on screen while a new one loads, so the dialog does not jump.
+ */
+export function useRoutePlanForSave(request: RoutePlanRequest | null) {
+  return useQuery({
+    ...routePlanOptions(request),
+    enabled: request !== null,
+    placeholderData: keepPreviousData,
+  })
 }
 
 /**

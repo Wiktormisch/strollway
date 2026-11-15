@@ -27,6 +27,9 @@ interface WalkFormProps {
   submitting?: boolean
   serverErrors?: Record<string, string>
   onSubmit: (values: WalkFormValues) => void
+  onProfileChange?: (profileId: number | null) => void
+  /** A -> B only: the walking time for the chosen profile, recomputed by the dialog. */
+  recompute?: { durationMin: number | undefined; loading: boolean; failed: boolean }
   onCancel: () => void
 }
 
@@ -44,6 +47,11 @@ export function WalkForm(props: WalkFormProps) {
     ...(nameError ? { name: nameError } : {}),
   }
   const sortedPois = [...(props.pois ?? [])].sort((a, b) => a.at_min - b.at_min)
+
+  function changeProfile(next: number | null) {
+    setProfileId(next)
+    props.onProfileChange?.(next)
+  }
 
   function toggle(poiId: string) {
     const next = new Set(chosen)
@@ -84,11 +92,12 @@ export function WalkForm(props: WalkFormProps) {
           id="walk-profile"
           profiles={props.profiles}
           value={profileId}
-          onChange={setProfileId}
+          onChange={changeProfile}
         />
-        {profileId !== props.defaultProfileId && (
-          <p className="text-sm text-stairs-text">{t('walkForm.paceMismatch')}</p>
-        )}
+        <ProfileTimeHint
+          recompute={props.recompute}
+          changed={profileId !== props.defaultProfileId}
+        />
         <FieldError id="walk-profile-error" message={errors.profile} />
       </div>
 
@@ -135,10 +144,36 @@ export function WalkForm(props: WalkFormProps) {
         <Button type="button" variant="outline" onClick={props.onCancel}>
           {t('common.cancel')}
         </Button>
-        <Button type="submit" disabled={props.submitting}>
+        <Button type="submit" disabled={props.submitting || props.recompute?.loading}>
           {props.submitting ? t('common.saving') : t('walkForm.submit')}
         </Button>
       </DialogFooter>
     </form>
+  )
+}
+
+/**
+ * What the walking time means for the chosen profile (audit idea 22).
+ * A -> B: the time is recomputed, so it is shown. A trip: a hint that the time stays.
+ */
+function ProfileTimeHint(props: { recompute: WalkFormProps['recompute']; changed: boolean }) {
+  const { t } = useTranslation()
+  const { recompute } = props
+  if (!recompute) {
+    return props.changed ? (
+      <p className="text-sm text-stairs-text">{t('walkForm.paceMismatch')}</p>
+    ) : null
+  }
+  if (recompute.failed) {
+    return <p className="text-sm text-stairs-text">{t('walkForm.recomputeFailed')}</p>
+  }
+  if (recompute.durationMin === undefined) return null
+  // A live region: a screen reader hears the new time after a profile change.
+  return (
+    <p aria-live="polite" className="text-sm text-muted-foreground">
+      {recompute.loading
+        ? t('walkForm.recomputing')
+        : t('walkForm.walkingTime', { minutes: Math.round(recompute.durationMin) })}
+    </p>
   )
 }

@@ -2,8 +2,16 @@
 
 from rest_framework import serializers
 
-from planning import geo
-from walks.models import FamilyProfile
+from planning import geo, place_search
+from walks.models import (
+    PACE_MAX_KMH,
+    PACE_MIN_KMH,
+    PACE_STEP_KMH,
+    TRIP_MAX_MINUTES,
+    TRIP_MIN_MINUTES,
+    FamilyProfile,
+    is_pace_step,
+)
 from walks.serializers import latitude_field, longitude_field
 
 # A stroller walk, not a road trip. Also protects the ORS daily limit.
@@ -15,8 +23,25 @@ class PointSerializer(serializers.Serializer):
     lng = longitude_field()
 
 
+def pace_field():
+    """Optional pace from the planner. When sent, it wins over the profile pace."""
+    return serializers.FloatField(
+        min_value=PACE_MIN_KMH,
+        max_value=PACE_MAX_KMH,
+        required=False,
+        allow_null=True,
+        default=None,
+        help_text="Walking pace in km/h, in steps of 0.5. Empty = the profile pace.",
+    )
+
+
 class ProfileMixin:
     """`profile_id` must belong to this client; `profile` holds the object (or None)."""
+
+    def validate_pace_kmh(self, value):
+        if value is not None and not is_pace_step(value):
+            raise serializers.ValidationError(f"Use steps of {PACE_STEP_KMH} km/h.")
+        return value
 
     def validate_profile_id(self, value):
         """The profile must belong to this client. Its object is kept in `profile`."""
@@ -39,6 +64,7 @@ class RoutePlanRequestSerializer(ProfileMixin, serializers.Serializer):
     end = PointSerializer()
     avoid_stairs = serializers.BooleanField(default=True)
     profile_id = serializers.IntegerField(required=False, allow_null=True)
+    pace_kmh = pace_field()
 
     def validate(self, attrs):
         start = (attrs["start"]["lat"], attrs["start"]["lng"])
@@ -64,6 +90,7 @@ class RouteSerializer(serializers.Serializer):
     geometry = serializers.ListField(child=lat_lng(), help_text="[[lat, lng], ...]")
     distance_m = serializers.IntegerField()
     duration_min = serializers.IntegerField(help_text="At the family pace, computed in code.")
+    kcal = serializers.IntegerField(help_text="Rough estimate for a 70 kg adult (+5% stroller).")
     stairs_m = serializers.FloatField(allow_null=True, help_text="null = unknown (mock route).")
     stairs_segments = serializers.ListField(
         child=serializers.ListField(child=lat_lng()), help_text="Line parts with stairs, to draw."
@@ -98,7 +125,10 @@ class RoutePlanResponseSerializer(serializers.Serializer):
     baseline = RouteSerializer(help_text="The shortest route, for comparison.")
     detour_m = serializers.IntegerField(allow_null=True)
     extra_min = serializers.IntegerField(allow_null=True)
-    pois_status = serializers.ChoiceField(choices=["ok", "unavailable"])
+    pois_status = serializers.ChoiceField(
+        choices=["ok", "unavailable", "outside_area"],
+        help_text="outside_area = no place data for this area (the data covers the Tricity).",
+    )
     pois = PoiSerializer(many=True)
     transit_stops = TransitStopSerializer(many=True)
 
@@ -118,7 +148,8 @@ class TripIdeaRequestSerializer(ProfileMixin, serializers.Serializer):
 
     start = PointSerializer()
     profile_id = serializers.IntegerField(required=False, allow_null=True)
-    max_minutes = serializers.IntegerField(min_value=15, max_value=180)
+    pace_kmh = pace_field()
+    max_minutes = serializers.IntegerField(min_value=TRIP_MIN_MINUTES, max_value=TRIP_MAX_MINUTES)
     round_trip = serializers.BooleanField(default=True)
     language = serializers.ChoiceField(choices=["pl", "en"], default="pl")
     wishes = serializers.CharField(max_length=MAX_WISHES_LENGTH, allow_blank=True, default="")
@@ -178,6 +209,58 @@ class TripIdeaResponseSerializer(serializers.Serializer):
 
 class TripIdeaErrorSerializer(serializers.Serializer):
     code = serializers.ChoiceField(
-        choices=["no_places_nearby", "places_unavailable", "no_route", "no_routable_point"]
+        choices=[
+            "no_places_nearby",
+            "places_unavailable",
+            "outside_area",
+            "no_route",
+            "no_routable_point",
+        ]
     )
     detail = serializers.CharField()
+
+
+# --- Place search (audit idea 15) ----------------------------------------------------
+
+
+class PlaceSearchQuerySerializer(serializers.Serializer):
+    q = serializers.CharField(
+        min_length=place_search.MIN_QUERY_LENGTH, max_length=place_search.MAX_QUERY_LENGTH
+    )
+
+
+class PlaceSearchResultSerializer(serializers.Serializer):
+    poi_id = serializers.CharField(help_text='OSM id, e.g. "way/123".')
+    name = serializers.CharField()
+    category = serializers.CharField(
+        help_text='A place category, "bus_stop", "tram_stop" or "other".'
+    )
+    lat = serializers.FloatField()
+    lng = serializers.FloatField()
+
+
+# --- Best time for a walk (audit idea 2) ---------------------------------------------
+
+
+class BestTimeQuerySerializer(serializers.Serializer):
+    lat = latitude_field()
+    lng = longitude_field()
+
+
+class BestTimeWindowSerializer(serializers.Serializer):
+    date = serializers.DateField(help_text="Local date at the point.")
+    day_offset = serializers.IntegerField(help_text="0 = today, 1 = tomorrow, 2 = in 2 days.")
+    start = serializers.CharField(help_text='Local time, "HH:MM".')
+    end = serializers.CharField(help_text='Local time, "HH:MM" (the end of the last hour).')
+    hours = serializers.IntegerField()
+    score = serializers.IntegerField(help_text="0-100, the average of the hours.")
+    label = serializers.ChoiceField(choices=["great", "good", "ok"])
+    temp_c = serializers.FloatField(allow_null=True, help_text="Average.")
+    precip_probability = serializers.IntegerField(allow_null=True, help_text="Highest.")
+    wind_kmh = serializers.FloatField(allow_null=True, help_text="Highest.")
+    sunshine_pct = serializers.IntegerField(allow_null=True)
+
+
+class BestTimeResponseSerializer(serializers.Serializer):
+    available = serializers.BooleanField(help_text="False when the forecast could not be loaded.")
+    windows = BestTimeWindowSerializer(many=True)

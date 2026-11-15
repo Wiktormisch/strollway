@@ -96,7 +96,7 @@ def create_demo_data(client_id):
     profile, created = FamilyProfile.objects.get_or_create(
         client_id=client_id,
         name=DEMO_PROFILE_NAME,
-        defaults={"children_ages": [2, 5], "wheels": "stroller", "pace": "relaxed"},
+        defaults={"children_ages": [2, 5], "wheels": "stroller", "pace_kmh": 3.5},
     )
     created_any |= created
 

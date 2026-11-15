@@ -6,8 +6,12 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from planning import routing, services, trip_planner
+from planning import best_time, place_search, routing, services, trip_planner, weather
 from planning.serializers import (
+    BestTimeQuerySerializer,
+    BestTimeResponseSerializer,
+    PlaceSearchQuerySerializer,
+    PlaceSearchResultSerializer,
     RoutePlanErrorSerializer,
     RoutePlanRequestSerializer,
     RoutePlanResponseSerializer,
@@ -45,6 +49,7 @@ ERROR_DETAILS = {
     "no_routable_point": "A point is too far from any path (more than 350 m).",
     "no_places_nearby": "No places for a trip were found near the start point.",
     "places_unavailable": "The map data service did not answer. Try again in a moment.",
+    "outside_area": "Place data covers the Tricity (Gdansk, Sopot, Gdynia) only.",
 }
 
 REQUEST_EXAMPLE = OpenApiExample(
@@ -66,6 +71,7 @@ RESPONSE_EXAMPLE = OpenApiExample(
             "geometry": [[54.347791, 18.618119], [54.34874, 18.618458]],
             "distance_m": 420,
             "duration_min": 6,
+            "kcal": 23,
             "stairs_m": 0,
             "stairs_segments": [],
         },
@@ -73,6 +79,7 @@ RESPONSE_EXAMPLE = OpenApiExample(
             "geometry": [[54.347791, 18.618119], [54.34874, 18.618458]],
             "distance_m": 132,
             "duration_min": 2,
+            "kcal": 7,
             "stairs_m": 16.0,
             "stairs_segments": [[[54.348, 18.6182], [54.3481, 18.6183]]],
         },
@@ -128,7 +135,11 @@ class RoutePlanView(APIView):
         data = serializer.validated_data
         try:
             plan = services.build_route_plan(
-                data["start_point"], data["end_point"], data["avoid_stairs"], data["profile"]
+                data["start_point"],
+                data["end_point"],
+                data["avoid_stairs"],
+                data["profile"],
+                pace_kmh=data["pace_kmh"],
             )
         except routing.RoutingError as exc:
             return Response(
@@ -160,6 +171,7 @@ TRIP_RESPONSE_EXAMPLE = OpenApiExample(
             "geometry": [[54.3385, 18.62], [54.3391, 18.6195], [54.3385, 18.62]],
             "distance_m": 180,
             "duration_min": 3,
+            "kcal": 10,
             "stairs_m": None,
             "stairs_segments": [],
         },
@@ -167,6 +179,7 @@ TRIP_RESPONSE_EXAMPLE = OpenApiExample(
             "geometry": [[54.3385, 18.62], [54.3391, 18.6195], [54.3385, 18.62]],
             "distance_m": 180,
             "duration_min": 3,
+            "kcal": 10,
             "stairs_m": None,
             "stairs_segments": [],
         },
@@ -244,6 +257,7 @@ class TripIdeaView(APIView):
                 language=data["language"],
                 wishes=data["wishes"],
                 profile=data["profile"],
+                pace_kmh=data["pace_kmh"],
             )
         except (routing.RoutingError, trip_planner.TripError) as exc:
             return Response(
@@ -251,3 +265,67 @@ class TripIdeaView(APIView):
                 status=status.HTTP_422_UNPROCESSABLE_ENTITY,
             )
         return Response(idea)
+
+
+class PlaceSearchView(APIView):
+    """Search the imported places by name, to pick a start point (audit idea 15)."""
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "place_search"
+
+    @extend_schema(
+        summary="Search places by name",
+        description=(
+            "Searches only our own place table (the Tricity), not an outside geocoder. "
+            "Polish letters and case do not matter. Names that start with the query come "
+            "first. At most 8 results. Limited to 300 requests per hour per IP."
+        ),
+        parameters=[PlaceSearchQuerySerializer],
+        responses={
+            200: PlaceSearchResultSerializer(many=True),
+            400: inline_serializer(
+                "PlaceSearchValidationError", fields={"q": serializers.ListField()}
+            ),
+            429: inline_serializer(
+                "PlaceSearchThrottled", fields={"detail": serializers.CharField()}
+            ),
+        },
+    )
+    def get(self, request: Request) -> Response:
+        query = PlaceSearchQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        return Response(place_search.search_places(query.validated_data["q"]))
+
+
+class BestTimeView(APIView):
+    """The best hours for a walk in the next 3 days near a point (audit idea 2)."""
+
+    throttle_classes = [ScopedRateThrottle]
+    throttle_scope = "best_time"
+
+    @extend_schema(
+        summary="Best time for a walk",
+        description=(
+            "Scores the daytime hours (8:00-20:00) of the Open-Meteo 3-day forecast in code "
+            "and returns up to 3 windows, the best first. When the forecast cannot be loaded, "
+            '"available" is false; this is never an error. Limited to 120 requests per hour '
+            "per IP."
+        ),
+        parameters=[BestTimeQuerySerializer],
+        responses={
+            200: BestTimeResponseSerializer,
+            400: inline_serializer(
+                "BestTimeValidationError",
+                fields={"lat": serializers.ListField(), "lng": serializers.ListField()},
+            ),
+            429: inline_serializer("BestTimeThrottled", fields={"detail": serializers.CharField()}),
+        },
+    )
+    def get(self, request: Request) -> Response:
+        query = BestTimeQuerySerializer(data=request.query_params)
+        query.is_valid(raise_exception=True)
+        point = (query.validated_data["lat"], query.validated_data["lng"])
+        forecast = weather.hourly_forecast(point)
+        if forecast is None:
+            return Response({"available": False, "windows": []})
+        return Response({"available": True, "windows": best_time.best_windows(forecast)})

@@ -19,6 +19,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { errorMessage, parseFieldErrors } from '@/lib/fieldErrors'
 import { formatDistance, formatDuration } from '@/lib/format'
 import { categoryLabel } from '@/lib/poiLabel'
+import { StatList, type Stat } from '@/components/common/StatList'
 import { cn } from '@/lib/utils'
 import { usePageTitle } from '@/lib/usePageTitle'
 
@@ -80,20 +81,25 @@ function WalkView({ walk }: { walk: WalkDetail }) {
   const [draft, setDraft] = useState<LatLng | null>(null)
 
   const stopLabel = (stop: Stop) => stop.name || categoryLabel(t, stop.category)
-  const stats = [
+  const stats: Stat[] = [
     {
-      key: 'distance',
+      kind: 'distance',
       label: t('walks.card.distance'),
       value: formatDistance(walk.distance_m, i18n.language),
     },
-    { key: 'duration', label: t('walks.card.duration'), value: formatDuration(walk.duration_min) },
+    { kind: 'time', label: t('walks.card.duration'), value: formatDuration(walk.duration_min) },
     {
-      key: 'stairsAvoided',
+      kind: 'kcal',
+      label: t('walks.card.kcal'),
+      value: t('planner.detour.kcalValue', { kcal: walk.kcal }),
+    },
+    {
+      kind: 'stairsAvoided',
       label: t('walks.card.stairsAvoided'),
       value: formatDistance(walk.stairs_avoided_m, i18n.language),
     },
     {
-      key: 'stairsOnRoute',
+      kind: 'stairsOnRoute',
       label: t('walkDetail.stairsOnRoute'),
       value: formatDistance(walk.stairs_m, i18n.language),
     },
@@ -135,17 +141,11 @@ function WalkView({ walk }: { walk: WalkDetail }) {
       </div>
 
       {/* The same stats row as the planner result hero, on a plain card. */}
-      <dl
-        aria-label={t('walkDetail.statsLabel')}
-        className="grid grid-cols-2 gap-x-6 gap-y-4 rounded-2xl border bg-card p-5 sm:flex sm:flex-wrap"
-      >
-        {stats.map((stat) => (
-          <div key={stat.key}>
-            <dt className="text-sm text-muted-foreground">{stat.label}</dt>
-            <dd className="text-lg font-semibold tabular-nums">{stat.value}</dd>
-          </div>
-        ))}
-      </dl>
+      <StatList
+        stats={stats}
+        label={t('walkDetail.statsLabel')}
+        className="gap-x-6 gap-y-4 rounded-2xl border bg-card p-5 sm:flex sm:flex-wrap"
+      />
 
       <div
         className={cn(

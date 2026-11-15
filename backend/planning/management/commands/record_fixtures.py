@@ -2,6 +2,10 @@
 
 Run it by hand with ORS_API_KEY set in backend/.env. It writes planning/fixtures/pair_N.json
 (default) or planning/fixtures/trip_demo.json (with --trip).
+
+When Overpass is down, export the places from Overpass Turbo and pass the file:
+`--pair 1 --overpass-file pair_1.json` replaces only the places of a saved pair (no ORS key
+needed), `--trip --overpass-file trip.json` records the trip with these places.
 """
 
 import json
@@ -80,10 +84,25 @@ class Command(BaseCommand):
         parser.add_argument(
             "--overpass-file",
             help=(
-                "With --trip: read the places from this JSON file (raw data exported from "
-                "Overpass Turbo for the query of build_around_query) instead of calling Overpass."
+                "Read the places from this JSON file (raw data exported from Overpass Turbo) "
+                "instead of calling Overpass. With --trip: the query of build_around_query. "
+                "With one --pair: the query of query_for_route; only the places of the saved "
+                "fixture are replaced, ORS is not called."
             ),
         )
+
+    def _replace_pair_places(self, number, overpass_file):
+        """Put places from a file into an existing pair fixture. Its ORS routes stay as they are."""
+        pair = next(p for p in fixtures.DEMO_PAIRS if p.number == number)
+        data = fixtures.load_fixture(pair)
+        if data is None:
+            raise CommandError(f"{pair.path.name} does not exist. Record the pair first.")
+        body = _read_overpass_file(overpass_file)
+        data["overpass"] = {"elements": body["elements"]}
+        fixtures.save_fixture(pair, data)
+        self.stdout.write(f"Pair {pair.number}: {pair.name}")
+        self.stdout.write(f"  Overpass: {len(body['elements'])} elements from {overpass_file}")
+        self.stdout.write(self.style.SUCCESS(f"  Saved {pair.path.name}"))
 
     def _record_trip(self, overpass_file=None):
         """Overpass around the demo start, then ORS routes for the rule-based demo plans.
@@ -131,10 +150,16 @@ class Command(BaseCommand):
         self.stdout.write(self.style.SUCCESS(f"  Saved {fixtures.trip_path().name}"))
 
     def handle(self, *args, **options):
+        overpass_file = options["overpass_file"]
+        pairs = options["pair"] or []
+        if overpass_file and not options["trip"]:
+            if len(pairs) != 1:
+                raise CommandError("--overpass-file works only with --trip or with one --pair.")
+            # Only the places change, so no ORS call and no key are needed.
+            self._replace_pair_places(pairs[0], overpass_file)
+            return
         if not settings.ORS_API_KEY:
             raise CommandError("ORS_API_KEY is not set in backend/.env.")
-        if options["overpass_file"] and not options["trip"]:
-            raise CommandError("--overpass-file works only with --trip.")
         if options["trip"]:
             self._record_trip(options["overpass_file"])
             return

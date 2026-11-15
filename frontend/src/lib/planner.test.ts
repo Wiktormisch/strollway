@@ -1,3 +1,4 @@
+import { afterEach, vi } from 'vitest'
 import { ApiError } from '@/api/client'
 import { makePlan, makePoi } from '@/test/routePlan'
 import { DEMO_ROUTES } from '@/constants/demoRoutes'
@@ -8,6 +9,8 @@ import {
   nextPoints,
   planErrorKey,
   visiblePois,
+  fitPadding,
+  prefersReducedMotion,
 } from './planner'
 
 const A = { lat: 54.1, lng: 18.1 }
@@ -94,6 +97,7 @@ describe('planErrorKey', () => {
     expect(planErrorKey(new ApiError(422, 'x', { code: 'no_routable_point' }))).toBe(
       'noRoutablePoint',
     )
+    expect(planErrorKey(new ApiError(422, 'x', { code: 'outside_area' }))).toBe('outsideArea')
     expect(planErrorKey(new ApiError(400, 'x', { end: ['Too far.'] }))).toBe('invalid')
     expect(planErrorKey(new ApiError(429, 'x'))).toBe('tooManyRequests')
     expect(planErrorKey(new ApiError(0, 'x'))).toBe('network')
@@ -114,5 +118,31 @@ describe('demoRouteOf', () => {
     expect(demoRouteOf({ lat: 54.1, lng: 18.1 }, 'start')).toBeNull()
     expect(demoRouteOf(demo.start, 'end')).toBeNull()
     expect(demoRouteOf(null, 'start')).toBeNull()
+  })
+})
+
+describe('fitPadding', () => {
+  it('adds the sheet height to the bottom gap only', () => {
+    expect(fitPadding(300)).toEqual({ paddingTopLeft: [40, 40], paddingBottomRight: [40, 340] })
+  })
+
+  it('uses the plain gap without a sheet and never a negative inset', () => {
+    expect(fitPadding(0).paddingBottomRight).toEqual([40, 40])
+    expect(fitPadding(-5).paddingBottomRight).toEqual([40, 40])
+  })
+})
+
+describe('prefersReducedMotion', () => {
+  afterEach(() => vi.unstubAllGlobals())
+
+  it('follows the system setting', () => {
+    vi.stubGlobal('matchMedia', (query: string) => ({ matches: query.includes('reduce') }))
+    expect(prefersReducedMotion()).toBe(true)
+    vi.stubGlobal('matchMedia', () => ({ matches: false }))
+    expect(prefersReducedMotion()).toBe(false)
+  })
+
+  it('is false without matchMedia', () => {
+    expect(prefersReducedMotion()).toBe(false)
   })
 })

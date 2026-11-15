@@ -1,9 +1,12 @@
 """Serializers for the walks API. All validation lives here, not in the views."""
 
+from django.conf import settings
 from django.db import transaction
+from drf_spectacular.utils import extend_schema_field
 from rest_framework import serializers
 
-from walks.models import FamilyProfile, Stop, Walk
+from planning import calories, services
+from walks.models import PACE_STEP_KMH, FamilyProfile, Stop, Walk, is_pace_step
 
 MAX_CHILDREN = 6
 MAX_CHILD_AGE = 17
@@ -30,22 +33,60 @@ def is_number(value):
     return isinstance(value, int | float) and not isinstance(value, bool)
 
 
+# JSON fields have no shape in the OpenAPI schema ("any value"). These two subclasses only
+# describe the shape for the schema and the generated frontend types; validation stays in the
+# validate_* methods below.
+@extend_schema_field({"type": "array", "items": {"type": "integer"}})
+class IntListJSONField(serializers.JSONField):
+    pass
+
+
+@extend_schema_field(
+    {
+        "type": "array",
+        "items": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+        "description": "[[lat, lng], ...]",
+    }
+)
+class LatLngListJSONField(serializers.JSONField):
+    pass
+
+
 class FamilyProfileSerializer(serializers.ModelSerializer):
+    # required=False like the model field with default=list.
+    children_ages = IntListJSONField(required=False)
+
     class Meta:
         model = FamilyProfile
-        fields = ["id", "name", "children_ages", "wheels", "pace", "created_at", "updated_at"]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        fields = [
+            "id",
+            "name",
+            "children_ages",
+            "wheels",
+            "pace_kmh",
+            "trip_minutes",
+            "round_trip",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = ["id", "kcal", "created_at", "updated_at"]
 
     def validate_children_ages(self, value):
         if not isinstance(value, list):
             raise serializers.ValidationError("Must be a list of ages.")
-        if not 1 <= len(value) <= MAX_CHILDREN:
-            raise serializers.ValidationError(f"Give between 1 and {MAX_CHILDREN} ages.")
+        # No children is fine: a profile can be only a pace and a way of moving (audit idea 5).
+        if len(value) > MAX_CHILDREN:
+            raise serializers.ValidationError(f"Give at most {MAX_CHILDREN} ages.")
         for age in value:
             if not is_int(age) or not 0 <= age <= MAX_CHILD_AGE:
                 raise serializers.ValidationError(
                     f"Each age must be a whole number from 0 to {MAX_CHILD_AGE}."
                 )
+        return value
+
+    def validate_pace_kmh(self, value):
+        if not is_pace_step(value):
+            raise serializers.ValidationError(f"Use steps of {PACE_STEP_KMH} km/h.")
         return value
 
 
@@ -95,8 +136,34 @@ class StopSerializer(StopFieldsMixin, serializers.ModelSerializer):
             raise serializers.ValidationError("A stop cannot be moved to another walk.")
         return walk
 
+    def validate(self, attrs):
+        # The same rules as the nested create in WalkSerializer.validate_stops.
+        walk = attrs.get("walk", getattr(self.instance, "walk", None))
+        siblings = walk.stops.all()
+        if self.instance is not None:
+            siblings = siblings.exclude(pk=self.instance.pk)
+        elif siblings.count() >= MAX_NESTED_STOPS:
+            raise serializers.ValidationError({"walk": f"At most {MAX_NESTED_STOPS} stops."})
+        if "order" in attrs and siblings.filter(order=attrs["order"]).exists():
+            raise serializers.ValidationError({"order": "Each stop needs a different order."})
+        return attrs
 
-class WalkListSerializer(serializers.ModelSerializer):
+
+class KcalMixin(serializers.Serializer):
+    """`kcal`: computed when read, not stored (audit idea 1, DECISIONS.md section 13).
+
+    It uses the pace and the way of moving of the walk's profile, like the planner did.
+    """
+
+    kcal = serializers.SerializerMethodField()
+
+    def get_kcal(self, walk) -> int:
+        profile = walk.profile
+        pace_kmh = services.pace_kmh_for(profile)
+        return calories.estimate_kcal(walk.distance_m, pace_kmh, services.has_stroller(profile))
+
+
+class WalkListSerializer(KcalMixin, serializers.ModelSerializer):
     """A light version for the list: no geometry, no stops, only their count."""
 
     stops_count = serializers.IntegerField(read_only=True)
@@ -112,6 +179,7 @@ class WalkListSerializer(serializers.ModelSerializer):
             "avoid_stairs",
             "distance_m",
             "duration_min",
+            "kcal",
             "stairs_m",
             "stairs_avoided_m",
             "detour_m",
@@ -124,9 +192,10 @@ class WalkListSerializer(serializers.ModelSerializer):
         read_only_fields = fields
 
 
-class WalkSerializer(serializers.ModelSerializer):
+class WalkSerializer(KcalMixin, serializers.ModelSerializer):
     """Detail and write serializer. Accepts an optional "stops" list on create only."""
 
+    geometry = LatLngListJSONField(required=False)
     start_lat = latitude_field()
     start_lng = longitude_field()
     end_lat = latitude_field()
@@ -155,6 +224,7 @@ class WalkSerializer(serializers.ModelSerializer):
             "avoid_stairs",
             "distance_m",
             "duration_min",
+            "kcal",
             "stairs_m",
             "stairs_avoided_m",
             "detour_m",
@@ -167,7 +237,7 @@ class WalkSerializer(serializers.ModelSerializer):
             "created_at",
             "updated_at",
         ]
-        read_only_fields = ["id", "created_at", "updated_at"]
+        read_only_fields = ["id", "kcal", "created_at", "updated_at"]
 
     def get_fields(self):
         fields = super().get_fields()
@@ -206,6 +276,8 @@ class WalkSerializer(serializers.ModelSerializer):
         return value
 
     def validate(self, attrs):
+        if self.instance is None:
+            self.check_walks_limit()
         # On PATCH the request may not include status, so use the saved value.
         status = attrs.get("status", getattr(self.instance, "status", Walk.Status.PLANNED))
         if status == Walk.Status.PLANNED:
@@ -216,6 +288,14 @@ class WalkSerializer(serializers.ModelSerializer):
             # Going back to "planned" clears an old rating.
             attrs["rating"] = None
         return attrs
+
+    def check_walks_limit(self):
+        # Not exact under parallel requests (it may pass by one or two); good enough here.
+        limit = settings.MAX_WALKS_PER_CLIENT
+        if Walk.objects.filter(client_id=self.context["client_id"]).count() >= limit:
+            raise serializers.ValidationError(
+                f"At most {limit} walks. Delete an old walk to save a new one."
+            )
 
     @transaction.atomic
     def create(self, validated_data):

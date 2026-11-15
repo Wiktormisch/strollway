@@ -23,7 +23,8 @@ class ClaudeCliClient:
     def __init__(self, model=""):
         self.model = model
 
-    def complete_json(self, system, user, schema):
+    def complete_json(self, system, user, schema, timeout_s=None):
+        timeout = min(TIMEOUT_S, timeout_s or TIMEOUT_S)
         executable = shutil.which("claude")
         if executable is None:
             raise LLMError("claude CLI not found on PATH")
@@ -40,12 +41,12 @@ class ClaudeCliClient:
                     text=True,
                     encoding="utf-8",
                     errors="replace",  # a stray non-UTF-8 byte must not crash the request
-                    timeout=TIMEOUT_S,
+                    timeout=timeout,
                     cwd=workdir,
                     check=False,
                 )
             except subprocess.TimeoutExpired as exc:
-                raise LLMError(f"claude CLI timed out after {TIMEOUT_S} s") from exc
+                raise LLMError(f"claude CLI timed out after {timeout:.0f} s") from exc
             except OSError as exc:
                 raise LLMError(f"claude CLI could not start: {type(exc).__name__}") from exc
         if done.returncode != 0:
