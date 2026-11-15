@@ -569,3 +569,35 @@ instead of adding more features.
   asked for them in this session. They are made with `npm run visual-check` and the new
   `ALLOW_TILES=1` option (loads OpenStreetMap tiles only), with mock LLM and weather. The trip
   screenshot was left out: without an ORS key a trip is a straight line.
+
+## 15. Stage 8: deploy (2026-11-15)
+
+Setup: `docker-compose.yml`, `backend/Dockerfile`, `deploy/nginx/`. Steps in `docs/DEPLOY.md`.
+
+- **Deploy from `main`, no separate deploy branch.** A branch without the Markdown files
+  would drift from `main` and need cleanup after every merge. The `.dockerignore` files keep
+  `*.md`, tests and secrets out of the images; `git sparse-checkout` is an option for the server.
+- **WhiteNoise, not a shared static volume.** Django serves its few static files (admin, DRF)
+  and nginx proxies `/static/` to it. No volume shared between containers and no start order to
+  manage. Swagger loads its own files from a CDN.
+- **The volume is mounted at `/app/var`, not `/app/data`.** `backend/data/` holds the committed
+  `places_tricity.json.gz`; a volume there would hide it. On the host the folder is still `data/`.
+  SQLite and the file cache find it through the `VAR_DIR` variable (local default: `backend/`).
+- **`import_places` runs on every start**, next to `migrate` and `seed_demo`. A new database has
+  an empty Place table; the command replaces the table in one transaction, so it is safe to repeat.
+- **`VITE_API_URL` is empty in the image build.** The client already calls `/api/...` paths, so
+  `/api` would give `/api/api/...`. An empty string is kept by `??` (only null/undefined fall back).
+- **TLS ends at Cloudflare.** nginx forwards the `X-Forwarded-Proto` it gets (falls back to
+  `$scheme` locally) and Django uses `SECURE_PROXY_SSL_HEADER`. `SECURE_SSL_REDIRECT` stays off:
+  Cloudflare redirects to HTTPS, and a Django redirect would break the local `http` run. Check
+  `security.W008` is silenced for that reason, and `security.W021` because HSTS preload is a
+  permanent list entry, too strong for a demo. HSTS `includeSubDomains` is on; from this host it
+  only covers `*.strollway.<domain>`.
+- **Real client IP for the limits.** nginx sets `X-Forwarded-For` to `CF-Connecting-IP`
+  (overwritten, never appended), Django has `DRF_NUM_PROXIES=1`. nginx only listens on
+  `127.0.0.1`, so nobody outside the tunnel can send a fake `CF-Connecting-IP`.
+- **`/admin/` is not routed.** The app has no admin users; unknown paths get the SPA.
+- **SQLite with two gunicorn workers** uses a 20 s lock timeout, so parallel writes wait
+  instead of failing with "database is locked". The traffic is small; PostgreSQL is not needed.
+- **`localhost` must be in `ALLOWED_HOSTS`** on the server: the container health check calls
+  `/api/health/` on localhost, and nginx starts only when `web` is healthy.
