@@ -3,7 +3,7 @@
 StrollWay plans walks without stairs for families with a stroller or a balance bike, and
 suggests short family trips with stops on the way.
 
-**Live demo:** _coming soon_ <!-- TODO(stage 8): add the link after the deploy -->
+**Live demo:** https://strollway.wiktormischker.dev/
 
 ![The planner: a route that avoids 16 m of stairs, compared with the shortest route](docs/screenshots/planner-route-desktop.png)
 
@@ -256,8 +256,8 @@ and [`CLAUDE.md`](CLAUDE.md):
 | A person approves what ships         | Merges and deploys are done by the developer                                                             |
 
 Decisions and verified facts are logged in [`docs/DECISIONS.md`](docs/DECISIONS.md). Stage
-logs are in [`docs/stages/`](docs/stages/). A longer write-up, `docs/AI_USAGE.md`, is being
-finished.
+logs are in [`docs/stages/`](docs/stages/). The full story of how AI tools were used, with real
+examples, is in [`docs/AI_USAGE.md`](docs/AI_USAGE.md).
 
 ## Tests and CI
 
