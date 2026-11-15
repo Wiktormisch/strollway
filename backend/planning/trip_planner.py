@@ -152,7 +152,9 @@ def _ask(client, user, candidates, timeout_s):
     except Exception as exc:  # a bug in one backend must not cost the user the trip
         logger.warning("LLM backend %s crashed: %s", client.name, type(exc).__name__)
         return None
-    answer, invalid_fields = validation.validate_answer(raw, candidates)
+    answer, invalid_fields, trimmed_fields = validation.validate_answer(raw, candidates)
+    if trimmed_fields:  # field names only; shows how often the model goes over the limits
+        logger.warning("LLM backend %s: cut too-long texts in %s", client.name, trimmed_fields)
     if answer is None:
         logger.warning("LLM backend %s gave an invalid answer: %s", client.name, invalid_fields)
     return answer

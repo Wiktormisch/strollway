@@ -86,7 +86,6 @@ def test_a_valid_llm_answer_is_used(setup):
         good_answer("node/3"),  # closed place
         good_answer(),  # zero stops
         good_answer("node/1", "node/2", "node/1", "node/2", "node/1"),  # five stops
-        {**good_answer("node/1"), "summary": "x" * 301},
         {
             **good_answer("node/1"),
             "stops": [{"poi_id": "node/1", "planned_minutes": "20", "reason": "r"}],
@@ -100,6 +99,22 @@ def test_a_valid_llm_answer_is_used(setup):
 def test_invalid_answers_end_in_the_rules(setup, answer):
     setup(FakeLLM("anthropic", answer))
     assert build()["engine"] == "rules"
+
+
+def test_regression_too_long_texts_are_cut_not_replaced_by_the_rules(setup, caplog):
+    # Before the fix, one unmet wish over 80 characters threw away the whole AI answer.
+    long_wish = "Coffee: the cafes near the start are closed right now, so I did not add any to it."
+    raw = {**good_answer("node/1"), "unmet_wishes": [long_wish], "summary": "x " * 200}
+    setup(FakeLLM("anthropic", raw))
+
+    with caplog.at_level(logging.WARNING):
+        idea = build()
+
+    assert idea["engine"] == "anthropic"
+    assert len(idea["unmet_wishes"][0]) <= 80
+    assert len(idea["summary"]) <= 300
+    assert "cut too-long texts in ['summary', 'unmet_wishes']" in caplog.text
+    assert "Coffee: the cafes" not in caplog.text  # field names only, never the texts
 
 
 @pytest.mark.parametrize("error", [LLMError("timeout"), RuntimeError("bug")])
