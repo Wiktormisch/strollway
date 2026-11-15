@@ -1,0 +1,9 @@
+goto /
+wait 1500
+click "text=Route A → B"
+wait 800
+click "text=Big detour"
+wait-for "text=Stair-free route: +"
+wait 2500
+hover "text=Stair-free route: +"
+wait 3000
