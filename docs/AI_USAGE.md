@@ -8,7 +8,7 @@ This page describes how the developer worked with AI tools on StrollWay: what th
 |---|---|
 | **Claude Fable** (planning) | Wrote and revised `docs/PLAN.md`: options, scope, data model, API contract, stage prompts, risks. |
 | **Claude Opus** (coding) | Builds one stage per session from the stage prompt, on its own branch. |
-| **The developer** | Decides scope and trade-offs, runs the checks by hand, reads every diff, commits, pushes, merges. |
+| **The developer** | Decides scope and trade-offs, runs the checks by hand, decides when to commit and open a PR, merges. |
 
 ## The working loop
 
@@ -16,7 +16,7 @@ This page describes how the developer worked with AI tools on StrollWay: what th
 2. **Plan before code.** The plan is the first commit. Every stage prompt names the plan sections the agent must read.
 3. **One stage, one session, one branch.** Each stage has a goal, a definition of done and a test list (see `docs/PLAN.md`, section E).
 4. **Checks before handover.** The agent runs the tests and linters that cover the changed code and reports the real output, including failures.
-5. **A human reads the diff.** The agent never commits, pushes, merges or opens a PR on its own (`AGENTS.md`).
+5. **Commit only when asked.** The agent commits, pushes or opens a PR only when the developer asks, and never merges (`AGENTS.md`).
 6. **Self-review with named gaps.** At the end of a task the agent scores its own work from 1 to 10 and must name what is missing. A score without named gaps is not accepted.
 
 Each finished stage has a short log in `docs/stages/` (`docs/stages/stage-1.md` to `stage-7.md`, plus `stage-7b.md` for the redesign): what was built, which checks ran, and what went wrong.

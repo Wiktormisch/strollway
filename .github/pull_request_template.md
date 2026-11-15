@@ -8,6 +8,5 @@
 
 ## Checklist
 
-- [ ] I read the whole diff
 - [ ] Tests pass (backend and frontend)
 - [ ] No secrets, `.env` files or personal data

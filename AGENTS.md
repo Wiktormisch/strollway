@@ -10,7 +10,8 @@ StrollWay plans stair-free walks for families with a stroller and suggests short
 - `docs/PLAN.md`: the project plan. `docs/DECISIONS.md`: decision log.
 
 ## The six rules (non-negotiable)
-1. **A human reads every diff.** Never commit on your own. Finish, show the diff, wait.
+1. **Commit only when asked.** Never commit, push or open a PR on your own. Finish, report
+   what changed, and wait for the developer's OK.
 2. **No production credentials for agents.** Never read, print or create `.env` files with real
    values. Use `.env.example`. If you need to know whether a key is set, ask.
 3. **Plan before code.** For anything bigger than a small edit, show a short plan and wait for OK.
