@@ -177,6 +177,19 @@ flowchart LR
   LOGIC --> LLM["LLM backend<br/>mock / Claude CLI / Anthropic / NVIDIA"]
 ```
 
+In production everything is on one origin, so the browser needs no CORS
+(details in [`docs/DEPLOY.md`](docs/DEPLOY.md)):
+
+```mermaid
+flowchart LR
+  B["Browser"] -->|HTTPS| CF["Cloudflare<br/>TLS"]
+  CF -->|tunnel| CFD["cloudflared"]
+  CFD --> NG["nginx"]
+  NG -->|"/"| SPA["built React app"]
+  NG -->|"/api/, /static/"| GU["Django on gunicorn<br/>WhiteNoise"]
+  GU --> VOL[("data/ volume<br/>SQLite + cache")]
+```
+
 ```
 backend/
   config/      settings, URLs
