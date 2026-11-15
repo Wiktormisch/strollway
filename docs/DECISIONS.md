@@ -601,3 +601,17 @@ Setup: `docker-compose.yml`, `backend/Dockerfile`, `deploy/nginx/`. Steps in `do
   instead of failing with "database is locked". The traffic is small; PostgreSQL is not needed.
 - **`localhost` must be in `ALLOWED_HOSTS`** on the server: the container health check calls
   `/api/health/` on localhost, and nginx starts only when `web` is healthy.
+
+## 16. Too-long LLM texts are cut, not rejected (2026-11-15)
+
+- **Audit L3, found again while recording the video tutorial.** An `unmet_wishes` item over 80
+  characters made `validation.py` reject the whole AI answer, so the trip fell back to the rules
+  after a paid call.
+- **Texts are cut in code.** `summary`, each stop `reason`, `unmet_wishes` and `tips` use
+  `TrimmedCharField`: a text over the limit is cut at a word (when one is in the second half)
+  and ends with "…", inside the same limit. Lists with too many items keep the first ones
+  (`tips` 3, `unmet_wishes` 10). The limits stay in the prompt, so the model still aims for them.
+- **Real errors still reject the answer:** an unknown, repeated or closed place, 0 or more than
+  4 stops, minutes outside 5-60, wrong types.
+- **A warning names the cut fields** (`cut too-long texts in ['unmet_wishes']`), never the
+  texts, so the logs show how often the model goes over the limits without holding user data.
