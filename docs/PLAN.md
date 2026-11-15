@@ -1173,7 +1173,7 @@ Build:
   for local runs nginx publishes a port on localhost.
 - backend/Dockerfile (python slim image, requirements, gunicorn). "web" runs migrate, collectstatic and
   seed_demo, then gunicorn with 2 workers and a 120 s timeout.
-- deploy/nginx/Dockerfile: multi-stage - build the frontend with Node (VITE_API_URL=/api), then copy
+- deploy/nginx/Dockerfile: multi-stage - build the frontend with Node (VITE_API_URL empty: the client already adds /api/), then copy
   dist into nginx:alpine. deploy/nginx/nginx.conf: "/" serves the SPA with try_files fallback to
   index.html; "/api/" proxies to web:8000 WITHOUT stripping the prefix; "/static/" serves Django static
   files (shared volume or whitenoise - pick one and say why). Forward the X-Forwarded-Proto header

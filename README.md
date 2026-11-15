@@ -145,6 +145,25 @@ The full list, with comments, is in [`backend/.env.example`](backend/.env.exampl
 | `WEATHER_PROVIDER` | `auto` asks Open-Meteo (no key needed); `mock` uses a recorded forecast.                                                                                                                     | `auto`  |
 | `POI_PROVIDER`     | `db` uses the imported place table; `overpass` asks the live Overpass API.                                                                                                                   | `db`    |
 
+## Run with Docker (production setup)
+
+The same stack that runs on the server: Django on gunicorn, nginx with the built frontend,
+and an optional Cloudflare tunnel. It runs with `DEBUG=0`. The dev setup above does not change.
+
+1. Create `.env` next to `docker-compose.yml` (see [`.env.production.example`](.env.production.example)).
+   For a local run, `SECRET_KEY=<any long text>`, `ALLOWED_HOSTS=localhost` and
+   `LLM_BACKEND=mock` are enough.
+2. Build and start (the same command on Windows, Linux and macOS):
+
+   ```bash
+   docker compose up --build
+   ```
+
+3. Open http://localhost:8080 (the app), `/api/health/` and `/api/docs/`.
+
+After a change in `.env`, run `docker compose up -d --force-recreate web` (no rebuild needed).
+Server setup, the Cloudflare tunnel, updates and backups are in [`docs/DEPLOY.md`](docs/DEPLOY.md).
+
 ## Architecture
 
 ```mermaid
