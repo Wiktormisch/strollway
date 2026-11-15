@@ -313,6 +313,7 @@ checked against the `claude-api` skill and against the installed SDK (`anthropic
   characters, a `summary` of 301) rejects the whole answer, and the trip falls back to the rules.
   The call is still paid. Fix: cut too-long texts in code (at a word), and reject only real
   errors (unknown, repeated or closed place, minutes out of range, wrong types).
+  **Done** 2026-11-15 (`DECISIONS.md` section 16).
 - **L4 [P3/S] `trip_planner.py:81-83`, `:259-261`** - when code drops stops to fit the time
   limit, the LLM `summary` stays as it was. It can name a dropped stop, while a tip says the same
   stop was skipped. Fix: add the dropped stops to `unmet_wishes`, or show a short note in the UI
@@ -632,7 +633,8 @@ Notes:
   goes into phase G. Rest of task 12 (decided 2026-11-14):
   - Do: B6, F7, F8 (one branch `chore/final-cleanup`), P1 (`fix/opening-hours-ph`).
   - Dropped: B5 (needs new dependencies), B7 (the suite is small), W2 (the S2 limit is enough),
-    L3 and L4 (with phase E), O3-O6 (live Overpass is optional; `POI_PROVIDER=db` is the default).
+    L3 and L4 (with phase E; L3 was done later, on 2026-11-15), O3-O6 (live Overpass is
+    optional; `POI_PROVIDER=db` is the default).
 - O7 / D7 are closed: 16 `indoor_play` places in the Tricity data
   (`backend/data/places_tricity.json.gz`), a category since phase B (`DECISIONS.md` section 11).
 - Task 9 (deploy, next session), what we already know:
