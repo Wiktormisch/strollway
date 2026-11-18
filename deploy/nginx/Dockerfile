@@ -9,6 +9,6 @@ ENV VITE_API_URL=""
 RUN npm run build
 
 # Stage 2: serve the built files and proxy the API.
-FROM nginx:1.29-alpine
+FROM nginx:1.30-alpine
 COPY --from=nginx_conf nginx.conf /etc/nginx/conf.d/default.conf
 COPY --from=build /app/dist /usr/share/nginx/html
